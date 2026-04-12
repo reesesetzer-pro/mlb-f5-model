@@ -19,9 +19,10 @@ BOOK_LABELS = {
     "williamhill_us": "Caesars",
     "espnbet":        "theScore",
 }
-TRACKER_FILE = "bet_tracker.csv"
-SP_FILE      = "sp_data.csv"
-CACHE_FILE   = "game_cache.json"
+TRACKER_FILE      = "bet_tracker.csv"
+SP_FILE           = "sp_data.csv"
+CACHE_FILE        = "game_cache.json"
+MODEL_PICKS_FILE  = "model_picks.csv"
 
 # ESPN logo URL builder
 def logo_url(abv):
@@ -122,20 +123,46 @@ def fetch_games():
 @st.cache_data(ttl=300)
 def fetch_f5(event_id, away, home):
     url = f"https://api.the-odds-api.com/v4/sports/{SPORT}/events/{event_id}/odds"
-    params = {"apiKey":API_KEY,"regions":REGIONS,"markets":"h2h_1st_5_innings,totals_1st_5_innings",
+    params = {"apiKey":API_KEY,"regions":REGIONS,
+              "markets":"h2h_1st_5_innings,spreads_1st_5_innings,totals_1st_5_innings,team_totals_1st_5_innings",
               "bookmakers":BOOKS,"oddsFormat":"american"}
-    result = {"ml":{},"total":{}}
+    result = {"ml":{}, "spread":{}, "total":{}, "team_total":{}}
     try:
         r = requests.get(url, params=params, timeout=15); r.raise_for_status()
         for bm in r.json().get("bookmakers",[]):
             k = bm["key"]
             for mkt in bm.get("markets",[]):
-                if mkt["key"] == "h2h_1st_5_innings":
+                mk = mkt["key"]
+                if mk == "h2h_1st_5_innings":
                     o = {x["name"]:x["price"] for x in mkt["outcomes"]}
                     result["ml"][k] = {"away":o.get(away),"home":o.get(home)}
-                elif mkt["key"] == "totals_1st_5_innings":
+                elif mk == "spreads_1st_5_innings":
+                    bk_spread = {}
                     for o in mkt["outcomes"]:
-                        if o["name"]=="Over": result["total"][k]=o.get("point")
+                        side = "away" if o["name"]==away else "home" if o["name"]==home else None
+                        if side:
+                            bk_spread[side] = {"line":o.get("point"), "price":o.get("price")}
+                    if bk_spread:
+                        result["spread"][k] = bk_spread
+                elif mk == "totals_1st_5_innings":
+                    bk_tot = {}
+                    for o in mkt["outcomes"]:
+                        if o["name"]=="Over":   bk_tot["over_line"]  = o.get("point"); bk_tot["over_price"]  = o.get("price")
+                        elif o["name"]=="Under": bk_tot["under_price"] = o.get("price")
+                    if bk_tot:
+                        result["total"][k] = bk_tot
+                elif mk == "team_totals_1st_5_innings":
+                    for o in mkt["outcomes"]:
+                        desc = o.get("description","")
+                        direction = o.get("name","")
+                        side = "away" if away.lower() in desc.lower() else "home" if home.lower() in desc.lower() else None
+                        if side:
+                            if k not in result["team_total"]:
+                                result["team_total"][k] = {}
+                            if side not in result["team_total"][k]:
+                                result["team_total"][k][side] = {}
+                            result["team_total"][k][side][direction.lower()+"_line"]  = o.get("point")
+                            result["team_total"][k][side][direction.lower()+"_price"] = o.get("price")
     except: pass
     return result
 
@@ -175,6 +202,112 @@ def calc_pnl(row):
         elif row["Result"]=="PUSH": return 0
     except: return None
 
+# ── MULTI-MARKET MODEL MATH ───────────────────────────────────────────────────
+def calc_model_total(away_sp_score, home_sp_score, away_lu, home_lu, pf, ump_k):
+    """Estimate F5 total runs. League avg F5 ≈ 4.5 runs."""
+    base   = 4.5
+    avg_sp = ((away_sp_score or 50) + (home_sp_score or 50)) / 2
+    avg_lu = ((away_lu or 50) + (home_lu or 50)) / 2
+    sp_adj  = 1 + (50 - avg_sp) / 100 * 0.40   # poor SP → more runs
+    lu_adj  = 1 + (avg_lu - 50)  / 100 * 0.25  # better lineup → more runs
+    ump_adj = 1 - abs(ump_k or 0) * 0.08        # high-K ump → fewer runs
+    return round(base * sp_adj * lu_adj * (pf or 1.0) * ump_adj, 2)
+
+def calc_model_team_totals(model_total, away_lu, home_lu, away_sp_score, home_sp_score):
+    """Split model total between the two teams."""
+    a_off = (away_lu or 50); h_off = (home_lu or 50)
+    h_pit = (home_sp_score or 50); a_pit = (away_sp_score or 50)
+    away_w = 0.5 + (a_off - h_pit) / 400
+    away_w = max(0.30, min(0.70, away_w))
+    return round(model_total * away_w, 2), round(model_total * (1 - away_w), 2)
+
+def _norm_cdf(x):
+    import math
+    return (1 + math.erf(x / math.sqrt(2))) / 2
+
+def cover_prob(model_diff, spread_line, sigma=2.8):
+    """P(away covers spread_line). model_diff = expected away run advantage."""
+    return round(_norm_cdf((model_diff - spread_line) / sigma), 4)
+
+def over_prob(model_total, line, sigma=2.5):
+    return round(_norm_cdf((model_total - line) / sigma), 4)
+
+# ── MODEL PICK TRACKING & LEARNING ───────────────────────────────────────────
+_MP_COLS = ["Date","Game","Team","Side","Market","ML","Book",
+            "Model_Prob","Market_Prob","Edge_Pct",
+            "Model_Line","Market_Line",
+            "SP_Score","LU_Score","Park_Factor","Ump_K",
+            "Result","F5_Score"]
+
+def load_model_picks():
+    if os.path.exists(MODEL_PICKS_FILE):
+        return pd.read_csv(MODEL_PICKS_FILE)
+    return pd.DataFrame(columns=_MP_COLS)
+
+def save_model_picks(df):
+    df.to_csv(MODEL_PICKS_FILE, index=False)
+
+def auto_log_model_picks(signals, picks_df, min_model_prob=0.52):
+    today = date.today().strftime("%m/%d/%Y")
+    new_rows = []
+    for s in signals:
+        if s["model_p"] < min_model_prob:
+            continue
+        dupe = picks_df[
+            (picks_df["Date"] == today) &
+            (picks_df["Game"] == s["game"]) &
+            (picks_df["Team"] == s["team"]) &
+            (picks_df["Market"] == s.get("market","F5 ML"))
+        ]
+        if not dupe.empty:
+            continue
+        new_rows.append({
+            "Date":        today,
+            "Game":        s["game"],
+            "Team":        s["team"],
+            "Side":        s["side"],
+            "Market":      s.get("market","F5 ML"),
+            "ML":          s["ml"],
+            "Book":        s["book"],
+            "Model_Prob":  round(s["model_p"] * 100, 1),
+            "Market_Prob": round(s["mkt_p"] * 100, 1),
+            "Edge_Pct":    round(s["edge"] * 100, 1),
+            "Model_Line":  s.get("model_line",""),
+            "Market_Line": s.get("mkt_line",""),
+            "SP_Score":    s.get("sp_score",""),
+            "LU_Score":    s.get("lu_score",""),
+            "Park_Factor": s.get("park_factor",""),
+            "Ump_K":       s.get("ump_k",""),
+            "Result":      "PENDING",
+            "F5_Score":    "",
+        })
+    if new_rows:
+        picks_df = pd.concat([picks_df, pd.DataFrame(new_rows)], ignore_index=True)
+        save_model_picks(picks_df)
+    return picks_df
+
+def get_calibration_map(picks_df):
+    """Return {prob_bucket: actual_win_rate} for buckets with ≥5 settled picks."""
+    settled = picks_df[picks_df["Result"].isin(["WIN","LOSS"])].copy()
+    if len(settled) < 5:
+        return {}
+    settled["Prob_Bucket"] = (settled["Model_Prob"] // 5 * 5).astype(int)
+    cal = {}
+    for bucket, grp in settled.groupby("Prob_Bucket"):
+        w = len(grp[grp["Result"]=="WIN"])
+        if len(grp) >= 5:
+            cal[int(bucket)] = w / len(grp)
+    return cal
+
+def calibrate_prob(raw_pct, cal_map):
+    """Blend raw model prob with historical accuracy at that confidence tier."""
+    if not cal_map:
+        return raw_pct
+    bucket = int(raw_pct // 5 * 5)
+    if bucket in cal_map:
+        return round(0.40 * raw_pct + 0.60 * cal_map[bucket] * 100, 1)
+    return raw_pct
+
 # ── SIDEBAR ───────────────────────────────────────────────────────────────────
 with st.sidebar:
     st.markdown("# ⚾ MLB F5 Model")
@@ -195,13 +328,15 @@ with st.sidebar:
     if st.button("🔄 Refresh Odds", use_container_width=True):
         st.cache_data.clear(); st.rerun()
     page = st.radio("Navigate", [
-        "📋 Today's Slate","🎯 Bet Signals","✏️ SP Input","📈 Bet Tracker","🏟️ Park Factors"])
+        "📋 Today's Slate","🎯 Bet Signals","✏️ SP Input","📈 Bet Tracker","🏟️ Park Factors","📊 Model Performance"])
 
 # ── LOAD DATA ─────────────────────────────────────────────────────────────────
-games, err = fetch_games()
-sp_df       = load_sp_data()
-tracker_df  = load_tracker()
-cache       = load_cache()
+games, err       = fetch_games()
+sp_df            = load_sp_data()
+tracker_df       = load_tracker()
+cache            = load_cache()
+model_picks_df   = load_model_picks()
+cal_map          = get_calibration_map(model_picks_df)
 
 # Build cache lookup by team name
 cache_by_away = {g["away_team"]: g for g in cache}
@@ -317,7 +452,7 @@ if page == "📋 Today's Slate":
 # PAGE: BET SIGNALS
 # ══════════════════════════════════════════════════════════════════════════════
 elif page == "🎯 Bet Signals":
-    st.title("🎯 Bet Signals — Edge Rankings")
+    st.title("🎯 Bet Signals — Ranked by Model Confidence")
     if not games: st.info("No games today.")
     else:
         signals = []
@@ -330,14 +465,15 @@ elif page == "🎯 Bet Signals":
                 time_et = dt.strftime("%#I:%M %p")+" ET"
             except: time_et=""
 
-            # Enriched cache data
-            c_data   = cache_by_away.get(away, cache_by_home.get(home,{}))
-            pf       = c_data.get("park_factor", 1.0)
-            ump_k    = c_data.get("ump_k_boost", 0.0)
-            away_lu  = c_data.get("away_lineup_score")
-            home_lu  = c_data.get("home_lineup_score")
-            away_sp  = c_data.get("away_sp",{})
-            home_sp  = c_data.get("home_sp",{})
+            c_data  = cache_by_away.get(away, cache_by_home.get(home,{}))
+            pf      = c_data.get("park_factor", 1.0)
+            ump_k   = c_data.get("ump_k_boost", 0.0)
+            away_lu = c_data.get("away_lineup_score")
+            home_lu = c_data.get("home_lineup_score")
+            away_sp = c_data.get("away_sp",{})
+            home_sp = c_data.get("home_sp",{})
+            asp = away_sp.get("sp_score") or 50
+            hsp = home_sp.get("sp_score") or 50
 
             away_mls = [odds_data["ml"][b]["away"] for b in BOOK_LABELS
                         if b in odds_data["ml"] and odds_data["ml"][b]["away"]]
@@ -351,90 +487,241 @@ elif page == "🎯 Bet Signals":
             best_home_bk = max((b for b in BOOK_LABELS if b in odds_data["ml"] and odds_data["ml"][b]["home"]),
                                key=lambda b: odds_data["ml"][b]["home"])
 
-            # Vig-free market probs
             true_away, true_home = vig_free(
                 sum(away_mls)/len(away_mls), sum(home_mls)/len(home_mls))
             if not true_away: continue
 
-            # SP score adjustment
-            asp = away_sp.get("sp_score") or 50
-            hsp = home_sp.get("sp_score") or 50
-            sp_edge = (asp - hsp) / 100 * w_sp
-
-            # Lineup adjustment
-            lu_edge = 0.0
-            if away_lu and home_lu:
-                lu_edge = (away_lu - home_lu) / 100 * w_lu
-
-            # Park factor adjustment (high PF hurts away pitcher slightly)
-            park_edge = (pf - 1.0) * w_park * -1  # high PF = slight home advantage
-
-            # Ump K% adjustment (high K ump = helps SP with better K-BB%)
-            away_kbb = away_sp.get("k_bb_pct") or 10
-            home_kbb = home_sp.get("k_bb_pct") or 10
-            ump_edge = ump_k * ((away_kbb - home_kbb)/100) * w_ump
+            sp_edge   = (asp - hsp) / 100 * w_sp
+            lu_edge   = (((away_lu or 50) - (home_lu or 50)) / 100 * w_lu)
+            park_edge = (pf - 1.0) * w_park * -1
+            away_kbb  = away_sp.get("k_bb_pct") or 10
+            home_kbb  = home_sp.get("k_bb_pct") or 10
+            ump_edge  = ump_k * ((away_kbb - home_kbb)/100) * w_ump
 
             model_away = max(0.05, min(0.95, true_away + sp_edge + lu_edge + park_edge + ump_edge))
             model_home = 1 - model_away
+            mkt_away   = american_to_prob(best_away_ml)
+            mkt_home   = american_to_prob(best_home_ml)
+            game_tag   = f"{away} @ {home}"
 
-            mkt_away = american_to_prob(best_away_ml)
-            mkt_home = american_to_prob(best_home_ml)
-
-            away_edge = model_away - mkt_away
-            home_edge = model_home - mkt_home
-
+            # ── F5 ML signals ────────────────────────────────────────────────
             for side, edge, ml, bk, model_p, mkt_p, sp_s, lu_s, team, abv in [
-                ("Away", away_edge, best_away_ml, best_away_bk, model_away, mkt_away, asp, away_lu, away, abv_away),
-                ("Home", home_edge, best_home_ml, best_home_bk, model_home, mkt_home, hsp, home_lu, home, abv_home),
+                ("Away", model_away-mkt_away, best_away_ml, best_away_bk, model_away, mkt_away, asp, away_lu, away, abv_away),
+                ("Home", model_home-mkt_home, best_home_ml, best_home_bk, model_home, mkt_home, hsp, home_lu, home, abv_home),
             ]:
-                if edge > 0:
-                    k = kelly(edge, ml, bankroll, kelly_frac, max_pct)
+                if model_p >= 0.52:
+                    k = kelly(max(edge,0), ml, bankroll, kelly_frac, max_pct)
                     signals.append({
-                        "game": f"{away} @ {home}", "time": time_et,
-                        "team": team, "abv": abv, "side": side,
-                        "edge": edge, "ml": ml, "book": BOOK_LABELS.get(bk,bk),
-                        "model_p": model_p, "mkt_p": mkt_p,
-                        "kelly": k, "sp_score": sp_s, "lu_score": lu_s,
-                        "park_factor": pf, "ump_k": ump_k,
-                        "away_sp": away_sp, "home_sp": home_sp,
+                        "game":game_tag,"time":time_et,"team":team,"abv":abv,
+                        "side":side,"market":"F5 ML",
+                        "edge":edge,"ml":ml,"book":BOOK_LABELS.get(bk,bk),
+                        "model_p":model_p,"mkt_p":mkt_p,"kelly":k,
+                        "sp_score":sp_s,"lu_score":lu_s,
+                        "park_factor":pf,"ump_k":ump_k,
+                        "model_line":"","mkt_line":"",
                     })
 
+            # ── F5 Spread signals ─────────────────────────────────────────────
+            spread_books = [b for b in BOOK_LABELS if b in odds_data["spread"]]
+            if spread_books:
+                # Use consensus spread line
+                all_away_lines = [odds_data["spread"][b]["away"]["line"]
+                                  for b in spread_books if "away" in odds_data["spread"][b] and odds_data["spread"][b]["away"].get("line") is not None]
+                if all_away_lines:
+                    consensus_spread = sum(all_away_lines)/len(all_away_lines)
+                    model_diff = (model_away - 0.5) * 5  # rough: 10% prob ≈ 0.5 runs
+                    # Away covers (favorite or dog)
+                    model_cover_away = cover_prob(model_diff, consensus_spread)
+                    # Best spread odds per side
+                    best_spread_bk_away = max(spread_books, key=lambda b: odds_data["spread"][b].get("away",{}).get("price",-200) or -200)
+                    best_spread_bk_home = max(spread_books, key=lambda b: odds_data["spread"][b].get("home",{}).get("price",-200) or -200)
+                    away_spread_ml = odds_data["spread"][best_spread_bk_away].get("away",{}).get("price") or -110
+                    home_spread_ml = odds_data["spread"][best_spread_bk_home].get("home",{}).get("price") or -110
+                    mkt_cover_away = american_to_prob(away_spread_ml) or 0.524
+                    mkt_cover_home = american_to_prob(home_spread_ml) or 0.524
+
+                    for side, model_p, mkt_p, ml, bk, team, abv, sp_s, lu_s, cover_line in [
+                        (f"Away {'+' if consensus_spread>0 else ''}{consensus_spread:.1f}",
+                         model_cover_away, mkt_cover_away, away_spread_ml, best_spread_bk_away,
+                         away, abv_away, asp, away_lu, consensus_spread),
+                        (f"Home {'+' if -consensus_spread>0 else ''}{-consensus_spread:.1f}",
+                         1-model_cover_away, mkt_cover_home, home_spread_ml, best_spread_bk_home,
+                         home, abv_home, hsp, home_lu, -consensus_spread),
+                    ]:
+                        edge = model_p - mkt_p
+                        if model_p >= 0.52:
+                            k = kelly(max(edge,0), ml, bankroll, kelly_frac, max_pct)
+                            signals.append({
+                                "game":game_tag,"time":time_et,"team":team,"abv":abv,
+                                "side":side,"market":"F5 Spread",
+                                "edge":edge,"ml":ml,"book":BOOK_LABELS.get(bk,bk),
+                                "model_p":model_p,"mkt_p":mkt_p,"kelly":k,
+                                "sp_score":sp_s,"lu_score":lu_s,
+                                "park_factor":pf,"ump_k":ump_k,
+                                "model_line":round(model_diff,2),"mkt_line":cover_line,
+                            })
+
+            # ── F5 Total signals ──────────────────────────────────────────────
+            total_books = [b for b in BOOK_LABELS if b in odds_data["total"]]
+            if total_books:
+                all_lines = [odds_data["total"][b]["over_line"]
+                             for b in total_books if odds_data["total"][b].get("over_line") is not None]
+                if all_lines:
+                    consensus_total = sum(all_lines)/len(all_lines)
+                    model_t = calc_model_total(asp, hsp, away_lu, home_lu, pf, ump_k)
+                    over_p  = over_prob(model_t, consensus_total)
+                    under_p = 1 - over_p
+
+                    best_over_bk  = max(total_books, key=lambda b: odds_data["total"][b].get("over_price",-200) or -200)
+                    best_under_bk = max(total_books, key=lambda b: odds_data["total"][b].get("under_price",-200) or -200)
+                    over_ml  = odds_data["total"][best_over_bk].get("over_price")  or -110
+                    under_ml = odds_data["total"][best_under_bk].get("under_price") or -110
+                    mkt_over_p  = american_to_prob(over_ml)  or 0.524
+                    mkt_under_p = american_to_prob(under_ml) or 0.524
+
+                    for side, model_p, mkt_p, ml, bk, team, abv in [
+                        (f"Over {consensus_total}",  over_p,  mkt_over_p,  over_ml,  best_over_bk,  f"{away}/{home}", abv_away),
+                        (f"Under {consensus_total}", under_p, mkt_under_p, under_ml, best_under_bk, f"{away}/{home}", abv_home),
+                    ]:
+                        edge = model_p - mkt_p
+                        if model_p >= 0.52:
+                            k = kelly(max(edge,0), ml, bankroll, kelly_frac, max_pct)
+                            signals.append({
+                                "game":game_tag,"time":time_et,"team":team,"abv":abv,
+                                "side":side,"market":"F5 Total",
+                                "edge":edge,"ml":ml,"book":BOOK_LABELS.get(bk,bk),
+                                "model_p":model_p,"mkt_p":mkt_p,"kelly":k,
+                                "sp_score":(asp+hsp)/2,"lu_score":((away_lu or 50)+(home_lu or 50))/2,
+                                "park_factor":pf,"ump_k":ump_k,
+                                "model_line":model_t,"mkt_line":consensus_total,
+                            })
+
+            # ── F5 Team Total signals ─────────────────────────────────────────
+            tt_books = [b for b in BOOK_LABELS if b in odds_data["team_total"]]
+            model_t = calc_model_total(asp, hsp, away_lu, home_lu, pf, ump_k)
+            m_away_tt, m_home_tt = calc_model_team_totals(model_t, away_lu, home_lu, asp, hsp)
+
+            if tt_books:
+                for tm, abv, m_tt, sp_s, lu_s in [
+                    (away, abv_away, m_away_tt, asp, away_lu),
+                    (home, abv_home, m_home_tt, hsp, home_lu),
+                ]:
+                    tt_side = "away" if tm == away else "home"
+                    mkt_lines = [(b, odds_data["team_total"][b][tt_side])
+                                 for b in tt_books if tt_side in odds_data["team_total"][b]]
+                    if not mkt_lines: continue
+                    best_over_bk  = max(mkt_lines, key=lambda x: x[1].get("over_price",-200)  or -200)[0]
+                    best_under_bk = max(mkt_lines, key=lambda x: x[1].get("under_price",-200) or -200)[0]
+                    all_tt_lines  = [x[1].get("over_line") for x in mkt_lines if x[1].get("over_line") is not None]
+                    if not all_tt_lines: continue
+                    mkt_tt = sum(all_tt_lines)/len(all_tt_lines)
+                    over_ml  = odds_data["team_total"][best_over_bk][tt_side].get("over_price")  or -110
+                    under_ml = odds_data["team_total"][best_under_bk][tt_side].get("under_price") or -110
+                    ov_p = over_prob(m_tt, mkt_tt, sigma=1.8)
+                    un_p = 1 - ov_p
+                    for side, model_p, mkt_p, ml, bk in [
+                        (f"{tm} Over {mkt_tt}",  ov_p, american_to_prob(over_ml)  or 0.524, over_ml,  best_over_bk),
+                        (f"{tm} Under {mkt_tt}", un_p, american_to_prob(under_ml) or 0.524, under_ml, best_under_bk),
+                    ]:
+                        edge = model_p - mkt_p
+                        if model_p >= 0.52:
+                            k = kelly(max(edge,0), ml, bankroll, kelly_frac, max_pct)
+                            signals.append({
+                                "game":game_tag,"time":time_et,"team":tm,"abv":abv,
+                                "side":side,"market":"F5 Team Total",
+                                "edge":edge,"ml":ml,"book":BOOK_LABELS.get(bk,bk),
+                                "model_p":model_p,"mkt_p":mkt_p,"kelly":k,
+                                "sp_score":sp_s,"lu_score":lu_s,
+                                "park_factor":pf,"ump_k":ump_k,
+                                "model_line":m_tt,"mkt_line":mkt_tt,
+                            })
+            else:
+                # No market data — show model estimate only if strongly leaning
+                for tm, abv, m_tt, sp_s, lu_s in [
+                    (away, abv_away, m_away_tt, asp, away_lu),
+                    (home, abv_home, m_home_tt, hsp, home_lu),
+                ]:
+                    ov_p = over_prob(m_tt, round(m_tt), sigma=1.8)
+                    un_p = 1 - ov_p
+                    if max(ov_p, un_p) >= 0.57:
+                        side = f"{tm} Over ~{m_tt}" if ov_p > un_p else f"{tm} Under ~{m_tt}"
+                        model_p = max(ov_p, un_p)
+                        signals.append({
+                            "game":game_tag,"time":time_et,"team":tm,"abv":abv,
+                            "side":side,"market":"F5 Team Total",
+                            "edge":0.0,"ml":None,"book":"Model Only",
+                            "model_p":model_p,"mkt_p":0.50,"kelly":0,
+                            "sp_score":sp_s,"lu_score":lu_s,
+                            "park_factor":pf,"ump_k":ump_k,
+                            "model_line":m_tt,"mkt_line":"—",
+                        })
+
+        # ── DISPLAY ───────────────────────────────────────────────────────────
         if not signals:
-            st.info("No positive edges found on today's slate with current data.")
+            st.info("No signals found on today's slate with current data.")
         else:
-            signals.sort(key=lambda x: x["edge"], reverse=True)
-            strong   = [s for s in signals if s["edge"] >= 0.05]
-            moderate = [s for s in signals if 0.03 <= s["edge"] < 0.05]
+            # Primary sort: model probability (most likely to hit), secondary: edge
+            signals.sort(key=lambda x: (x["model_p"], x["edge"]), reverse=True)
+
+            # Auto-log all signals ≥52% model_p to the learning tracker
+            model_picks_df = auto_log_model_picks(signals, model_picks_df)
+
+            high_conf = [s for s in signals if s["model_p"] >= 0.60]
+            solid     = [s for s in signals if 0.55 <= s["model_p"] < 0.60]
 
             m1,m2,m3,m4 = st.columns(4)
-            m1.metric("Total Edges",    len(signals))
-            m2.metric("🟢 Strong (>5%)", len(strong))
-            m3.metric("🟡 Moderate (3-5%)", len(moderate))
-            m4.metric("Total Rec. Wagers", f"${sum(s['kelly'] for s in signals if s['edge']>=min_edge):,.0f}")
+            m1.metric("Total Signals",       len(signals))
+            m2.metric("🔥 High Conf (≥60%)",  len(high_conf))
+            m3.metric("🟢 Solid (55-60%)",    len(solid))
+            m4.metric("Total Rec. Wagers",   f"${sum(s['kelly'] for s in signals if s['edge']>=min_edge and s['ml']):,.0f}")
+
+            market_filter = st.multiselect("Filter by Market",
+                ["F5 ML","F5 Spread","F5 Total","F5 Team Total"],
+                default=["F5 ML","F5 Spread","F5 Total","F5 Team Total"])
             st.divider()
 
-            for s in [s for s in signals if s["edge"] >= min_edge]:
-                css = "bet-strong" if s["edge"]>=0.05 else "bet-moderate"
-                badge = "🟢 STRONG EDGE" if s["edge"]>=0.05 else "🟡 MODERATE EDGE"
-                lu_txt = f" | LU: {s['lu_score']:.0f}/100" if s['lu_score'] else ""
-                pf_txt = f"Park: {s['park_factor']:.2f}x"
-                ump_txt = f"Ump K: {s['ump_k']:+.2f}" if s['ump_k'] else ""
+            display_signals = [s for s in signals
+                                if s["edge"] >= min_edge
+                                and s.get("market","F5 ML") in market_filter]
+
+            for s in display_signals:
+                if s["model_p"] >= 0.60:
+                    css, badge = "bet-strong",   "🔥 HIGH CONFIDENCE"
+                elif s["model_p"] >= 0.55:
+                    css, badge = "bet-moderate",  "🟢 SOLID PICK"
+                else:
+                    css, badge = "no-edge",        "🟡 LEAN"
+
+                edge_tag = (f"🟢 +{s['edge']*100:.1f}% edge" if s['edge'] >= 0.05
+                            else f"🟡 +{s['edge']*100:.1f}% edge" if s['edge'] >= 0.01
+                            else f"⚪ No Edge (model only)")
+                cal_p    = calibrate_prob(s["model_p"]*100, cal_map)
+                cal_txt  = f" → {cal_p:.1f}% cal" if cal_map and abs(cal_p - s["model_p"]*100) >= 1 else ""
+                lu_txt   = f" | LU: {s['lu_score']:.0f}/100" if s['lu_score'] else ""
+                pf_txt   = f"Park: {s['park_factor']:.2f}x"
+                ump_txt  = f"Ump K: {s['ump_k']:+.2f}" if s['ump_k'] else ""
+                mkt_tag  = f"<span class='metric-pill'>📊 {s['market']}</span>"
+                line_txt = (f"<span class='metric-pill'>📐 Model: <b>{s['model_line']}</b> vs Mkt: <b>{s['mkt_line']}</b></span>"
+                            if s.get("model_line") != "" and s.get("mkt_line") != "" else "")
+                ml_str   = (f"{'+' if s['ml']>0 else ''}{s['ml']}" if s['ml'] else "—")
 
                 st.markdown(f"""
                 <div class="{css}">
                   <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
                     <img src="{logo_url(s['abv'])}" width="40" style="border-radius:50%"/>
                     <div>
-                      <strong>{badge} — {s['team']} ({s['side']})</strong><br>
+                      <strong>{badge} — {s['side']}</strong><br>
                       <small style="color:#8ab4d4">{s['game']} | {s['time']}</small>
                     </div>
                   </div>
                   <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px">
-                    <span class="metric-pill">📊 Edge: <b>{s['edge']*100:.1f}%</b></span>
-                    <span class="metric-pill">💰 Best: <b>{'+' if s['ml']>0 else ''}{s['ml']}</b> @ {s['book']}</span>
-                    <span class="metric-pill">🎯 Model: <b>{s['model_p']*100:.1f}%</b></span>
+                    {mkt_tag}
+                    <span class="metric-pill">🎯 Model: <b>{s['model_p']*100:.1f}%{cal_txt}</b></span>
+                    <span class="metric-pill">{edge_tag}</span>
+                    <span class="metric-pill">💰 Best: <b>{ml_str}</b> @ {s['book']}</span>
                     <span class="metric-pill">📉 Market: <b>{s['mkt_p']*100:.1f}%</b></span>
                     <span class="metric-pill">⚾ SP Score: <b>{s['sp_score']:.0f}</b>{lu_txt}</span>
+                    {line_txt}
                     <span class="park-badge">{pf_txt}</span>
                     {f'<span class="ump-badge">{ump_txt}</span>' if ump_txt else ""}
                   </div>
@@ -445,16 +732,16 @@ elif page == "🎯 Bet Signals":
             # Log bet
             st.divider(); st.subheader("➕ Log a Bet")
             with st.form("log_bet"):
-                eligible = [s for s in signals if s["edge"] >= min_edge]
+                loggable = [s for s in display_signals if s["ml"]]
                 sel = st.selectbox("Select Signal",
-                    [f"{s['team']} ({s['side']}) — {s['game']}" for s in eligible])
+                    [f"[{s['market']}] {s['side']} — {s['game']}" for s in loggable])
                 wager = st.number_input("Wager ($)", min_value=1.0, value=10.0)
                 notes = st.text_input("Notes")
-                if st.form_submit_button("Log Bet") and eligible:
-                    idx = [f"{s['team']} ({s['side']}) — {s['game']}" for s in eligible].index(sel)
-                    s = eligible[idx]
+                if st.form_submit_button("Log Bet") and loggable:
+                    idx = [f"[{s['market']}] {s['side']} — {s['game']}" for s in loggable].index(sel)
+                    s = loggable[idx]
                     new = {"Date":date.today().strftime("%m/%d/%Y"),"Game":s["game"],
-                           "Bet_Side":f"{s['team']} ({s['side']})","Market":"F5 ML",
+                           "Bet_Side":s["side"],"Market":s["market"],
                            "Book":s["book"],"Bet_ML":s["ml"],
                            "Model_Prob":round(s["model_p"]*100,1),
                            "Market_Implied":round(s["mkt_p"]*100,1),
@@ -600,3 +887,141 @@ elif page == "🏟️ Park Factors":
     st.dataframe(df.style.background_gradient(subset=["F5 Factor"],cmap="RdYlGn",
                  vmin=0.90,vmax=1.30), hide_index=True, use_container_width=True)
     st.caption("Factors updated annually. Coors Field (+28%) and Great American Ball Park (+12%) are the most significant outliers.")
+
+# ══════════════════════════════════════════════════════════════════════════════
+# PAGE: MODEL PERFORMANCE
+# ══════════════════════════════════════════════════════════════════════════════
+elif page == "📊 Model Performance":
+    st.title("📊 Model Performance & Learning")
+    st.caption("All signals ≥52% model confidence are auto-tracked here. Settle results to train the model.")
+
+    if model_picks_df.empty:
+        st.info("No model picks tracked yet. Signals ≥52% model prob are auto-logged on game days.")
+    else:
+        settled = model_picks_df[model_picks_df["Result"].isin(["WIN","LOSS"])].copy()
+        pending_picks = model_picks_df[model_picks_df["Result"]=="PENDING"]
+        wins   = len(settled[settled["Result"]=="WIN"])
+        losses = len(settled[settled["Result"]=="LOSS"])
+        n      = wins + losses
+
+        c1,c2,c3,c4,c5,c6 = st.columns(6)
+        c1.metric("Total Tracked", len(model_picks_df))
+        c2.metric("Settled",       n)
+        c3.metric("Pending",       len(pending_picks))
+        c4.metric("Record",        f"{wins}-{losses}")
+        c5.metric("Win Rate",      f"{wins/n*100:.1f}%" if n>0 else "—")
+
+        # Market breakdown
+        by_mkt = model_picks_df[model_picks_df["Result"].isin(["WIN","LOSS"])].groupby("Market").apply(
+            lambda g: pd.Series({"W":sum(g["Result"]=="WIN"),"L":sum(g["Result"]=="LOSS")})).reset_index()
+        if not by_mkt.empty:
+            by_mkt["Win%"] = (by_mkt["W"]/(by_mkt["W"]+by_mkt["L"])*100).round(1).astype(str)+"%"
+            c6.metric("Markets", len(by_mkt))
+
+        if n > 0:
+            st.divider()
+            # ── Calibration ───────────────────────────────────────────────────
+            st.subheader("🎯 Probability Calibration")
+            st.caption("Does the model's confidence match reality? When it says 60%, does it hit 60% of the time?")
+            settled["Prob_Bucket"] = (settled["Model_Prob"] // 5 * 5).astype(int)
+            cal_rows = []
+            for bucket in sorted(settled["Prob_Bucket"].unique()):
+                grp = settled[settled["Prob_Bucket"]==bucket]
+                w   = len(grp[grp["Result"]=="WIN"])
+                tot = len(grp)
+                actual = w/tot*100
+                expected = bucket + 2.5
+                bias = actual - expected
+                bias_icon = "🟢" if abs(bias) <= 3 else "🟡" if abs(bias) <= 6 else "🔴"
+                cal_rows.append({
+                    "Prob Range":  f"{bucket}-{bucket+5}%",
+                    "# Picks":     tot,
+                    "Expected Win%": f"{expected:.1f}%",
+                    "Actual Win%":   f"{actual:.1f}%",
+                    "Bias":          f"{bias_icon} {bias:+.1f}%",
+                    "Record":        f"{w}-{tot-w}",
+                })
+            st.dataframe(pd.DataFrame(cal_rows), hide_index=True, use_container_width=True)
+
+            overall_wr = wins/n*100
+            if overall_wr >= 55:
+                st.success(f"✅ Model is performing well — {overall_wr:.1f}% overall win rate on tracked signals.")
+            elif overall_wr >= 50:
+                st.info(f"📊 Model is slightly above break-even ({overall_wr:.1f}%). Keep building the sample.")
+            else:
+                st.warning(f"⚠️ Model is below break-even ({overall_wr:.1f}%). Consider raising the min edge threshold.")
+
+            # Market breakdown table
+            if not by_mkt.empty:
+                st.divider()
+                st.subheader("📈 Performance by Market")
+                st.dataframe(by_mkt.rename(columns={"Market":"Market","W":"Wins","L":"Losses"}),
+                             hide_index=True, use_container_width=True)
+
+        if n >= 20:
+            st.divider()
+            st.subheader("🔬 Factor Correlation with Wins")
+            st.caption("Which model inputs actually predict outcomes? Higher correlation = more predictive.")
+            try:
+                import numpy as np
+                settled_num = settled.copy()
+                settled_num["Win_Binary"] = (settled_num["Result"]=="WIN").astype(int)
+                factor_rows = []
+                for col, label in [("SP_Score","SP Score"),("LU_Score","Lineup Quality"),
+                                    ("Park_Factor","Park Factor"),("Ump_K","Ump K Boost"),
+                                    ("Edge_Pct","Edge %"),("Model_Prob","Model Prob")]:
+                    try:
+                        vals = pd.to_numeric(settled_num[col], errors="coerce").dropna()
+                        if len(vals) < 10: continue
+                        corr = float(np.corrcoef(vals.values, settled_num.loc[vals.index,"Win_Binary"].values)[0,1])
+                        signal = "↑ Helpful" if corr > 0.05 else "↓ Hurting" if corr < -0.05 else "≈ Neutral"
+                        factor_rows.append({"Factor":label,"Correlation":round(corr,3),"Signal":signal})
+                    except: continue
+                if factor_rows:
+                    fdf = pd.DataFrame(factor_rows).sort_values("Correlation",ascending=False)
+                    st.dataframe(fdf, hide_index=True, use_container_width=True)
+
+                    if n >= 30:
+                        st.subheader("💡 Weight Adjustment Suggestions")
+                        sp_c  = next((f["Correlation"] for f in factor_rows if f["Factor"]=="SP Score"),    None)
+                        lu_c  = next((f["Correlation"] for f in factor_rows if f["Factor"]=="Lineup Quality"), None)
+                        pk_c  = next((f["Correlation"] for f in factor_rows if f["Factor"]=="Park Factor"), None)
+                        ump_c = next((f["Correlation"] for f in factor_rows if f["Factor"]=="Ump K Boost"), None)
+                        if sp_c is not None and lu_c is not None:
+                            if sp_c > lu_c + 0.10:
+                                st.info("📊 SP Score is more predictive than Lineup Quality. Consider increasing the SP weight slider.")
+                            elif lu_c > sp_c + 0.10:
+                                st.info("📊 Lineup Quality is more predictive than SP Score. Consider increasing the Lineup weight slider.")
+                            else:
+                                st.success("✅ SP and Lineup weights appear balanced based on history.")
+                        if pk_c is not None and abs(pk_c) < 0.03:
+                            st.info("📊 Park Factor shows low correlation with outcomes. Consider reducing its weight.")
+                        if ump_c is not None and abs(ump_c) < 0.03:
+                            st.info("📊 Ump tendency shows low correlation. Consider reducing its weight.")
+            except Exception as e:
+                st.caption(f"Correlation analysis unavailable: {e}")
+
+        # ── Settle pending model picks ─────────────────────────────────────────
+        if not pending_picks.empty:
+            st.divider()
+            st.subheader("✏️ Settle Model Picks")
+            for idx, row in pending_picks.iterrows():
+                mkt_disp = row.get("Market","F5 ML")
+                with st.expander(f"{row['Date']} | [{mkt_disp}] {row['Side']} | Model: {row['Model_Prob']}% | Edge: {row['Edge_Pct']}%"):
+                    r1, r2 = st.columns(2)
+                    result = r1.selectbox("Result",["PENDING","WIN","LOSS","PUSH"],key=f"mp_r{idx}")
+                    score  = r2.text_input("F5 Score (e.g. 3-2)",key=f"mp_s{idx}")
+                    if st.button("Update",key=f"mp_u{idx}"):
+                        model_picks_df.at[idx,"Result"]   = result
+                        model_picks_df.at[idx,"F5_Score"] = score
+                        save_model_picks(model_picks_df)
+                        st.success("Updated!"); st.rerun()
+
+        # ── Full history ───────────────────────────────────────────────────────
+        st.divider()
+        st.subheader("📋 Full Model Pick History")
+        disp_df = model_picks_df.sort_values("Date", ascending=False) if not model_picks_df.empty else model_picks_df
+        st.dataframe(disp_df, hide_index=True, use_container_width=True)
+        if not model_picks_df.empty:
+            st.download_button("📥 Download CSV",
+                model_picks_df.to_csv(index=False).encode(),"model_picks.csv","text/csv")
