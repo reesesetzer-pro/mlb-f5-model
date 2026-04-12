@@ -936,11 +936,24 @@ elif page == "🎯 Bet Signals":
             m4.metric("Total Rec. Wagers",   f"${sum(s['kelly'] for s in signals if s['edge']>=min_edge and s['ml']):,.0f}")
 
             # ── Parlay of the Day ──────────────────────────────────────────────
+            # Prefer legs with odds in the +100 to +200 range (value dogs / near even)
+            # for a meaningful parlay payout. Fall back to any ML signal if needed.
             ml_signals = [s for s in signals if s.get("market") == "F5 ML" and s["ml"] is not None]
-            if len(ml_signals) >= 2:
-                leg1, leg2 = ml_signals[0], ml_signals[1]
-                # Only show parlay if legs are different games
-                if leg1["game"] != leg2["game"]:
+            value_legs  = [s for s in ml_signals if 90 <= float(s["ml"]) <= 220]
+            parlay_pool = value_legs if len(value_legs) >= 2 else ml_signals
+
+            # Pick the two highest-confidence legs from different games
+            seen_games, parlay_legs = set(), []
+            for s in parlay_pool:
+                if s["game"] not in seen_games:
+                    parlay_legs.append(s)
+                    seen_games.add(s["game"])
+                if len(parlay_legs) == 2:
+                    break
+
+            if len(parlay_legs) == 2:
+                leg1, leg2 = parlay_legs[0], parlay_legs[1]
+                if True:  # placeholder to keep indentation consistent
                     def to_decimal(american):
                         o = float(american)
                         return (o / 100) + 1 if o > 0 else (100 / abs(o)) + 1
@@ -958,13 +971,15 @@ elif page == "🎯 Bet Signals":
                     parlay_payout = round((parlay_dec - 1) * bankroll, 2)
                     parlay_edge   = parlay_prob - (1 / parlay_dec)
 
-                    with st.expander(f"🎰 Parlay of the Day  ·  {parlay_pct}% Combined Probability  ·  {parlay_amr}", expanded=False):
+                    _is_value = len(value_legs) >= 2
+                    _parlay_label = "Value Dog" if _is_value else "Best Available"
+                    with st.expander(f"🎰 Double of the Day  ·  {parlay_amr}  ·  {parlay_pct}% Hit Prob  ·  +${parlay_payout:,.0f} on $100", expanded=False):
                         st.markdown(f"""
                         <div style="background:linear-gradient(145deg,#0a1a2e,#0f2040);border-radius:14px;
                                     padding:18px 20px;border:1px solid rgba(33,150,243,0.35);
                                     box-shadow:0 0 28px rgba(33,150,243,0.10)">
                           <div style="font-size:0.78rem;color:#5a8ab4;text-transform:uppercase;
-                                      letter-spacing:0.07em;margin-bottom:12px">⚡ 2-Leg ML Parlay</div>
+                                      letter-spacing:0.07em;margin-bottom:12px">⚡ 2-LEG {_parlay_label.upper()} PARLAY</div>
                           <div style="display:flex;flex-direction:column;gap:10px">
                             <div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:12px 16px">
                               <div style="font-weight:700;font-size:0.95rem">Leg 1 &nbsp;·&nbsp; {leg1['side']}</div>
