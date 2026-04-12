@@ -598,6 +598,7 @@ if page == "📋 Today's Slate":
     elif not games: st.info("⚾ No games today. Check back on a game day!")
     else:
         st.success(f"✅ {len(games)} games on today's slate")
+        _now_utc = datetime.utcnow()
         for game in games:
             away = game["away_team"]; home = game["home_team"]
             abv_away = get_abv(away);  abv_home = get_abv(home)
@@ -605,7 +606,12 @@ if page == "📋 Today's Slate":
             try:
                 dt = datetime.strptime(game["commence_time"],"%Y-%m-%dT%H:%M:%SZ")
                 time_et = fmt_time_et(dt)
-            except: time_et = ""
+                game_started = dt <= _now_utc
+            except:
+                time_et = ""
+                game_started = False
+            if game_started:
+                time_et = "🔴 Live / Final"
 
             # Get enriched data from cache
             c_data = cache_by_away.get(away, cache_by_home.get(home, {}))
@@ -715,13 +721,20 @@ elif page == "🎯 Bet Signals":
     """, unsafe_allow_html=True)
     if not games: st.info("No games today.")
     else:
+        now_utc = datetime.utcnow()
         signals = []
         for game in games:
+            # Skip games that have already started — no pre-game signals on live games
+            try:
+                dt = datetime.strptime(game["commence_time"],"%Y-%m-%dT%H:%M:%SZ")
+                if dt <= now_utc:
+                    continue
+            except: pass
+
             away = game["away_team"]; home = game["home_team"]
             abv_away = get_abv(away);  abv_home = get_abv(home)
             odds_data = fetch_f5(game["id"], away, home)
             try:
-                dt = datetime.strptime(game["commence_time"],"%Y-%m-%dT%H:%M:%SZ")
                 time_et = fmt_time_et(dt)
             except: time_et=""
 
