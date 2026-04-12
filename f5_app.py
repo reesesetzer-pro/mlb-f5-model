@@ -67,21 +67,157 @@ def get_park_factor(venue):
 # ── CSS ───────────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-  .block-container{padding-top:1rem}
-  .game-card{background:#1a2b4a;border-radius:12px;padding:16px;margin-bottom:12px;
-             border:1px solid #2e75b6}
-  .bet-strong{background:#0d2b1a;border-left:4px solid #00c853;border-radius:8px;
-              padding:14px;margin:6px 0}
-  .bet-moderate{background:#2b2000;border-left:4px solid #ffd600;border-radius:8px;
-                padding:14px;margin:6px 0}
-  .no-edge{background:#1a1a2e;border-left:4px solid #444;border-radius:8px;
-           padding:14px;margin:6px 0}
-  .metric-pill{background:#1a2b4a;border-radius:20px;padding:4px 12px;
-               display:inline-block;margin:2px;font-size:0.85rem}
-  .park-badge{background:#2e3f55;border-radius:6px;padding:2px 8px;font-size:0.8rem}
-  .ump-badge{background:#3a2a4a;border-radius:6px;padding:2px 8px;font-size:0.8rem}
-  .lineup-badge{background:#1a3a2a;border-radius:6px;padding:2px 8px;font-size:0.8rem}
-  div[data-testid="stMetricValue"]{font-size:1.5rem}
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+  html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
+
+  /* ── Layout ── */
+  .block-container { padding-top: 0.75rem !important; max-width: 1400px; }
+  .stApp { background: #070d1a; }
+
+  /* ── Sidebar ── */
+  section[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #090f1e 0%, #0c1628 100%) !important;
+    border-right: 1px solid rgba(46,117,182,0.18);
+  }
+  section[data-testid="stSidebar"] .block-container { padding-top: 1rem !important; }
+
+  /* ── Metrics ── */
+  div[data-testid="stMetric"] {
+    background: rgba(15,28,58,0.7);
+    border: 1px solid rgba(46,117,182,0.22);
+    border-radius: 12px;
+    padding: 14px 16px;
+    backdrop-filter: blur(8px);
+  }
+  div[data-testid="stMetricValue"] { font-size: 1.65rem !important; font-weight: 700; }
+  div[data-testid="stMetricLabel"] { font-size: 0.72rem !important; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* ── Divider ── */
+  hr { border-color: rgba(46,117,182,0.18) !important; margin: 1rem 0 !important; }
+
+  /* ── Page title ── */
+  h1 { font-weight: 800 !important; letter-spacing: -0.02em !important; }
+  h2 { font-weight: 700 !important; }
+
+  /* ── Game card ── */
+  .game-card {
+    background: linear-gradient(145deg, #0c1828, #111d33);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 14px;
+    border: 1px solid rgba(46,117,182,0.22);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.35);
+  }
+
+  /* ── Signal cards ── */
+  .bet-strong {
+    background: linear-gradient(145deg, #051510, #091f12);
+    border: 1px solid rgba(0,230,118,0.35);
+    border-left: 4px solid #00e676;
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin: 10px 0;
+    box-shadow: 0 0 28px rgba(0,230,118,0.10);
+    animation: pulse-green 3s ease-in-out infinite;
+  }
+  .bet-moderate {
+    background: linear-gradient(145deg, #141000, #1e1800);
+    border: 1px solid rgba(255,214,0,0.28);
+    border-left: 4px solid #ffd600;
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin: 10px 0;
+    box-shadow: 0 0 18px rgba(255,214,0,0.07);
+  }
+  .no-edge {
+    background: linear-gradient(145deg, #0d1020, #111526);
+    border: 1px solid rgba(100,120,160,0.18);
+    border-left: 4px solid #4a5568;
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin: 10px 0;
+  }
+
+  /* ── Animations ── */
+  @keyframes pulse-green {
+    0%,100% { box-shadow: 0 0 28px rgba(0,230,118,0.10); }
+    50%      { box-shadow: 0 0 40px rgba(0,230,118,0.22); }
+  }
+  @keyframes blink {
+    0%,100% { opacity:1; }
+    50%     { opacity:0.35; }
+  }
+
+  /* ── Confidence dot ── */
+  .dot-high  { display:inline-block;width:9px;height:9px;border-radius:50%;background:#00e676;
+               box-shadow:0 0 8px #00e676;animation:blink 1.5s infinite;margin-right:7px;vertical-align:middle; }
+  .dot-solid { display:inline-block;width:9px;height:9px;border-radius:50%;background:#ffd600;
+               margin-right:7px;vertical-align:middle; }
+  .dot-lean  { display:inline-block;width:9px;height:9px;border-radius:50%;background:#607d8b;
+               margin-right:7px;vertical-align:middle; }
+
+  /* ── Metric pills ── */
+  .metric-pill {
+    background: rgba(15,28,58,0.85);
+    border: 1px solid rgba(46,117,182,0.28);
+    border-radius: 20px;
+    padding: 5px 13px;
+    display: inline-block;
+    margin: 3px 2px;
+    font-size: 0.81rem;
+    backdrop-filter: blur(6px);
+  }
+
+  /* ── Market badges ── */
+  .mkt-ml     { background:rgba(33,150,243,0.18); border:1px solid rgba(33,150,243,0.45);
+                border-radius:7px; padding:3px 10px; font-size:0.74rem; color:#64b5f6; font-weight:700; }
+  .mkt-spread { background:rgba(156,39,176,0.18); border:1px solid rgba(156,39,176,0.45);
+                border-radius:7px; padding:3px 10px; font-size:0.74rem; color:#ce93d8; font-weight:700; }
+  .mkt-total  { background:rgba(255,152,0,0.18);  border:1px solid rgba(255,152,0,0.45);
+                border-radius:7px; padding:3px 10px; font-size:0.74rem; color:#ffb74d; font-weight:700; }
+  .mkt-team   { background:rgba(0,188,212,0.18);  border:1px solid rgba(0,188,212,0.45);
+                border-radius:7px; padding:3px 10px; font-size:0.74rem; color:#4dd0e1; font-weight:700; }
+
+  /* ── Park / ump badges ── */
+  .park-badge { background:rgba(46,63,85,0.7); border:1px solid rgba(70,100,140,0.4);
+                border-radius:7px; padding:3px 9px; font-size:0.78rem; }
+  .ump-badge  { background:rgba(58,42,74,0.7); border:1px solid rgba(100,70,130,0.4);
+                border-radius:7px; padding:3px 9px; font-size:0.78rem; }
+
+  /* ── Confidence bar ── */
+  .conf-bar-wrap { height:4px; background:rgba(255,255,255,0.07); border-radius:3px; margin-top:10px; overflow:hidden; }
+  .conf-bar-fill { height:100%; border-radius:3px; transition:width 0.4s ease; }
+
+  /* ── TOP PICK ribbon ── */
+  .top-pick-ribbon {
+    display:inline-block;
+    background:linear-gradient(90deg,#00e676,#00bcd4);
+    color:#000;
+    font-weight:800;
+    font-size:0.7rem;
+    letter-spacing:0.08em;
+    padding:3px 10px;
+    border-radius:4px;
+    text-transform:uppercase;
+    margin-left:10px;
+    vertical-align:middle;
+  }
+
+  /* ── Tables ── */
+  .stDataFrame { border-radius: 10px !important; overflow: hidden; }
+  [data-testid="stDataFrame"] > div { border-radius: 10px; }
+
+  /* ── Streamlit default overrides ── */
+  .stButton > button {
+    background: linear-gradient(135deg, #1565c0, #0d47a1);
+    border: 1px solid rgba(33,150,243,0.4);
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  .stButton > button:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(33,150,243,0.3); }
+  .stProgress > div > div { border-radius: 4px !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -310,24 +446,31 @@ def calibrate_prob(raw_pct, cal_map):
 
 # ── SIDEBAR ───────────────────────────────────────────────────────────────────
 with st.sidebar:
-    st.markdown("# ⚾ MLB F5 Model")
-    st.caption(f"Updated: {datetime.now().strftime('%I:%M %p')}")
+    st.markdown("""
+    <div style="padding:8px 0 4px 0">
+      <div style="font-size:1.45rem;font-weight:800;letter-spacing:-0.02em">⚾ F5 Model</div>
+      <div style="font-size:0.72rem;color:#5a8ab4;text-transform:uppercase;letter-spacing:0.08em;margin-top:2px">MLB Analytics</div>
+    </div>
+    """, unsafe_allow_html=True)
+    st.caption(f"🕐 {datetime.now().strftime('%I:%M %p')} · Season 2026")
     st.divider()
-    st.subheader("💰 Bankroll Settings")
-    bankroll   = st.number_input("Bankroll ($)", value=1000, step=100, min_value=100)
-    kelly_frac = st.slider("Kelly Fraction", 0.1, 1.0, 0.25, 0.05)
-    min_edge   = st.slider("Min Edge (%)", 1, 10, 3) / 100
-    max_pct    = st.slider("Max Bet % Bankroll", 1, 10, 5) / 100
+    st.markdown("**💰 Bankroll**")
+    bankroll   = st.number_input("Bankroll ($)", value=1000, step=100, min_value=100, label_visibility="collapsed")
+    c1,c2 = st.columns(2)
+    with c1: kelly_frac = st.slider("Kelly Frac", 0.1, 1.0, 0.25, 0.05)
+    with c2: max_pct    = st.slider("Max Bet %",  1, 10, 5) / 100
+    min_edge = st.slider("Min Edge (%)", 0, 10, 3) / 100
     st.divider()
-    st.subheader("🔧 Model Weights")
-    w_sp   = st.slider("SP Score weight",      0.1, 0.8, 0.45, 0.05)
-    w_lu   = st.slider("Lineup Quality weight",0.1, 0.6, 0.30, 0.05)
-    w_park = st.slider("Park Factor weight",   0.0, 0.3, 0.15, 0.05)
-    w_ump  = st.slider("Ump Tendency weight",  0.0, 0.2, 0.10, 0.05)
+    st.markdown("**🔧 Model Weights**")
+    w_sp   = st.slider("SP Score",       0.1, 0.8, 0.45, 0.05)
+    w_lu   = st.slider("Lineup Quality", 0.1, 0.6, 0.30, 0.05)
+    w_park = st.slider("Park Factor",    0.0, 0.3, 0.15, 0.05)
+    w_ump  = st.slider("Ump Tendency",   0.0, 0.2, 0.10, 0.05)
     st.divider()
     if st.button("🔄 Refresh Odds", use_container_width=True):
         st.cache_data.clear(); st.rerun()
-    page = st.radio("Navigate", [
+    st.markdown("&nbsp;")
+    page = st.radio("", [
         "📋 Today's Slate","🎯 Bet Signals","✏️ SP Input","📈 Bet Tracker","🏟️ Park Factors","📊 Model Performance"])
 
 # ── LOAD DATA ─────────────────────────────────────────────────────────────────
@@ -346,7 +489,19 @@ cache_by_home = {g["home_team"]: g for g in cache}
 # PAGE: TODAY'S SLATE
 # ══════════════════════════════════════════════════════════════════════════════
 if page == "📋 Today's Slate":
-    st.title(f"📋 Today's F5 Slate — {date.today().strftime('%A, %B %d, %Y')}")
+    st.markdown(f"""
+    <div style="background:linear-gradient(135deg,#0c1e42 0%,#0f2a1a 100%);
+                border-radius:16px;padding:24px 28px;margin-bottom:20px;
+                border:1px solid rgba(46,117,182,0.25);
+                box-shadow:0 8px 32px rgba(0,0,0,0.4)">
+      <div style="font-size:1.6rem;font-weight:800;letter-spacing:-0.02em">
+        📋 Today's F5 Slate
+      </div>
+      <div style="font-size:0.9rem;color:#6a9cbf;margin-top:4px">
+        {date.today().strftime('%A, %B %d, %Y')} &nbsp;·&nbsp; First 5 Innings
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
     if err: st.error(f"API Error: {err}")
     elif not games: st.info("⚾ No games today. Check back on a game day!")
     else:
@@ -452,7 +607,19 @@ if page == "📋 Today's Slate":
 # PAGE: BET SIGNALS
 # ══════════════════════════════════════════════════════════════════════════════
 elif page == "🎯 Bet Signals":
-    st.title("🎯 Bet Signals — Ranked by Model Confidence")
+    st.markdown("""
+    <div style="background:linear-gradient(135deg,#0c1e42 0%,#1a0c2a 100%);
+                border-radius:16px;padding:24px 28px;margin-bottom:20px;
+                border:1px solid rgba(46,117,182,0.25);
+                box-shadow:0 8px 32px rgba(0,0,0,0.4)">
+      <div style="font-size:1.6rem;font-weight:800;letter-spacing:-0.02em">
+        🎯 Bet Signals
+      </div>
+      <div style="font-size:0.9rem;color:#6a9cbf;margin-top:4px">
+        Ranked by model win probability &nbsp;·&nbsp; ML · Spread · Total · Team Total
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
     if not games: st.info("No games today.")
     else:
         signals = []
@@ -684,48 +851,77 @@ elif page == "🎯 Bet Signals":
                                 if s["edge"] >= min_edge
                                 and s.get("market","F5 ML") in market_filter]
 
-            for s in display_signals:
+            for rank, s in enumerate(display_signals):
                 if s["model_p"] >= 0.60:
-                    css, badge = "bet-strong",   "🔥 HIGH CONFIDENCE"
+                    css, dot = "bet-strong",  "dot-high"
+                    badge_label = "HIGH CONFIDENCE"
+                    bar_color = "linear-gradient(90deg,#00e676,#00bcd4)"
                 elif s["model_p"] >= 0.55:
-                    css, badge = "bet-moderate",  "🟢 SOLID PICK"
+                    css, dot = "bet-moderate", "dot-solid"
+                    badge_label = "SOLID PICK"
+                    bar_color = "linear-gradient(90deg,#ffd600,#ff9800)"
                 else:
-                    css, badge = "no-edge",        "🟡 LEAN"
+                    css, dot = "no-edge", "dot-lean"
+                    badge_label = "LEAN"
+                    bar_color = "linear-gradient(90deg,#607d8b,#455a64)"
 
-                edge_tag = (f"🟢 +{s['edge']*100:.1f}% edge" if s['edge'] >= 0.05
-                            else f"🟡 +{s['edge']*100:.1f}% edge" if s['edge'] >= 0.01
-                            else f"⚪ No Edge (model only)")
-                cal_p    = calibrate_prob(s["model_p"]*100, cal_map)
-                cal_txt  = f" → {cal_p:.1f}% cal" if cal_map and abs(cal_p - s["model_p"]*100) >= 1 else ""
-                lu_txt   = f" | LU: {s['lu_score']:.0f}/100" if s['lu_score'] else ""
-                pf_txt   = f"Park: {s['park_factor']:.2f}x"
-                ump_txt  = f"Ump K: {s['ump_k']:+.2f}" if s['ump_k'] else ""
-                mkt_tag  = f"<span class='metric-pill'>📊 {s['market']}</span>"
-                line_txt = (f"<span class='metric-pill'>📐 Model: <b>{s['model_line']}</b> vs Mkt: <b>{s['mkt_line']}</b></span>"
-                            if s.get("model_line") != "" and s.get("mkt_line") != "" else "")
-                ml_str   = (f"{'+' if s['ml']>0 else ''}{s['ml']}" if s['ml'] else "—")
+                # Market badge class
+                mkt = s.get("market","F5 ML")
+                mkt_cls = {"F5 ML":"mkt-ml","F5 Spread":"mkt-spread","F5 Total":"mkt-total","F5 Team Total":"mkt-team"}.get(mkt,"mkt-ml")
+
+                edge_color = "#00e676" if s['edge'] >= 0.05 else "#ffd600" if s['edge'] >= 0.01 else "#78909c"
+                edge_label = (f"+{s['edge']*100:.1f}% edge" if s['edge'] >= 0.01 else "Model only")
+
+                cal_p   = calibrate_prob(s["model_p"]*100, cal_map)
+                cal_txt = f"<span style='color:#78909c;font-size:0.78rem'> → {cal_p:.1f}% cal</span>" if cal_map and abs(cal_p - s["model_p"]*100) >= 1 else ""
+                lu_txt  = f" &nbsp;|&nbsp; LU: <b>{s['lu_score']:.0f}</b>/100" if s['lu_score'] else ""
+                pf_txt  = f"Park {s['park_factor']:.2f}×"
+                ump_txt = f"Ump K {s['ump_k']:+.2f}" if s['ump_k'] else ""
+                ml_str  = (f"{'+' if s['ml']>0 else ''}{s['ml']}" if s['ml'] else "—")
+                line_txt = (f"""<span class="metric-pill">📐 Line: <b>{s['model_line']}</b> vs <b>{s['mkt_line']}</b></span>"""
+                            if s.get("model_line") not in ("","—",None) else "")
+                top_ribbon = '<span class="top-pick-ribbon">⭐ TOP PICK</span>' if rank == 0 else ""
+                conf_pct   = int(s["model_p"] * 100)
 
                 st.markdown(f"""
                 <div class="{css}">
-                  <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
-                    <img src="{logo_url(s['abv'])}" width="40" style="border-radius:50%"/>
-                    <div>
-                      <strong>{badge} — {s['side']}</strong><br>
-                      <small style="color:#8ab4d4">{s['game']} | {s['time']}</small>
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+                    <div style="display:flex;align-items:center;gap:12px">
+                      <img src="{logo_url(s['abv'])}" width="44"
+                           style="border-radius:50%;box-shadow:0 2px 10px rgba(0,0,0,0.5)"/>
+                      <div>
+                        <div style="font-size:1.05rem;font-weight:700;line-height:1.2">
+                          <span class="{dot}"></span>{badge_label}{top_ribbon}
+                        </div>
+                        <div style="font-size:0.9rem;font-weight:600;margin-top:2px">{s['side']}</div>
+                        <div style="font-size:0.78rem;color:#7a9cbf;margin-top:1px">{s['game']} &nbsp;·&nbsp; {s['time']}</div>
+                      </div>
+                    </div>
+                    <div style="text-align:right">
+                      <div style="font-size:2rem;font-weight:800;line-height:1">{conf_pct}%</div>
+                      <div style="font-size:0.7rem;color:#7a9cbf;text-transform:uppercase;letter-spacing:0.05em">Model Prob{cal_txt}</div>
                     </div>
                   </div>
-                  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px">
-                    {mkt_tag}
-                    <span class="metric-pill">🎯 Model: <b>{s['model_p']*100:.1f}%{cal_txt}</b></span>
-                    <span class="metric-pill">{edge_tag}</span>
-                    <span class="metric-pill">💰 Best: <b>{ml_str}</b> @ {s['book']}</span>
-                    <span class="metric-pill">📉 Market: <b>{s['mkt_p']*100:.1f}%</b></span>
-                    <span class="metric-pill">⚾ SP Score: <b>{s['sp_score']:.0f}</b>{lu_txt}</span>
+
+                  <div class="conf-bar-wrap">
+                    <div class="conf-bar-fill" style="width:{conf_pct}%;background:{bar_color}"></div>
+                  </div>
+
+                  <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;margin-bottom:10px">
+                    <span class="{mkt_cls}">{mkt}</span>
+                    <span class="metric-pill" style="border-color:{edge_color};color:{edge_color}"><b>{edge_label}</b></span>
+                    <span class="metric-pill">💰 <b>{ml_str}</b> @ {s['book']}</span>
+                    <span class="metric-pill">📉 Mkt: <b>{s['mkt_p']*100:.1f}%</b></span>
+                    <span class="metric-pill">⚾ SP: <b>{s['sp_score']:.0f}</b>{lu_txt}</span>
                     {line_txt}
                     <span class="park-badge">{pf_txt}</span>
                     {f'<span class="ump-badge">{ump_txt}</span>' if ump_txt else ""}
                   </div>
-                  <strong>✅ Rec. Wager: ${s['kelly']:,.2f}</strong>
+
+                  <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,0.06);padding-top:10px;margin-top:4px">
+                    <span style="color:#b0bec5;font-size:0.82rem">Kelly Rec.</span>
+                    <span style="font-size:1.1rem;font-weight:700;color:#00e676">${s['kelly']:,.2f}</span>
+                  </div>
                 </div>
                 """, unsafe_allow_html=True)
 
