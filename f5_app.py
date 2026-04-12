@@ -4,7 +4,7 @@ import pandas as pd
 import json, os, math
 from datetime import datetime, date
 
-st.set_page_config(page_title="MLB F5 Model", page_icon="⚾", layout="wide",
+st.set_page_config(page_title="MLB F5 Model", page_icon="https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png", layout="wide",
                    initial_sidebar_state="expanded")
 
 # ── CONSTANTS ─────────────────────────────────────────────────────────────────
