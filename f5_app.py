@@ -524,7 +524,7 @@ with st.sidebar:
     with c1: kelly_frac = st.slider("Kelly Frac", 0.1, 1.0, 0.25, 0.05)
     with c2: max_pct    = st.slider("Max Bet %",  1, 10, 5) / 100
     min_edge = st.slider("Min Edge (%)", 0, 10, 3) / 100
-    min_conf = st.slider("Min Model Conf (%)", 50, 70, 52) / 100
+    min_conf = st.slider("Min Model Conf (%)", 50, 70, 55) / 100
     st.divider()
     st.markdown("**🔧 Model Weights**")
     w_sp   = st.slider("SP Score",       0.1, 0.8, 0.45, 0.05)
@@ -906,6 +906,25 @@ elif page == "🎯 Bet Signals":
 
             # Auto-log all signals ≥52% model_p to the learning tracker
             model_picks_df = auto_log_model_picks(signals, model_picks_df)
+
+            # ── Deduplicate: for symmetric markets (Spread, Total, Team Total)
+            # keep only the stronger side per game × market × team combination.
+            # ML is directional (away vs home) so both sides can legitimately show.
+            _seen = {}
+            deduped = []
+            for s in signals:
+                mkt = s.get("market", "F5 ML")
+                if mkt == "F5 ML":
+                    deduped.append(s)
+                else:
+                    # Key: game + market + team (for team totals) or game + market (for total/spread)
+                    team_key = s["team"] if mkt == "F5 Team Total" else ""
+                    key = (s["game"], mkt, team_key)
+                    if key not in _seen:
+                        _seen[key] = s  # first seen = highest model_p (already sorted)
+            deduped += list(_seen.values())
+            deduped.sort(key=lambda x: (x["model_p"], x["edge"]), reverse=True)
+            signals = deduped
 
             high_conf = [s for s in signals if s["model_p"] >= 0.60]
             solid     = [s for s in signals if 0.55 <= s["model_p"] < 0.60]
