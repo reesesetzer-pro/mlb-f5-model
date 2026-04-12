@@ -312,18 +312,23 @@ def load_sp_data():
 
 def save_sp_data(df): df.to_csv(SP_FILE, index=False)
 
-def calc_sp_score(xfip, kbb, hh=None):
+def calc_sp_score(xfip, kbb, hh=None, barrel=None, velo=None):
     """
-    Recalibrated so an average MLB starter (xFIP=4.20, K-BB%=10%, HardHit%=35%) scores ~50.
-    kbb and hh should be passed as decimals (0.10, 0.35).
-    Higher score = better pitcher (fewer runs allowed).
+    Multi-factor SP quality (0-100, league avg = 50).
+    kbb, hh passed as decimals (0.10, 0.35); barrel as decimal (0.08); velo in mph.
     """
     try:
-        # Each component centered at 50 for league-average values
-        comp_xfip = 50 + (4.20 - xfip) * 12           # xFIP 3.0→64, 4.2→50, 6.0→26
-        comp_kbb  = 50 + (kbb - 0.10) * 200            # 10%→50, 20%→70, 5%→40
-        comp_hh   = 50 + (0.35 - hh) * 100 if hh else 50  # 35%→50, 30%→55, 45%→40
-        s = comp_xfip * 0.45 + comp_kbb * 0.35 + comp_hh * 0.20
+        comp_xfip   = 50 + (4.20 - xfip)  * 12
+        comp_kbb    = 50 + (kbb  - 0.10)  * 200
+        comp_hh     = 50 + (0.35 - hh)    * 100 if hh     is not None else 50
+        comp_barrel = 50 + (0.08 - barrel) * 300 if barrel is not None else 50
+        comp_velo   = 50 + (88.0 - velo)   * 2   if velo   is not None else 50
+        if barrel is not None and velo is not None:
+            s = comp_xfip*0.32 + comp_kbb*0.28 + comp_hh*0.15 + comp_barrel*0.15 + comp_velo*0.10
+        elif hh is not None:
+            s = comp_xfip*0.45 + comp_kbb*0.35 + comp_hh*0.20
+        else:
+            s = comp_xfip*0.60 + comp_kbb*0.40
         return round(max(0, min(100, s)), 1)
     except: return None
 
@@ -352,28 +357,31 @@ def calc_pnl(row):
 
 # ── MULTI-MARKET MODEL MATH ───────────────────────────────────────────────────
 def calc_model_total(away_sp_score, home_sp_score, away_lu, home_lu, pf, ump_k,
-                     away_era=None, home_era=None):
+                     away_era=None, home_era=None,
+                     ump_run_factor=1.0, weather_wind_mult=1.0, weather_temp_mult=1.0):
     """
     Estimate F5 total runs. League avg F5 ≈ 4.5 runs.
-    Incorporates SP score, lineup quality, park factor, ump K tendency,
-    and SP ERA as a secondary validation signal.
+    Incorporates SP score, lineup quality, park factor, ump tendency,
+    ERA validation, ump run factor, and weather (wind + temp).
     """
     base   = 4.5
     avg_sp = ((away_sp_score or 50) + (home_sp_score or 50)) / 2
     avg_lu = ((away_lu or 50) + (home_lu or 50)) / 2
 
-    sp_adj  = 1 + (50 - avg_sp) / 100 * 0.42   # poor SP → more runs
-    lu_adj  = 1 + (avg_lu - 50)  / 100 * 0.28  # better lineup → more runs
-    ump_adj = 1 - (ump_k or 0) * 0.10           # high-K ump → fewer runs (directional)
+    sp_adj  = 1 + (50 - avg_sp) / 100 * 0.42
+    lu_adj  = 1 + (avg_lu - 50)  / 100 * 0.28
+    ump_adj = 1 - (ump_k or 0) * 0.10
 
-    # ERA validation: if SPs have high ERA, nudge total up slightly
     if away_era and home_era:
         avg_era = (away_era + home_era) / 2
-        era_adj = 1 + (avg_era - 4.20) / 100 * 0.15  # baseline ERA 4.20
+        era_adj = 1 + (avg_era - 4.20) / 100 * 0.15
     else:
         era_adj = 1.0
 
-    return round(base * sp_adj * lu_adj * (pf or 1.0) * ump_adj * era_adj, 2)
+    return round(base * sp_adj * lu_adj * (pf or 1.0) * ump_adj * era_adj
+                 * (ump_run_factor or 1.0)
+                 * (weather_wind_mult or 1.0)
+                 * (weather_temp_mult or 1.0), 2)
 
 def calc_model_team_totals(model_total, away_lu, home_lu, away_sp_score, home_sp_score):
     """
@@ -699,24 +707,41 @@ elif page == "🎯 Bet Signals":
             except: time_et=""
 
             c_data  = cache_by_away.get(away, cache_by_home.get(home,{}))
-            pf      = c_data.get("park_factor", 1.0)
-            ump_k   = c_data.get("ump_k_boost", 0.0)
-            away_lu = c_data.get("away_lineup_score")
-            home_lu = c_data.get("home_lineup_score")
-            away_sp = c_data.get("away_sp",{})
-            home_sp = c_data.get("home_sp",{})
+            pf           = c_data.get("park_factor", 1.0)
+            ump_k        = c_data.get("ump_k_boost", 0.0)
+            ump_run_fac  = c_data.get("ump_run_factor", 1.0)
+            away_lu      = c_data.get("away_lineup_score")
+            home_lu      = c_data.get("home_lineup_score")
+            away_sp      = c_data.get("away_sp", {})
+            home_sp      = c_data.get("home_sp", {})
+
+            # Base SP scores (pre-computed in cache with barrel/velo if available)
             asp = away_sp.get("sp_score") or 50
             hsp = home_sp.get("sp_score") or 50
 
-            # Matchup-adjusted lineup scores (platoon splits + H2H vs opposing SP)
-            # When available, blend with overall score for more accurate lineup quality
-            away_matchup = c_data.get("away_matchup_score")
-            home_matchup = c_data.get("home_matchup_score")
+            # Apply recent form + home/away split adjustments
+            away_form_adj = (away_sp.get("form_score", 0) or 0) + (away_sp.get("home_away_adj", 0) or 0)
+            home_form_adj = (home_sp.get("form_score", 0) or 0) + (home_sp.get("home_away_adj", 0) or 0)
+            eff_asp = round(max(0, min(100, asp + away_form_adj)), 1)
+            eff_hsp = round(max(0, min(100, hsp + home_form_adj)), 1)
+
+            # Matchup-adjusted lineup: 55% platoon/H2H blended, 45% overall
+            away_matchup     = c_data.get("away_matchup_score")
+            home_matchup     = c_data.get("home_matchup_score")
             away_platoon_adv = c_data.get("away_platoon_adv")
             home_platoon_adv = c_data.get("home_platoon_adv")
-            # Effective lineup: 55% matchup-adjusted, 45% overall when matchup data exists
             eff_away_lu = round(away_matchup*0.55 + (away_lu or 50)*0.45, 1) if away_matchup else (away_lu or 50)
             eff_home_lu = round(home_matchup*0.55 + (home_lu or 50)*0.45, 1) if home_matchup else (home_lu or 50)
+
+            # Weather
+            wx              = c_data.get("weather") or {}
+            wx_wind_mult    = wx.get("wind_multiplier", 1.0) if wx and not wx.get("is_dome") else 1.0
+            wx_temp_mult    = wx.get("temp_multiplier", 1.0) if wx and not wx.get("is_dome") else 1.0
+            wx_wind_speed   = wx.get("wind_speed", 0)
+            wx_wind_dir     = wx.get("wind_dir", "")
+            wx_temp         = wx.get("temp")
+            wx_precip       = wx.get("precip_pct", 0)
+            wx_is_dome      = wx.get("is_dome", False)
 
             away_mls = [odds_data["ml"][b]["away"] for b in BOOK_LABELS
                         if b in odds_data["ml"] and odds_data["ml"][b]["away"]]
@@ -734,7 +759,7 @@ elif page == "🎯 Bet Signals":
                 sum(away_mls)/len(away_mls), sum(home_mls)/len(home_mls))
             if not true_away: continue
 
-            sp_edge   = (asp - hsp) / 100 * w_sp
+            sp_edge   = (eff_asp - eff_hsp) / 100 * w_sp
             lu_edge   = ((eff_away_lu - eff_home_lu) / 100 * w_lu)
             park_edge = (pf - 1.0) * w_park * -1
             away_kbb  = away_sp.get("k_bb_pct") or 10
@@ -767,6 +792,9 @@ elif page == "🎯 Bet Signals":
                         "sp_score":sp_s,"lu_score":lu_s,"eff_lu":eff_lu,
                         "matchup_score":matchup_s,"platoon_adv":plat_adv,
                         "opp_hand": home_sp.get("hand","R") if side=="Away" else away_sp.get("hand","R"),
+                        "form_score": away_sp.get("form_score",0) if side=="Away" else home_sp.get("form_score",0),
+                        "days_rest":  away_sp.get("days_rest") if side=="Away" else home_sp.get("days_rest"),
+                        "weather": wx,
                         "park_factor":pf,"ump_k":ump_k,
                         "model_line":"","mkt_line":"",
                     })
@@ -808,6 +836,7 @@ elif page == "🎯 Bet Signals":
                                 "edge":edge,"ml":ml,"book":BOOK_LABELS.get(bk,bk),
                                 "model_p":model_p,"mkt_p":mkt_p,"kelly":k,
                                 "sp_score":sp_s,"lu_score":lu_s,
+                                "form_score":0,"days_rest":None,"weather":wx,
                                 "park_factor":pf,"ump_k":ump_k,
                                 "model_line":round(model_diff,2),"mkt_line":cover_line,
                             })
@@ -819,8 +848,9 @@ elif page == "🎯 Bet Signals":
                              for b in total_books if odds_data["total"][b].get("over_line") is not None]
                 if all_lines:
                     consensus_total = sum(all_lines)/len(all_lines)
-                    model_t = calc_model_total(asp, hsp, eff_away_lu, eff_home_lu, pf, ump_k,
-                                           away_sp.get("era"), home_sp.get("era"))
+                    model_t = calc_model_total(eff_asp, eff_hsp, eff_away_lu, eff_home_lu, pf, ump_k,
+                                           away_sp.get("era"), home_sp.get("era"),
+                                           ump_run_fac, wx_wind_mult, wx_temp_mult)
                     over_p  = over_prob(model_t, consensus_total)
                     under_p = 1 - over_p
 
@@ -844,16 +874,18 @@ elif page == "🎯 Bet Signals":
                                 "side":side,"market":"F5 Total",
                                 "edge":edge,"ml":ml,"book":BOOK_LABELS.get(bk,bk),
                                 "model_p":model_p,"mkt_p":mkt_p,"kelly":k,
-                                "sp_score":(asp+hsp)/2,"lu_score":((away_lu or 50)+(home_lu or 50))/2,
+                                "sp_score":(eff_asp+eff_hsp)/2,"lu_score":((away_lu or 50)+(home_lu or 50))/2,
+                                "form_score":0,"days_rest":None,"weather":wx,
                                 "park_factor":pf,"ump_k":ump_k,
                                 "model_line":model_t,"mkt_line":consensus_total,
                             })
 
             # ── F5 Team Total signals ─────────────────────────────────────────
             tt_books = [b for b in BOOK_LABELS if b in odds_data["team_total"]]
-            model_t = calc_model_total(asp, hsp, eff_away_lu, eff_home_lu, pf, ump_k,
-                                       away_sp.get("era"), home_sp.get("era"))
-            m_away_tt, m_home_tt = calc_model_team_totals(model_t, eff_away_lu, eff_home_lu, asp, hsp)
+            model_t = calc_model_total(eff_asp, eff_hsp, eff_away_lu, eff_home_lu, pf, ump_k,
+                                       away_sp.get("era"), home_sp.get("era"),
+                                       ump_run_fac, wx_wind_mult, wx_temp_mult)
+            m_away_tt, m_home_tt = calc_model_team_totals(model_t, eff_away_lu, eff_home_lu, eff_asp, eff_hsp)
 
             if tt_books:
                 for tm, abv, m_tt, sp_s, lu_s in [
@@ -1107,18 +1139,40 @@ elif page == "🎯 Bet Signals":
                 cal_p   = calibrate_prob(s["model_p"]*100, cal_map)
                 cal_txt = f"<span style='color:#78909c;font-size:0.78rem'> → {cal_p:.1f}% cal</span>" if cal_map and abs(cal_p - s["model_p"]*100) >= 1 else ""
                 lu_txt  = f" &nbsp;|&nbsp; LU: <b>{s['lu_score']:.0f}</b>/100" if s['lu_score'] else ""
-                # Matchup badge: show platoon advantage and effective lineup vs opp hand
-                _plat = s.get("platoon_adv")
-                _hand = s.get("opp_hand","R")
-                _mscr = s.get("matchup_score")
+
+                # Matchup badge
+                _plat = s.get("platoon_adv"); _hand = s.get("opp_hand","R"); _mscr = s.get("matchup_score")
                 if _mscr and _plat is not None:
-                    _plat_color = "#00e676" if _plat >= 3 else "#ff7043" if _plat <= -3 else "#b0bec5"
-                    matchup_txt = (f'<span class="metric-pill" style="border-color:{_plat_color};color:{_plat_color}">'
+                    _pc = "#00e676" if _plat >= 3 else "#ff7043" if _plat <= -3 else "#b0bec5"
+                    matchup_txt = (f'<span class="metric-pill" style="border-color:{_pc};color:{_pc}">'
                                    f'vs {_hand}HP: <b>{_plat:+.0f}</b> matchup</span>')
-                elif _mscr:
-                    matchup_txt = f'<span class="metric-pill">vs {_hand}HP: <b>{_mscr:.0f}</b>/100</span>'
                 else:
                     matchup_txt = ""
+
+                # Form badge (recent performance + rest)
+                _form = s.get("form_score", 0) or 0
+                _rest = s.get("days_rest")
+                if abs(_form) >= 2 or (_rest is not None and _rest <= 3):
+                    _fc = "#00e676" if _form >= 3 else "#ff7043" if _form <= -3 else "#ffd600"
+                    _rest_str = f" · {_rest}d rest" if _rest is not None else ""
+                    form_txt = (f'<span class="metric-pill" style="border-color:{_fc};color:{_fc}">'
+                                f'Form: <b>{_form:+.0f}</b>{_rest_str}</span>')
+                else:
+                    form_txt = ""
+
+                # Weather badge
+                _wx = s.get("weather") or {}
+                if _wx and not _wx.get("is_dome") and _wx.get("wind_speed", 0) >= 8:
+                    _wm = _wx.get("wind_multiplier", 1.0)
+                    _wc = "#ff7043" if _wm >= 1.06 else "#64b5f6" if _wm <= 0.94 else "#b0bec5"
+                    _wlbl = "OUT" if _wm > 1.02 else "IN" if _wm < 0.98 else "→"
+                    weather_txt = (f'<span class="metric-pill" style="border-color:{_wc};color:{_wc}">'
+                                   f'🌬 {_wx["wind_speed"]:.0f}mph {_wx.get("wind_dir","")} ({_wlbl})'
+                                   f' · {_wx.get("temp","?")}°F</span>')
+                elif _wx and not _wx.get("is_dome") and _wx.get("temp") is not None:
+                    weather_txt = f'<span class="metric-pill">🌡 {_wx["temp"]}°F</span>'
+                else:
+                    weather_txt = ""
                 pf_txt  = f"Park {s['park_factor']:.2f}×"
                 ump_txt = f"Ump K {s['ump_k']:+.2f}" if s['ump_k'] else ""
                 ml_str  = (f"{'+' if s['ml']>0 else ''}{s['ml']}" if s['ml'] else "—")
@@ -1185,6 +1239,8 @@ elif page == "🎯 Bet Signals":
                     <span class="metric-pill">📉 Mkt: <b>{s['mkt_p']*100:.1f}%</b></span>
                     <span class="metric-pill">⚾ SP: <b>{s['sp_score']:.0f}</b>{lu_txt}</span>
                     {matchup_txt}
+                    {form_txt}
+                    {weather_txt}
                     {line_txt}
                     <span class="park-badge">{pf_txt}</span>
                     {f'<span class="ump-badge">{ump_txt}</span>' if ump_txt else ""}
