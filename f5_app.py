@@ -800,15 +800,16 @@ elif page == "🎯 Bet Signals":
                     mkt_over_p  = american_to_prob(over_ml)  or 0.524
                     mkt_under_p = american_to_prob(under_ml) or 0.524
 
-                    for side, model_p, mkt_p, ml, bk, team, abv in [
-                        (f"Over {consensus_total}",  over_p,  mkt_over_p,  over_ml,  best_over_bk,  f"{away}/{home}", abv_away),
-                        (f"Under {consensus_total}", under_p, mkt_under_p, under_ml, best_under_bk, f"{away}/{home}", abv_home),
+                    for side, model_p, mkt_p, ml, bk, team in [
+                        (f"Over {consensus_total}",  over_p,  mkt_over_p,  over_ml,  best_over_bk,  f"{away}/{home}"),
+                        (f"Under {consensus_total}", under_p, mkt_under_p, under_ml, best_under_bk, f"{away}/{home}"),
                     ]:
                         edge = model_p - mkt_p
                         if model_p >= 0.52:
                             k = kelly(max(edge,0), ml, bankroll, kelly_frac, max_pct)
                             signals.append({
-                                "game":game_tag,"time":time_et,"team":team,"abv":abv,
+                                "game":game_tag,"time":time_et,"team":team,
+                                "abv":abv_away,"abv2":abv_home,  # both logos for totals
                                 "side":side,"market":"F5 Total",
                                 "edge":edge,"ml":ml,"book":BOOK_LABELS.get(bk,bk),
                                 "model_p":model_p,"mkt_p":mkt_p,"kelly":k,
@@ -938,12 +939,30 @@ elif page == "🎯 Bet Signals":
                 top_ribbon = '<span class="top-pick-ribbon">⭐ TOP PICK</span>' if rank == 0 else ""
                 conf_pct   = int(s["model_p"] * 100)
 
+                # Logo block — dual overlapping for game totals, single for everything else
+                abv2 = s.get("abv2")
+                if abv2:
+                    logo_html = f"""
+                      <div style="position:relative;width:60px;height:44px;flex-shrink:0">
+                        <img src="{logo_url(s['abv'])}" width="38"
+                             style="border-radius:50%;box-shadow:0 2px 10px rgba(0,0,0,0.5);
+                                    position:absolute;left:0;top:0;z-index:2;
+                                    border:2px solid rgba(0,0,0,0.4)"/>
+                        <img src="{logo_url(abv2)}" width="38"
+                             style="border-radius:50%;box-shadow:0 2px 10px rgba(0,0,0,0.5);
+                                    position:absolute;left:18px;top:0;z-index:1;
+                                    border:2px solid rgba(0,0,0,0.4)"/>
+                      </div>"""
+                else:
+                    logo_html = f"""
+                      <img src="{logo_url(s['abv'])}" width="44"
+                           style="border-radius:50%;box-shadow:0 2px 10px rgba(0,0,0,0.5);flex-shrink:0"/>"""
+
                 st.markdown(f"""
                 <div class="{css}">
                   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
                     <div style="display:flex;align-items:center;gap:12px">
-                      <img src="{logo_url(s['abv'])}" width="44"
-                           style="border-radius:50%;box-shadow:0 2px 10px rgba(0,0,0,0.5)"/>
+                      {logo_html}
                       <div>
                         <div style="font-size:1.05rem;font-weight:700;line-height:1.2">
                           <span class="{dot}"></span>{badge_label}{top_ribbon}
