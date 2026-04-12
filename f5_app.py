@@ -527,7 +527,7 @@ with st.sidebar:
         except: pass
     st.divider()
     st.markdown("**💰 Bankroll**")
-    bankroll   = st.number_input("Bankroll ($)", value=100, step=50, min_value=10, label_visibility="collapsed")
+    bankroll   = st.number_input("Bankroll ($)", value=100, step=25, min_value=25, label_visibility="collapsed")
     c1,c2 = st.columns(2)
     with c1: kelly_frac = st.slider("Kelly Frac", 0.1, 1.0, 0.25, 0.05)
     with c2: max_pct    = st.slider("Max Bet %",  1, 10, 5) / 100
@@ -847,7 +847,7 @@ elif page == "🎯 Bet Signals":
                 all_lines = [odds_data["total"][b]["over_line"]
                              for b in total_books if odds_data["total"][b].get("over_line") is not None]
                 if all_lines:
-                    consensus_total = sum(all_lines)/len(all_lines)
+                    consensus_total = round(sum(all_lines)/len(all_lines), 1)
                     model_t = calc_model_total(eff_asp, eff_hsp, eff_away_lu, eff_home_lu, pf, ump_k,
                                            away_sp.get("era"), home_sp.get("era"),
                                            ump_run_fac, wx_wind_mult, wx_temp_mult)
@@ -1137,7 +1137,7 @@ elif page == "🎯 Bet Signals":
                 edge_label = (f"+{s['edge']*100:.1f}% edge" if s['edge'] >= 0.01 else "Model only")
 
                 cal_p   = calibrate_prob(s["model_p"]*100, cal_map)
-                cal_txt = f"<span style='color:#78909c;font-size:0.78rem'> → {cal_p:.1f}% cal</span>" if cal_map and abs(cal_p - s["model_p"]*100) >= 1 else ""
+                cal_txt = f'<span style="color:#78909c;font-size:0.78rem"> cal {cal_p:.1f}%</span>' if cal_map and abs(cal_p - s["model_p"]*100) >= 1 else ""
                 lu_txt  = f" &nbsp;|&nbsp; LU: <b>{s['lu_score']:.0f}</b>/100" if s['lu_score'] else ""
 
                 # Matchup badge
@@ -1154,7 +1154,7 @@ elif page == "🎯 Bet Signals":
                 _rest = s.get("days_rest")
                 if abs(_form) >= 2 or (_rest is not None and _rest <= 3):
                     _fc = "#00e676" if _form >= 3 else "#ff7043" if _form <= -3 else "#ffd600"
-                    _rest_str = f" · {_rest}d rest" if _rest is not None else ""
+                    _rest_str = f" {_rest}d rest" if _rest is not None else ""
                     form_txt = (f'<span class="metric-pill" style="border-color:{_fc};color:{_fc}">'
                                 f'Form: <b>{_form:+.0f}</b>{_rest_str}</span>')
                 else:
@@ -1165,19 +1165,30 @@ elif page == "🎯 Bet Signals":
                 if _wx and not _wx.get("is_dome") and _wx.get("wind_speed", 0) >= 8:
                     _wm = _wx.get("wind_multiplier", 1.0)
                     _wc = "#ff7043" if _wm >= 1.06 else "#64b5f6" if _wm <= 0.94 else "#b0bec5"
-                    _wlbl = "OUT" if _wm > 1.02 else "IN" if _wm < 0.98 else "→"
+                    _wlbl = "OUT" if _wm > 1.02 else "IN" if _wm < 0.98 else "CROSS"
+                    _wspd = int(_wx.get("wind_speed", 0))
+                    _wdir = str(_wx.get("wind_dir", ""))
+                    _wtemp = str(_wx.get("temp", "?"))
                     weather_txt = (f'<span class="metric-pill" style="border-color:{_wc};color:{_wc}">'
-                                   f'🌬 {_wx["wind_speed"]:.0f}mph {_wx.get("wind_dir","")} ({_wlbl})'
-                                   f' · {_wx.get("temp","?")}°F</span>')
+                                   f'Wind {_wspd}mph {_wdir} ({_wlbl}) {_wtemp}F</span>')
                 elif _wx and not _wx.get("is_dome") and _wx.get("temp") is not None:
-                    weather_txt = f'<span class="metric-pill">🌡 {_wx["temp"]}°F</span>'
+                    weather_txt = f'<span class="metric-pill">{_wx["temp"]}F</span>'
                 else:
                     weather_txt = ""
-                pf_txt  = f"Park {s['park_factor']:.2f}×"
+                pf_txt  = f"Park {s['park_factor']:.2f}x"
                 ump_txt = f"Ump K {s['ump_k']:+.2f}" if s['ump_k'] else ""
-                ml_str  = (f"{'+' if s['ml']>0 else ''}{s['ml']}" if s['ml'] else "—")
-                line_txt = (f"""<span class="metric-pill">📐 Line: <b>{s['model_line']}</b> vs <b>{s['mkt_line']}</b></span>"""
-                            if s.get("model_line") not in ("","—",None) else "")
+                ml_str  = (f"{'+' if s['ml']>0 else ''}{s['ml']}" if s['ml'] else "-")
+                _mkt_line_val = s.get("mkt_line")
+                _mod_line_val = s.get("model_line")
+                if _mod_line_val not in ("", "-", None, "—"):
+                    try:
+                        _mkt_fmt = f"{float(_mkt_line_val):.2f}" if _mkt_line_val not in ("", "-", None, "—") else str(_mkt_line_val)
+                        _mod_fmt = f"{float(_mod_line_val):.2f}"
+                        line_txt = f'<span class="metric-pill">Line: <b>{_mod_fmt}</b> vs <b>{_mkt_fmt}</b></span>'
+                    except (TypeError, ValueError):
+                        line_txt = ""
+                else:
+                    line_txt = ""
                 top_ribbon = '<span class="top-pick-ribbon">⭐ TOP PICK</span>' if rank == 0 else ""
                 conf_pct   = int(s["model_p"] * 100)
 
@@ -1219,7 +1230,7 @@ elif page == "🎯 Bet Signals":
                           <span class="{dot}"></span>{badge_label}{top_ribbon}
                         </div>
                         <div style="font-size:0.9rem;font-weight:600;margin-top:2px">{s['side']}</div>
-                        <div style="font-size:0.78rem;color:#7a9cbf;margin-top:1px">{s['game']} &nbsp;·&nbsp; {s['time']}</div>
+                        <div style="font-size:0.78rem;color:#7a9cbf;margin-top:1px">{s['game']} &nbsp;|&nbsp; {s['time']}</div>
                       </div>
                     </div>
                     <div style="text-align:right">
