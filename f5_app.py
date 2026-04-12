@@ -659,11 +659,12 @@ if page == "📋 Today's Slate":
                     else: st.caption("Lines not yet posted")
 
                 # Totals
-                tots = [(BOOK_LABELS.get(b,b), odds_data["total"][b])
-                        for b in BOOK_LABELS if b in odds_data["total"] and odds_data["total"][b]]
+                tots = [(BOOK_LABELS.get(b,b), odds_data["total"][b].get("over_line"))
+                        for b in BOOK_LABELS
+                        if b in odds_data["total"] and odds_data["total"][b].get("over_line") is not None]
                 if tots:
                     st.caption("**F5 Totals:** " + " | ".join([f"{bn}: **{t}**" for bn,t in tots]))
-                    avg_t = sum(t for _,t in tots)/len(tots)
+                    avg_t = sum(t for _,t in tots) / len(tots)
                     st.caption(f"Consensus F5 Total: **{avg_t:.2f}**")
 
                 st.markdown('</div>', unsafe_allow_html=True)
