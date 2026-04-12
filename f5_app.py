@@ -514,6 +514,10 @@ with st.sidebar:
       <div style="font-size:0.72rem;color:#5a8ab4;text-transform:uppercase;letter-spacing:0.08em;margin-top:2px">MLB Analytics</div>
     </div>
     """, unsafe_allow_html=True)
+    # ── Navigation (top) ──
+    page = st.radio("", [
+        "📋 Today's Slate","🎯 Bet Signals","✏️ SP Input","📈 Bet Tracker","🏟️ Park Factors","📊 Model Performance"])
+    st.divider()
     st.caption(f"🕐 {datetime.now().strftime('%I:%M %p')} · Season 2026")
     # Show last data sync status
     _status_path = "sync_status.json"
@@ -525,6 +529,8 @@ with st.sidebar:
             st.caption(f"{_ok_icon} Data synced: {_ts}")
             if _s.get("games_today"): st.caption(f"📅 {_s['games_today']} games today")
         except: pass
+    if st.button("🔄 Refresh Odds", use_container_width=True):
+        st.cache_data.clear(); st.rerun()
     st.divider()
     st.markdown("**💰 Bankroll**")
     bankroll   = st.number_input("Bankroll ($)", value=100, step=25, min_value=25, label_visibility="collapsed")
@@ -539,12 +545,6 @@ with st.sidebar:
     w_lu   = st.slider("Lineup Quality", 0.1, 0.6, 0.30, 0.05)
     w_park = st.slider("Park Factor",    0.0, 0.3, 0.15, 0.05)
     w_ump  = st.slider("Ump Tendency",   0.0, 0.2, 0.10, 0.05)
-    st.divider()
-    if st.button("🔄 Refresh Odds", use_container_width=True):
-        st.cache_data.clear(); st.rerun()
-    st.markdown("&nbsp;")
-    page = st.radio("", [
-        "📋 Today's Slate","🎯 Bet Signals","✏️ SP Input","📈 Bet Tracker","🏟️ Park Factors","📊 Model Performance"])
 
 # ── LOAD DATA ─────────────────────────────────────────────────────────────────
 games, err       = fetch_games()
