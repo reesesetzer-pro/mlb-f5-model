@@ -1,0 +1,28 @@
+# Excel model (local only)
+*.xlsx
+
+# Log files
+*.txt
+*.log
+
+# Cache
+game_cache.json
+bet_tracker.csv
+sp_data.csv
+__pycache__/
+*.pyc
+.pybaseball/
+
+# Local sync scripts (not deployed to Streamlit)
+data_sync.py
+f5_sync.py
+run_f5_model.bat
+patch_sync.py
+get-pip.py
+
+# Local Python environment
+Lib/
+Scripts/
+share/
+etc/
+pyvenv.cfg
