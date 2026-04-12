@@ -313,10 +313,18 @@ def load_sp_data():
 def save_sp_data(df): df.to_csv(SP_FILE, index=False)
 
 def calc_sp_score(xfip, kbb, hh=None):
+    """
+    Recalibrated so an average MLB starter (xFIP=4.20, K-BB%=10%, HardHit%=35%) scores ~50.
+    kbb and hh should be passed as decimals (0.10, 0.35).
+    Higher score = better pitcher (fewer runs allowed).
+    """
     try:
-        s = (100-(xfip*12))*0.40 + (kbb*100*0.35)
-        if hh: s += (30-hh*100)*0.25
-        return round(max(0,min(100,s)),1)
+        # Each component centered at 50 for league-average values
+        comp_xfip = 50 + (4.20 - xfip) * 12           # xFIP 3.0→64, 4.2→50, 6.0→26
+        comp_kbb  = 50 + (kbb - 0.10) * 200            # 10%→50, 20%→70, 5%→40
+        comp_hh   = 50 + (0.35 - hh) * 100 if hh else 50  # 35%→50, 30%→55, 45%→40
+        s = comp_xfip * 0.45 + comp_kbb * 0.35 + comp_hh * 0.20
+        return round(max(0, min(100, s)), 1)
     except: return None
 
 def load_tracker():
@@ -511,11 +519,12 @@ with st.sidebar:
         except: pass
     st.divider()
     st.markdown("**💰 Bankroll**")
-    bankroll   = st.number_input("Bankroll ($)", value=1000, step=100, min_value=100, label_visibility="collapsed")
+    bankroll   = st.number_input("Bankroll ($)", value=100, step=50, min_value=10, label_visibility="collapsed")
     c1,c2 = st.columns(2)
     with c1: kelly_frac = st.slider("Kelly Frac", 0.1, 1.0, 0.25, 0.05)
     with c2: max_pct    = st.slider("Max Bet %",  1, 10, 5) / 100
     min_edge = st.slider("Min Edge (%)", 0, 10, 3) / 100
+    min_conf = st.slider("Min Model Conf (%)", 50, 70, 52) / 100
     st.divider()
     st.markdown("**🔧 Model Weights**")
     w_sp   = st.slider("SP Score",       0.1, 0.8, 0.45, 0.05)
@@ -906,6 +915,114 @@ elif page == "🎯 Bet Signals":
             m3.metric("🟢 Solid (55-60%)",    len(solid))
             m4.metric("Total Rec. Wagers",   f"${sum(s['kelly'] for s in signals if s['edge']>=min_edge and s['ml']):,.0f}")
 
+            # ── Parlay of the Day ──────────────────────────────────────────────
+            ml_signals = [s for s in signals if s.get("market") == "F5 ML" and s["ml"] is not None]
+            if len(ml_signals) >= 2:
+                leg1, leg2 = ml_signals[0], ml_signals[1]
+                # Only show parlay if legs are different games
+                if leg1["game"] != leg2["game"]:
+                    def to_decimal(american):
+                        o = float(american)
+                        return (o / 100) + 1 if o > 0 else (100 / abs(o)) + 1
+
+                    def decimal_to_american(dec):
+                        if dec >= 2.0:
+                            return f"+{int((dec - 1) * 100)}"
+                        else:
+                            return f"{int(-100 / (dec - 1))}"
+
+                    parlay_prob   = leg1["model_p"] * leg2["model_p"]
+                    parlay_dec    = to_decimal(leg1["ml"]) * to_decimal(leg2["ml"])
+                    parlay_amr    = decimal_to_american(parlay_dec)
+                    parlay_pct    = int(parlay_prob * 100)
+                    parlay_payout = round((parlay_dec - 1) * bankroll, 2)
+                    parlay_edge   = parlay_prob - (1 / parlay_dec)
+
+                    with st.expander(f"🎰 Parlay of the Day  ·  {parlay_pct}% Combined Probability  ·  {parlay_amr}", expanded=False):
+                        st.markdown(f"""
+                        <div style="background:linear-gradient(145deg,#0a1a2e,#0f2040);border-radius:14px;
+                                    padding:18px 20px;border:1px solid rgba(33,150,243,0.35);
+                                    box-shadow:0 0 28px rgba(33,150,243,0.10)">
+                          <div style="font-size:0.78rem;color:#5a8ab4;text-transform:uppercase;
+                                      letter-spacing:0.07em;margin-bottom:12px">⚡ 2-Leg ML Parlay</div>
+                          <div style="display:flex;flex-direction:column;gap:10px">
+                            <div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:12px 16px">
+                              <div style="font-weight:700;font-size:0.95rem">Leg 1 &nbsp;·&nbsp; {leg1['side']}</div>
+                              <div style="color:#7a9cbf;font-size:0.82rem">{leg1['game']} &nbsp;·&nbsp; {leg1['time']}</div>
+                              <div style="display:flex;gap:8px;margin-top:6px">
+                                <span style="background:rgba(33,150,243,0.15);border:1px solid rgba(33,150,243,0.4);
+                                             border-radius:6px;padding:2px 9px;font-size:0.78rem;color:#64b5f6">
+                                  {'+' if int(leg1['ml'])>0 else ''}{leg1['ml']} @ {leg1['book']}
+                                </span>
+                                <span style="background:rgba(0,230,118,0.10);border:1px solid rgba(0,230,118,0.3);
+                                             border-radius:6px;padding:2px 9px;font-size:0.78rem;color:#69f0ae">
+                                  {int(leg1['model_p']*100)}% model
+                                </span>
+                              </div>
+                            </div>
+                            <div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:12px 16px">
+                              <div style="font-weight:700;font-size:0.95rem">Leg 2 &nbsp;·&nbsp; {leg2['side']}</div>
+                              <div style="color:#7a9cbf;font-size:0.82rem">{leg2['game']} &nbsp;·&nbsp; {leg2['time']}</div>
+                              <div style="display:flex;gap:8px;margin-top:6px">
+                                <span style="background:rgba(33,150,243,0.15);border:1px solid rgba(33,150,243,0.4);
+                                             border-radius:6px;padding:2px 9px;font-size:0.78rem;color:#64b5f6">
+                                  {'+' if int(leg2['ml'])>0 else ''}{leg2['ml']} @ {leg2['book']}
+                                </span>
+                                <span style="background:rgba(0,230,118,0.10);border:1px solid rgba(0,230,118,0.3);
+                                             border-radius:6px;padding:2px 9px;font-size:0.78rem;color:#69f0ae">
+                                  {int(leg2['model_p']*100)}% model
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <div style="display:flex;gap:16px;margin-top:14px;padding-top:12px;
+                                      border-top:1px solid rgba(255,255,255,0.07)">
+                            <div style="text-align:center;flex:1">
+                              <div style="font-size:1.4rem;font-weight:800">{parlay_pct}%</div>
+                              <div style="font-size:0.68rem;color:#5a8ab4;text-transform:uppercase">Hit Prob</div>
+                            </div>
+                            <div style="text-align:center;flex:1">
+                              <div style="font-size:1.4rem;font-weight:800">{parlay_amr}</div>
+                              <div style="font-size:0.68rem;color:#5a8ab4;text-transform:uppercase">Parlay Odds</div>
+                            </div>
+                            <div style="text-align:center;flex:1">
+                              <div style="font-size:1.4rem;font-weight:800;color:#00e676">+${parlay_payout:,.2f}</div>
+                              <div style="font-size:0.68rem;color:#5a8ab4;text-transform:uppercase">Win on $100</div>
+                            </div>
+                            <div style="text-align:center;flex:1">
+                              <div style="font-size:1.4rem;font-weight:800;color:{'#00e676' if parlay_edge>0 else '#ff7043'}">{parlay_edge*100:+.1f}%</div>
+                              <div style="font-size:0.68rem;color:#5a8ab4;text-transform:uppercase">Edge</div>
+                            </div>
+                          </div>
+                        </div>
+                        """, unsafe_allow_html=True)
+
+                        if st.button("📋 Log Parlay to Tracker", key="log_parlay", use_container_width=True):
+                            today_str = date.today().strftime("%m/%d/%Y")
+                            parlay_note = f"PARLAY: {leg1['side']} ({leg1['ml']}) + {leg2['side']} ({leg2['ml']})"
+                            new_row = {
+                                "Date": today_str,
+                                "Game": f"{leg1['game']} + {leg2['game']}",
+                                "Bet_Side": f"Parlay: {leg1['side']} / {leg2['side']}",
+                                "Market": "Parlay",
+                                "Book": f"{leg1['book']} / {leg2['book']}",
+                                "Bet_ML": parlay_amr,
+                                "Model_Prob": parlay_pct,
+                                "Market_Implied": round(1/parlay_dec*100, 1),
+                                "Edge_Pct": round(parlay_edge*100, 1),
+                                "Park_Factor": "", "Ump_K_Boost": "",
+                                "Away_LU_Score": "", "Home_LU_Score": "",
+                                "Wager": bankroll,
+                                "F5_Score": "", "Result": "PENDING",
+                                "Profit_Loss": "", "Closing_ML": "", "CLV": "",
+                                "Notes": parlay_note,
+                            }
+                            tracker_df = pd.concat([tracker_df, pd.DataFrame([new_row])], ignore_index=True)
+                            save_tracker(tracker_df)
+                            st.success("✅ Parlay logged!")
+
+            st.divider()
+
             market_filter = st.multiselect("Filter by Market",
                 ["F5 ML","F5 Spread","F5 Total","F5 Team Total"],
                 default=["F5 ML","F5 Spread","F5 Total","F5 Team Total"])
@@ -913,7 +1030,8 @@ elif page == "🎯 Bet Signals":
 
             display_signals = [s for s in signals
                                 if s["edge"] >= min_edge
-                                and s.get("market","F5 ML") in market_filter]
+                                and s.get("market","F5 ML") in market_filter
+                                and s["model_p"] >= min_conf]
 
             for rank, s in enumerate(display_signals):
                 if s["model_p"] >= 0.60:
@@ -1016,13 +1134,49 @@ elif page == "🎯 Bet Signals":
                 </div>
                 """, unsafe_allow_html=True)
 
-            # Log bet
-            st.divider(); st.subheader("➕ Log a Bet")
+                # One-click log button (below card, outside HTML)
+                if s["ml"]:
+                    today_str = date.today().strftime("%m/%d/%Y")
+                    _mask = (tracker_df["Date"] == today_str) & (tracker_df["Bet_Side"] == s["side"])
+                    if "Market" in tracker_df.columns:
+                        _mask = _mask & (tracker_df["Market"] == s.get("market", "F5 ML"))
+                    already_logged = not tracker_df[_mask].empty
+
+                    btn_cols = st.columns([3, 1])
+                    with btn_cols[1]:
+                        if already_logged:
+                            st.success("✓ Logged")
+                        elif st.button(f"📋 Log ${bankroll:.0f}", key=f"log_{rank}_{s['game']}_{s['side']}", use_container_width=True):
+                            new_row = {
+                                "Date": today_str,
+                                "Game": s["game"],
+                                "Bet_Side": s["side"],
+                                "Market": s.get("market", "F5 ML"),
+                                "Book": s["book"],
+                                "Bet_ML": s["ml"],
+                                "Model_Prob": round(s["model_p"] * 100, 1),
+                                "Market_Implied": round(s["mkt_p"] * 100, 1),
+                                "Edge_Pct": round(s["edge"] * 100, 1),
+                                "Park_Factor": s.get("park_factor", ""),
+                                "Ump_K_Boost": s.get("ump_k", ""),
+                                "Away_LU_Score": s.get("lu_score", ""),
+                                "Home_LU_Score": "",
+                                "Wager": bankroll,
+                                "F5_Score": "", "Result": "PENDING",
+                                "Profit_Loss": "", "Closing_ML": "", "CLV": "",
+                                "Notes": "",
+                            }
+                            tracker_df = pd.concat([tracker_df, pd.DataFrame([new_row])], ignore_index=True)
+                            save_tracker(tracker_df)
+                            st.rerun()
+
+            # Log bet (manual form fallback)
+            st.divider(); st.subheader("➕ Log a Bet (Manual)")
             with st.form("log_bet"):
                 loggable = [s for s in display_signals if s["ml"]]
                 sel = st.selectbox("Select Signal",
                     [f"[{s['market']}] {s['side']} — {s['game']}" for s in loggable])
-                wager = st.number_input("Wager ($)", min_value=1.0, value=10.0)
+                wager = st.number_input("Wager ($)", min_value=1.0, value=float(bankroll))
                 notes = st.text_input("Notes")
                 if st.form_submit_button("Log Bet") and loggable:
                     idx = [f"[{s['market']}] {s['side']} — {s['game']}" for s in loggable].index(sel)
