@@ -1220,49 +1220,28 @@ elif page == "🎯 Bet Signals":
                     </div>
                   </div>"""
 
-                st.markdown(f"""
-                <div class="{css}">
-                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-                    <div style="display:flex;align-items:center;gap:12px">
-                      {logo_html}
-                      <div>
-                        <div style="font-size:1.05rem;font-weight:700;line-height:1.2">
-                          <span class="{dot}"></span>{badge_label}{top_ribbon}
-                        </div>
-                        <div style="font-size:0.9rem;font-weight:600;margin-top:2px">{s['side']}</div>
-                        <div style="font-size:0.78rem;color:#7a9cbf;margin-top:1px">{s['game']} &nbsp;|&nbsp; {s['time']}</div>
-                      </div>
-                    </div>
-                    <div style="text-align:right">
-                      <div style="font-size:2rem;font-weight:800;line-height:1">{conf_pct}%</div>
-                      <div style="font-size:0.7rem;color:#7a9cbf;text-transform:uppercase;letter-spacing:0.05em">Model Prob{cal_txt}</div>
-                    </div>
-                  </div>
+                # Pre-build pills as one string so empty vars don't leave blank
+                # lines that would terminate Streamlit/CommonMark's HTML block mode.
+                pills_html = "".join(filter(None, [
+                    f'<span class="{mkt_cls}">{mkt}</span>',
+                    f'<span class="metric-pill" style="border-color:{edge_color};color:{edge_color}"><b>{edge_label}</b></span>',
+                    f'<span class="metric-pill">+{ml_str} @ {s["book"]}</span>',
+                    f'<span class="metric-pill">Mkt: {s["mkt_p"]*100:.1f}%</span>',
+                    f'<span class="metric-pill">SP: {s["sp_score"]:.0f}{lu_txt}</span>',
+                    matchup_txt,
+                    form_txt,
+                    weather_txt,
+                    line_txt,
+                    f'<span class="park-badge">{pf_txt}</span>',
+                    f'<span class="ump-badge">{ump_txt}</span>' if ump_txt else "",
+                ]))
 
-                  <div class="conf-bar-wrap">
-                    <div class="conf-bar-fill" style="width:{conf_pct}%;background:{bar_color}"></div>
-                  </div>
-
-                  <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;margin-bottom:10px">
-                    <span class="{mkt_cls}">{mkt}</span>
-                    <span class="metric-pill" style="border-color:{edge_color};color:{edge_color}"><b>{edge_label}</b></span>
-                    <span class="metric-pill">💰 <b>{ml_str}</b> @ {s['book']}</span>
-                    <span class="metric-pill">📉 Mkt: <b>{s['mkt_p']*100:.1f}%</b></span>
-                    <span class="metric-pill">⚾ SP: <b>{s['sp_score']:.0f}</b>{lu_txt}</span>
-                    {matchup_txt}
-                    {form_txt}
-                    {weather_txt}
-                    {line_txt}
-                    <span class="park-badge">{pf_txt}</span>
-                    {f'<span class="ump-badge">{ump_txt}</span>' if ump_txt else ""}
-                  </div>
-
-                  <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,0.06);padding-top:10px;margin-top:4px">
-                    <span style="color:#b0bec5;font-size:0.82rem">Kelly Rec.</span>
-                    <span style="font-size:1.1rem;font-weight:700;color:#00e676">${s['kelly']:,.2f}</span>
-                  </div>
-                </div>
-                """, unsafe_allow_html=True)
+                st.markdown(f"""<div class="{css}">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div style="display:flex;align-items:center;gap:12px">{logo_html}<div><div style="font-size:1.05rem;font-weight:700;line-height:1.2"><span class="{dot}"></span>{badge_label}{top_ribbon}</div><div style="font-size:0.9rem;font-weight:600;margin-top:2px">{s['side']}</div><div style="font-size:0.78rem;color:#7a9cbf;margin-top:1px">{s['game']} | {s['time']}</div></div></div><div style="text-align:right"><div style="font-size:2rem;font-weight:800;line-height:1">{conf_pct}%</div><div style="font-size:0.7rem;color:#7a9cbf;text-transform:uppercase;letter-spacing:0.05em">Model Prob{cal_txt}</div></div></div>
+<div class="conf-bar-wrap"><div class="conf-bar-fill" style="width:{conf_pct}%;background:{bar_color}"></div></div>
+<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;margin-bottom:10px">{pills_html}</div>
+<div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,0.06);padding-top:10px;margin-top:4px"><span style="color:#b0bec5;font-size:0.82rem">Suggested bet</span><span style="font-size:1.1rem;font-weight:700;color:#00e676">${s['kelly']:,.2f}</span></div>
+</div>""", unsafe_allow_html=True)
 
                 # One-click log button (below card, outside HTML)
                 if s["ml"]:
