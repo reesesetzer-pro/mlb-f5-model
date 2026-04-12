@@ -10,15 +10,19 @@ st.set_page_config(page_title="MLB F5 Model", page_icon="https://a.espncdn.com/i
 # ── CONSTANTS ─────────────────────────────────────────────────────────────────
 API_KEY = st.secrets.get("ODDS_API_KEY", "40cfbba84e52cd6da31272d4ac287966")
 SPORT   = "baseball_mlb"
-BOOKS   = "draftkings,fanduel,betmgm,williamhill_us,espnbet"
-REGIONS = "us,us2"
+BOOKS   = "draftkings,fanduel,betmgm,williamhill_us,espnbet,pinnacle"
+REGIONS = "us,us2,eu"
 BOOK_LABELS = {
     "draftkings":     "DraftKings",
     "fanduel":        "FanDuel",
     "betmgm":         "BetMGM",
     "williamhill_us": "Caesars",
     "espnbet":        "theScore",
+    "pinnacle":       "Pinnacle",
 }
+# Pinnacle is the reference/sharp book — used for market probability calibration only.
+# Recreational books are where we display the best available price for wagering.
+REC_BOOKS = {"draftkings","fanduel","betmgm","williamhill_us","espnbet"}
 TRACKER_FILE      = "bet_tracker.csv"
 SP_FILE           = "sp_data.csv"
 CACHE_FILE        = "game_cache.json"
@@ -710,6 +714,7 @@ elif page == "🎯 Bet Signals":
             pf           = c_data.get("park_factor", 1.0)
             ump_k        = c_data.get("ump_k_boost", 0.0)
             ump_run_fac  = c_data.get("ump_run_factor", 1.0)
+            ump_zone     = c_data.get("ump_zone_size", 1.0)
             away_lu      = c_data.get("away_lineup_score")
             home_lu      = c_data.get("home_lineup_score")
             away_sp      = c_data.get("away_sp", {})
@@ -743,20 +748,29 @@ elif page == "🎯 Bet Signals":
             wx_precip       = wx.get("precip_pct", 0)
             wx_is_dome      = wx.get("is_dome", False)
 
-            away_mls = [odds_data["ml"][b]["away"] for b in BOOK_LABELS
-                        if b in odds_data["ml"] and odds_data["ml"][b]["away"]]
-            home_mls = [odds_data["ml"][b]["home"] for b in BOOK_LABELS
-                        if b in odds_data["ml"] and odds_data["ml"][b]["home"]]
-            if not away_mls or not home_mls: continue
+            # Recreational books — best price (where to actually bet)
+            away_mls_rec = [odds_data["ml"][b]["away"] for b in REC_BOOKS
+                            if b in odds_data["ml"] and odds_data["ml"][b]["away"]]
+            home_mls_rec = [odds_data["ml"][b]["home"] for b in REC_BOOKS
+                            if b in odds_data["ml"] and odds_data["ml"][b]["home"]]
+            if not away_mls_rec or not home_mls_rec: continue
 
-            best_away_ml = max(away_mls); best_home_ml = max(home_mls)
-            best_away_bk = max((b for b in BOOK_LABELS if b in odds_data["ml"] and odds_data["ml"][b]["away"]),
+            best_away_ml = max(away_mls_rec); best_home_ml = max(home_mls_rec)
+            best_away_bk = max((b for b in REC_BOOKS if b in odds_data["ml"] and odds_data["ml"][b]["away"]),
                                key=lambda b: odds_data["ml"][b]["away"])
-            best_home_bk = max((b for b in BOOK_LABELS if b in odds_data["ml"] and odds_data["ml"][b]["home"]),
+            best_home_bk = max((b for b in REC_BOOKS if b in odds_data["ml"] and odds_data["ml"][b]["home"]),
                                key=lambda b: odds_data["ml"][b]["home"])
 
-            true_away, true_home = vig_free(
-                sum(away_mls)/len(away_mls), sum(home_mls)/len(home_mls))
+            # Reference probability — Pinnacle vig-free (sharpest) when available,
+            # else vig-free from recreational book average.
+            pin_ml = odds_data["ml"].get("pinnacle", {})
+            if pin_ml.get("away") and pin_ml.get("home"):
+                true_away, true_home = vig_free(pin_ml["away"], pin_ml["home"])
+                using_pinnacle = True
+            else:
+                true_away, true_home = vig_free(
+                    sum(away_mls_rec)/len(away_mls_rec), sum(home_mls_rec)/len(home_mls_rec))
+                using_pinnacle = False
             if not true_away: continue
 
             sp_edge   = (eff_asp - eff_hsp) / 100 * w_sp
@@ -768,8 +782,9 @@ elif page == "🎯 Bet Signals":
 
             model_away = max(0.05, min(0.95, true_away + sp_edge + lu_edge + park_edge + ump_edge))
             model_home = 1 - model_away
-            mkt_away   = american_to_prob(best_away_ml)
-            mkt_home   = american_to_prob(best_home_ml)
+            # mkt_p = Pinnacle vig-free if available (true market price), else one-sided rec book
+            mkt_away = true_away if using_pinnacle else american_to_prob(best_away_ml)
+            mkt_home = true_home if using_pinnacle else american_to_prob(best_home_ml)
             game_tag   = f"{away} @ {home}"
 
             # ── F5 ML signals ────────────────────────────────────────────────
@@ -789,13 +804,14 @@ elif page == "🎯 Bet Signals":
                         "side":side,"market":"F5 ML",
                         "edge":edge,"ml":ml,"book":BOOK_LABELS.get(bk,bk),
                         "model_p":model_p,"mkt_p":mkt_p,"kelly":k,
+                        "sharp_ref":using_pinnacle,
                         "sp_score":sp_s,"lu_score":lu_s,"eff_lu":eff_lu,
                         "matchup_score":matchup_s,"platoon_adv":plat_adv,
                         "opp_hand": home_sp.get("hand","R") if side=="Away" else away_sp.get("hand","R"),
                         "form_score": away_sp.get("form_score",0) if side=="Away" else home_sp.get("form_score",0),
                         "days_rest":  away_sp.get("days_rest") if side=="Away" else home_sp.get("days_rest"),
                         "weather": wx,
-                        "park_factor":pf,"ump_k":ump_k,
+                        "park_factor":pf,"ump_k":ump_k,"ump_zone":ump_zone,
                         "model_line":"","mkt_line":"",
                     })
 
@@ -837,29 +853,44 @@ elif page == "🎯 Bet Signals":
                                 "model_p":model_p,"mkt_p":mkt_p,"kelly":k,
                                 "sp_score":sp_s,"lu_score":lu_s,
                                 "form_score":0,"days_rest":None,"weather":wx,
-                                "park_factor":pf,"ump_k":ump_k,
+                                "park_factor":pf,"ump_k":ump_k,"ump_zone":ump_zone,
                                 "model_line":round(model_diff,2),"mkt_line":cover_line,
                             })
 
             # ── F5 Total signals ──────────────────────────────────────────────
-            total_books = [b for b in BOOK_LABELS if b in odds_data["total"]]
-            if total_books:
+            total_books_all = [b for b in BOOK_LABELS if b in odds_data["total"]]
+            total_books_rec = [b for b in REC_BOOKS  if b in odds_data["total"]]
+            total_books     = total_books_all  # used for line selection only
+            if total_books_rec:
                 all_lines = [odds_data["total"][b]["over_line"]
-                             for b in total_books if odds_data["total"][b].get("over_line") is not None]
+                             for b in total_books_rec if odds_data["total"][b].get("over_line") is not None]
                 if all_lines:
-                    consensus_total = round(sum(all_lines)/len(all_lines), 1)
+                    # Use Pinnacle's total line if available (sharpest consensus)
+                    pin_tot = odds_data["total"].get("pinnacle", {})
+                    if pin_tot.get("over_line"):
+                        consensus_total = round(float(pin_tot["over_line"]), 1)
+                        tot_sharp_ref   = True
+                    else:
+                        consensus_total = round(sum(all_lines)/len(all_lines), 1)
+                        tot_sharp_ref   = False
                     model_t = calc_model_total(eff_asp, eff_hsp, eff_away_lu, eff_home_lu, pf, ump_k,
                                            away_sp.get("era"), home_sp.get("era"),
                                            ump_run_fac, wx_wind_mult, wx_temp_mult)
                     over_p  = over_prob(model_t, consensus_total)
                     under_p = 1 - over_p
 
-                    best_over_bk  = max(total_books, key=lambda b: odds_data["total"][b].get("over_price",-200) or -200)
-                    best_under_bk = max(total_books, key=lambda b: odds_data["total"][b].get("under_price",-200) or -200)
+                    # Best price at rec books (where to bet)
+                    best_over_bk  = max(total_books_rec, key=lambda b: odds_data["total"][b].get("over_price",-200) or -200)
+                    best_under_bk = max(total_books_rec, key=lambda b: odds_data["total"][b].get("under_price",-200) or -200)
                     over_ml  = odds_data["total"][best_over_bk].get("over_price")  or -110
                     under_ml = odds_data["total"][best_under_bk].get("under_price") or -110
-                    mkt_over_p  = american_to_prob(over_ml)  or 0.524
-                    mkt_under_p = american_to_prob(under_ml) or 0.524
+                    # mkt_p: use Pinnacle's price if available (efficient reference)
+                    if pin_tot.get("over_price"):
+                        mkt_over_p  = american_to_prob(pin_tot["over_price"])  or 0.524
+                        mkt_under_p = 1 - mkt_over_p
+                    else:
+                        mkt_over_p  = american_to_prob(over_ml)  or 0.524
+                        mkt_under_p = american_to_prob(under_ml) or 0.524
 
                     for side, model_p, mkt_p, ml, bk, team in [
                         (f"Over {consensus_total}",  over_p,  mkt_over_p,  over_ml,  best_over_bk,  f"{away}/{home}"),
@@ -874,9 +905,10 @@ elif page == "🎯 Bet Signals":
                                 "side":side,"market":"F5 Total",
                                 "edge":edge,"ml":ml,"book":BOOK_LABELS.get(bk,bk),
                                 "model_p":model_p,"mkt_p":mkt_p,"kelly":k,
+                                "sharp_ref":tot_sharp_ref,
                                 "sp_score":(eff_asp+eff_hsp)/2,"lu_score":((away_lu or 50)+(home_lu or 50))/2,
                                 "form_score":0,"days_rest":None,"weather":wx,
-                                "park_factor":pf,"ump_k":ump_k,
+                                "park_factor":pf,"ump_k":ump_k,"ump_zone":ump_zone,
                                 "model_line":model_t,"mkt_line":consensus_total,
                             })
 
@@ -919,7 +951,7 @@ elif page == "🎯 Bet Signals":
                                 "edge":edge,"ml":ml,"book":BOOK_LABELS.get(bk,bk),
                                 "model_p":model_p,"mkt_p":mkt_p,"kelly":k,
                                 "sp_score":sp_s,"lu_score":lu_s,
-                                "park_factor":pf,"ump_k":ump_k,
+                                "park_factor":pf,"ump_k":ump_k,"ump_zone":ump_zone,
                                 "model_line":m_tt,"mkt_line":mkt_tt,
                             })
             else:
@@ -939,7 +971,7 @@ elif page == "🎯 Bet Signals":
                             "edge":0.0,"ml":None,"book":"Model Only",
                             "model_p":model_p,"mkt_p":0.50,"kelly":0,
                             "sp_score":sp_s,"lu_score":lu_s,
-                            "park_factor":pf,"ump_k":ump_k,
+                            "park_factor":pf,"ump_k":ump_k,"ump_zone":ump_zone,
                             "model_line":m_tt,"mkt_line":"—",
                         })
 
@@ -1176,7 +1208,9 @@ elif page == "🎯 Bet Signals":
                 else:
                     weather_txt = ""
                 pf_txt  = f"Park {s['park_factor']:.2f}x"
-                ump_txt = f"Ump K {s['ump_k']:+.2f}" if s['ump_k'] else ""
+                _uz = s.get("ump_zone", 1.0) or 1.0
+                _zone_str = f" Z{_uz:.2f}" if abs(_uz - 1.0) >= 0.03 else ""
+                ump_txt = f"Ump K{s['ump_k']:+.2f}{_zone_str}" if s['ump_k'] else ""
                 ml_str  = (f"{'+' if s['ml']>0 else ''}{s['ml']}" if s['ml'] else "-")
                 _mkt_line_val = s.get("mkt_line")
                 _mod_line_val = s.get("model_line")
@@ -1189,7 +1223,8 @@ elif page == "🎯 Bet Signals":
                         line_txt = ""
                 else:
                     line_txt = ""
-                top_ribbon = '<span class="top-pick-ribbon">⭐ TOP PICK</span>' if rank == 0 else ""
+                top_ribbon   = '<span class="top-pick-ribbon">⭐ TOP PICK</span>' if rank == 0 else ""
+                sharp_ref_txt = '<span class="metric-pill" style="border-color:#9c27b0;color:#9c27b0">PIN ref</span>' if s.get("sharp_ref") else ""
                 conf_pct   = int(s["model_p"] * 100)
 
                 # DraftKings-style logo block: always both teams side by side,
@@ -1232,6 +1267,7 @@ elif page == "🎯 Bet Signals":
                     form_txt,
                     weather_txt,
                     line_txt,
+                    sharp_ref_txt,
                     f'<span class="park-badge">{pf_txt}</span>',
                     f'<span class="ump-badge">{ump_txt}</span>' if ump_txt else "",
                 ]))
