@@ -708,6 +708,16 @@ elif page == "🎯 Bet Signals":
             asp = away_sp.get("sp_score") or 50
             hsp = home_sp.get("sp_score") or 50
 
+            # Matchup-adjusted lineup scores (platoon splits + H2H vs opposing SP)
+            # When available, blend with overall score for more accurate lineup quality
+            away_matchup = c_data.get("away_matchup_score")
+            home_matchup = c_data.get("home_matchup_score")
+            away_platoon_adv = c_data.get("away_platoon_adv")
+            home_platoon_adv = c_data.get("home_platoon_adv")
+            # Effective lineup: 55% matchup-adjusted, 45% overall when matchup data exists
+            eff_away_lu = round(away_matchup*0.55 + (away_lu or 50)*0.45, 1) if away_matchup else (away_lu or 50)
+            eff_home_lu = round(home_matchup*0.55 + (home_lu or 50)*0.45, 1) if home_matchup else (home_lu or 50)
+
             away_mls = [odds_data["ml"][b]["away"] for b in BOOK_LABELS
                         if b in odds_data["ml"] and odds_data["ml"][b]["away"]]
             home_mls = [odds_data["ml"][b]["home"] for b in BOOK_LABELS
@@ -725,7 +735,7 @@ elif page == "🎯 Bet Signals":
             if not true_away: continue
 
             sp_edge   = (asp - hsp) / 100 * w_sp
-            lu_edge   = (((away_lu or 50) - (home_lu or 50)) / 100 * w_lu)
+            lu_edge   = ((eff_away_lu - eff_home_lu) / 100 * w_lu)
             park_edge = (pf - 1.0) * w_park * -1
             away_kbb  = away_sp.get("k_bb_pct") or 10
             home_kbb  = home_sp.get("k_bb_pct") or 10
@@ -738,9 +748,11 @@ elif page == "🎯 Bet Signals":
             game_tag   = f"{away} @ {home}"
 
             # ── F5 ML signals ────────────────────────────────────────────────
-            for side, edge, ml, bk, model_p, mkt_p, sp_s, lu_s, team, abv in [
-                ("Away", model_away-mkt_away, best_away_ml, best_away_bk, model_away, mkt_away, asp, away_lu, away, abv_away),
-                ("Home", model_home-mkt_home, best_home_ml, best_home_bk, model_home, mkt_home, hsp, home_lu, home, abv_home),
+            for side, edge, ml, bk, model_p, mkt_p, sp_s, lu_s, eff_lu, matchup_s, plat_adv, team, abv in [
+                ("Away", model_away-mkt_away, best_away_ml, best_away_bk, model_away, mkt_away,
+                 asp, away_lu, eff_away_lu, away_matchup, away_platoon_adv, away, abv_away),
+                ("Home", model_home-mkt_home, best_home_ml, best_home_bk, model_home, mkt_home,
+                 hsp, home_lu, eff_home_lu, home_matchup, home_platoon_adv, home, abv_home),
             ]:
                 if model_p >= 0.52:
                     k = kelly(max(edge,0), ml, bankroll, kelly_frac, max_pct)
@@ -752,7 +764,9 @@ elif page == "🎯 Bet Signals":
                         "side":side,"market":"F5 ML",
                         "edge":edge,"ml":ml,"book":BOOK_LABELS.get(bk,bk),
                         "model_p":model_p,"mkt_p":mkt_p,"kelly":k,
-                        "sp_score":sp_s,"lu_score":lu_s,
+                        "sp_score":sp_s,"lu_score":lu_s,"eff_lu":eff_lu,
+                        "matchup_score":matchup_s,"platoon_adv":plat_adv,
+                        "opp_hand": home_sp.get("hand","R") if side=="Away" else away_sp.get("hand","R"),
                         "park_factor":pf,"ump_k":ump_k,
                         "model_line":"","mkt_line":"",
                     })
@@ -765,7 +779,7 @@ elif page == "🎯 Bet Signals":
                                   for b in spread_books if "away" in odds_data["spread"][b] and odds_data["spread"][b]["away"].get("line") is not None]
                 if all_away_lines:
                     consensus_spread = sum(all_away_lines)/len(all_away_lines)
-                    model_diff = calc_model_run_diff(model_away, asp, hsp, away_lu, home_lu, pf)
+                    model_diff = calc_model_run_diff(model_away, asp, hsp, eff_away_lu, eff_home_lu, pf)
                     # Away covers (favorite or dog)
                     model_cover_away = cover_prob(model_diff, consensus_spread)
                     # Best spread odds per side
@@ -805,7 +819,7 @@ elif page == "🎯 Bet Signals":
                              for b in total_books if odds_data["total"][b].get("over_line") is not None]
                 if all_lines:
                     consensus_total = sum(all_lines)/len(all_lines)
-                    model_t = calc_model_total(asp, hsp, away_lu, home_lu, pf, ump_k,
+                    model_t = calc_model_total(asp, hsp, eff_away_lu, eff_home_lu, pf, ump_k,
                                            away_sp.get("era"), home_sp.get("era"))
                     over_p  = over_prob(model_t, consensus_total)
                     under_p = 1 - over_p
@@ -837,9 +851,9 @@ elif page == "🎯 Bet Signals":
 
             # ── F5 Team Total signals ─────────────────────────────────────────
             tt_books = [b for b in BOOK_LABELS if b in odds_data["team_total"]]
-            model_t = calc_model_total(asp, hsp, away_lu, home_lu, pf, ump_k,
+            model_t = calc_model_total(asp, hsp, eff_away_lu, eff_home_lu, pf, ump_k,
                                        away_sp.get("era"), home_sp.get("era"))
-            m_away_tt, m_home_tt = calc_model_team_totals(model_t, away_lu, home_lu, asp, hsp)
+            m_away_tt, m_home_tt = calc_model_team_totals(model_t, eff_away_lu, eff_home_lu, asp, hsp)
 
             if tt_books:
                 for tm, abv, m_tt, sp_s, lu_s in [
@@ -1093,6 +1107,18 @@ elif page == "🎯 Bet Signals":
                 cal_p   = calibrate_prob(s["model_p"]*100, cal_map)
                 cal_txt = f"<span style='color:#78909c;font-size:0.78rem'> → {cal_p:.1f}% cal</span>" if cal_map and abs(cal_p - s["model_p"]*100) >= 1 else ""
                 lu_txt  = f" &nbsp;|&nbsp; LU: <b>{s['lu_score']:.0f}</b>/100" if s['lu_score'] else ""
+                # Matchup badge: show platoon advantage and effective lineup vs opp hand
+                _plat = s.get("platoon_adv")
+                _hand = s.get("opp_hand","R")
+                _mscr = s.get("matchup_score")
+                if _mscr and _plat is not None:
+                    _plat_color = "#00e676" if _plat >= 3 else "#ff7043" if _plat <= -3 else "#b0bec5"
+                    matchup_txt = (f'<span class="metric-pill" style="border-color:{_plat_color};color:{_plat_color}">'
+                                   f'vs {_hand}HP: <b>{_plat:+.0f}</b> matchup</span>')
+                elif _mscr:
+                    matchup_txt = f'<span class="metric-pill">vs {_hand}HP: <b>{_mscr:.0f}</b>/100</span>'
+                else:
+                    matchup_txt = ""
                 pf_txt  = f"Park {s['park_factor']:.2f}×"
                 ump_txt = f"Ump K {s['ump_k']:+.2f}" if s['ump_k'] else ""
                 ml_str  = (f"{'+' if s['ml']>0 else ''}{s['ml']}" if s['ml'] else "—")
@@ -1158,6 +1184,7 @@ elif page == "🎯 Bet Signals":
                     <span class="metric-pill">💰 <b>{ml_str}</b> @ {s['book']}</span>
                     <span class="metric-pill">📉 Mkt: <b>{s['mkt_p']*100:.1f}%</b></span>
                     <span class="metric-pill">⚾ SP: <b>{s['sp_score']:.0f}</b>{lu_txt}</span>
+                    {matchup_txt}
                     {line_txt}
                     <span class="park-badge">{pf_txt}</span>
                     {f'<span class="ump-badge">{ump_txt}</span>' if ump_txt else ""}
