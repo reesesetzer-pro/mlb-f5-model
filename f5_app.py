@@ -733,6 +733,9 @@ elif page == "🎯 Bet Signals":
                     k = kelly(max(edge,0), ml, bankroll, kelly_frac, max_pct)
                     signals.append({
                         "game":game_tag,"time":time_et,"team":team,"abv":abv,
+                        "away_abv":abv_away,"home_abv":abv_home,
+                        "away_abv_str":game["away_team_abv"] if "away_team_abv" in game else abv_away.upper(),
+                        "home_abv_str":game["home_team_abv"] if "home_team_abv" in game else abv_home.upper(),
                         "side":side,"market":"F5 ML",
                         "edge":edge,"ml":ml,"book":BOOK_LABELS.get(bk,bk),
                         "model_p":model_p,"mkt_p":mkt_p,"kelly":k,
@@ -773,6 +776,7 @@ elif page == "🎯 Bet Signals":
                             k = kelly(max(edge,0), ml, bankroll, kelly_frac, max_pct)
                             signals.append({
                                 "game":game_tag,"time":time_et,"team":team,"abv":abv,
+                                "away_abv":abv_away,"home_abv":abv_home,
                                 "side":side,"market":"F5 Spread",
                                 "edge":edge,"ml":ml,"book":BOOK_LABELS.get(bk,bk),
                                 "model_p":model_p,"mkt_p":mkt_p,"kelly":k,
@@ -809,7 +813,7 @@ elif page == "🎯 Bet Signals":
                             k = kelly(max(edge,0), ml, bankroll, kelly_frac, max_pct)
                             signals.append({
                                 "game":game_tag,"time":time_et,"team":team,
-                                "abv":abv_away,"abv2":abv_home,  # both logos for totals
+                                "abv":abv_away,"away_abv":abv_away,"home_abv":abv_home,
                                 "side":side,"market":"F5 Total",
                                 "edge":edge,"ml":ml,"book":BOOK_LABELS.get(bk,bk),
                                 "model_p":model_p,"mkt_p":mkt_p,"kelly":k,
@@ -851,6 +855,7 @@ elif page == "🎯 Bet Signals":
                             k = kelly(max(edge,0), ml, bankroll, kelly_frac, max_pct)
                             signals.append({
                                 "game":game_tag,"time":time_et,"team":tm,"abv":abv,
+                                "away_abv":abv_away,"home_abv":abv_home,
                                 "side":side,"market":"F5 Team Total",
                                 "edge":edge,"ml":ml,"book":BOOK_LABELS.get(bk,bk),
                                 "model_p":model_p,"mkt_p":mkt_p,"kelly":k,
@@ -939,24 +944,33 @@ elif page == "🎯 Bet Signals":
                 top_ribbon = '<span class="top-pick-ribbon">⭐ TOP PICK</span>' if rank == 0 else ""
                 conf_pct   = int(s["model_p"] * 100)
 
-                # Logo block — dual overlapping for game totals, single for everything else
-                abv2 = s.get("abv2")
-                if abv2:
-                    logo_html = f"""
-                      <div style="position:relative;width:60px;height:44px;flex-shrink:0">
-                        <img src="{logo_url(s['abv'])}" width="38"
-                             style="border-radius:50%;box-shadow:0 2px 10px rgba(0,0,0,0.5);
-                                    position:absolute;left:0;top:0;z-index:2;
-                                    border:2px solid rgba(0,0,0,0.4)"/>
-                        <img src="{logo_url(abv2)}" width="38"
-                             style="border-radius:50%;box-shadow:0 2px 10px rgba(0,0,0,0.5);
-                                    position:absolute;left:18px;top:0;z-index:1;
-                                    border:2px solid rgba(0,0,0,0.4)"/>
-                      </div>"""
-                else:
-                    logo_html = f"""
-                      <img src="{logo_url(s['abv'])}" width="44"
-                           style="border-radius:50%;box-shadow:0 2px 10px rgba(0,0,0,0.5);flex-shrink:0"/>"""
+                # DraftKings-style logo block: always both teams side by side,
+                # active team full opacity, opposing team dimmed.
+                # For game totals, both at full opacity (no active team).
+                a_abv  = s.get("away_abv", s["abv"])
+                h_abv  = s.get("home_abv", s["abv"])
+                mkt    = s.get("market","F5 ML")
+                is_total = mkt == "F5 Total"
+                # Determine which side is active to set opacity
+                away_op = "1.0" if (is_total or s["abv"] == a_abv) else "0.35"
+                home_op = "1.0" if (is_total or s["abv"] == h_abv) else "0.35"
+                logo_html = f"""
+                  <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+                    <div style="text-align:center;opacity:{away_op};transition:opacity 0.2s">
+                      <img src="{logo_url(a_abv)}" width="38"
+                           style="border-radius:6px;display:block;margin:0 auto"/>
+                      <div style="font-size:0.6rem;font-weight:800;color:#8ab4d4;
+                                  margin-top:3px;letter-spacing:0.04em">{a_abv.upper()}</div>
+                    </div>
+                    <div style="color:#3a4a5e;font-size:0.75rem;font-weight:700;
+                                margin-bottom:12px;padding:0 2px">@</div>
+                    <div style="text-align:center;opacity:{home_op};transition:opacity 0.2s">
+                      <img src="{logo_url(h_abv)}" width="38"
+                           style="border-radius:6px;display:block;margin:0 auto"/>
+                      <div style="font-size:0.6rem;font-weight:800;color:#8ab4d4;
+                                  margin-top:3px;letter-spacing:0.04em">{h_abv.upper()}</div>
+                    </div>
+                  </div>"""
 
                 st.markdown(f"""
                 <div class="{css}">
