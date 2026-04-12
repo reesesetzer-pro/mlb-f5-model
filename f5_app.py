@@ -2,7 +2,21 @@ import streamlit as st
 import requests
 import pandas as pd
 import json, os, math
-from datetime import datetime, date
+from datetime import datetime, date, timezone, timedelta
+
+# Eastern Time conversion — use zoneinfo (Python 3.9+) for proper DST handling;
+# fall back to a fixed seasonal offset if tzdata isn't available on the host.
+try:
+    from zoneinfo import ZoneInfo
+    _ET = ZoneInfo("America/New_York")
+    def _to_et(dt_utc: datetime) -> datetime:
+        return dt_utc.replace(tzinfo=timezone.utc).astimezone(_ET)
+except Exception:
+    _ET = None
+    def _to_et(dt_utc: datetime) -> datetime:
+        # MLB season: Mar–Nov = EDT (UTC-4), rest = EST (UTC-5)
+        offset = -4 if 3 <= dt_utc.month <= 11 else -5
+        return dt_utc.replace(tzinfo=timezone.utc) + timedelta(hours=offset)
 
 st.set_page_config(page_title="MLB F5 Model", page_icon="https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png", layout="wide",
                    initial_sidebar_state="expanded")
@@ -50,8 +64,9 @@ def get_abv(team_name):
     return TEAM_ABV.get(team_name, team_name[:3].lower())
 
 def fmt_time_et(dt):
-    """Cross-platform 12-hour time without leading zero (works on Linux + Windows)."""
-    return dt.strftime("%I:%M %p").lstrip("0") + " ET"
+    """Convert UTC datetime to Eastern and format as 12-hour time."""
+    dt_et = _to_et(dt)
+    return dt_et.strftime("%I:%M %p").lstrip("0") + " ET"
 
 # Park factors
 PARK_FACTORS = {
@@ -259,9 +274,9 @@ def fetch_games():
     params = {"apiKey":API_KEY,"regions":"us","markets":"h2h","oddsFormat":"american"}
     try:
         r = requests.get(url, params=params, timeout=15); r.raise_for_status()
-        data = r.json(); today = datetime.utcnow().date()
+        data = r.json(); today = _to_et(datetime.utcnow()).date()
         return [g for g in data
-                if datetime.strptime(g["commence_time"],"%Y-%m-%dT%H:%M:%SZ").date()==today], None
+                if _to_et(datetime.strptime(g["commence_time"],"%Y-%m-%dT%H:%M:%SZ")).date()==today], None
     except Exception as e: return [], str(e)
 
 @st.cache_data(ttl=300)
@@ -522,7 +537,7 @@ with st.sidebar:
     page = st.radio("", [
         "📋 Today's Slate","🎯 Bet Signals","✏️ SP Input","📈 Bet Tracker","🏟️ Park Factors","📊 Model Performance"])
     st.divider()
-    st.caption(f"🕐 {datetime.now().strftime('%I:%M %p')} · Season 2026")
+    st.caption(f"🕐 {_to_et(datetime.utcnow()).strftime('%I:%M %p')} ET · Season 2026")
     # Show last data sync status
     _status_path = "sync_status.json"
     if os.path.exists(_status_path):
