@@ -935,12 +935,13 @@ elif page == "🎯 Bet Signals":
             m3.metric("🟢 Solid (55-60%)",    len(solid))
             m4.metric("Total Rec. Wagers",   f"${sum(s['kelly'] for s in signals if s['edge']>=min_edge and s['ml']):,.0f}")
 
-            # ── Parlay of the Day ──────────────────────────────────────────────
-            # Prefer legs with odds in the +100 to +200 range (value dogs / near even)
-            # for a meaningful parlay payout. Fall back to any ML signal if needed.
-            ml_signals = [s for s in signals if s.get("market") == "F5 ML" and s["ml"] is not None]
-            value_legs  = [s for s in ml_signals if 90 <= float(s["ml"]) <= 220]
-            parlay_pool = value_legs if len(value_legs) >= 2 else ml_signals
+            # ── Double of the Day ──────────────────────────────────────────────
+            # Any market (ML, Spread, Total, Team Total) is eligible.
+            # Prefer legs with odds in the +90 to +220 range for meaningful payout.
+            # Fall back to any signal with a real line if no value-range picks exist.
+            all_bettable = [s for s in signals if s["ml"] is not None]
+            value_legs   = [s for s in all_bettable if 90 <= float(s["ml"]) <= 220]
+            parlay_pool  = value_legs if len(value_legs) >= 2 else all_bettable
 
             # Pick the two highest-confidence legs from different games
             seen_games, parlay_legs = set(), []
