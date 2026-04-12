@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 import pandas as pd
-import json, os
+import json, os, math
 from datetime import datetime, date
 
 st.set_page_config(page_title="MLB F5 Model", page_icon="⚾", layout="wide",
@@ -44,6 +44,10 @@ TEAM_ABV = {
 
 def get_abv(team_name):
     return TEAM_ABV.get(team_name, team_name[:3].lower())
+
+def fmt_time_et(dt):
+    """Cross-platform 12-hour time without leading zero (works on Linux + Windows)."""
+    return dt.strftime("%I:%M %p").lstrip("0") + " ET"
 
 # Park factors
 PARK_FACTORS = {
@@ -396,7 +400,6 @@ def calc_model_run_diff(model_away_prob, away_sp_score, home_sp_score,
     return round(0.60 * prob_diff + 0.40 * comp_diff, 3)
 
 def _norm_cdf(x):
-    import math
     return (1 + math.erf(x / math.sqrt(2))) / 2
 
 def cover_prob(model_diff, spread_line, sigma=2.6):
@@ -565,7 +568,7 @@ if page == "📋 Today's Slate":
             odds_data = fetch_f5(game["id"], away, home)
             try:
                 dt = datetime.strptime(game["commence_time"],"%Y-%m-%dT%H:%M:%SZ")
-                time_et = dt.strftime("%#I:%M %p") + " ET"
+                time_et = fmt_time_et(dt)
             except: time_et = ""
 
             # Get enriched data from cache
@@ -682,7 +685,7 @@ elif page == "🎯 Bet Signals":
             odds_data = fetch_f5(game["id"], away, home)
             try:
                 dt = datetime.strptime(game["commence_time"],"%Y-%m-%dT%H:%M:%SZ")
-                time_et = dt.strftime("%#I:%M %p")+" ET"
+                time_et = fmt_time_et(dt)
             except: time_et=""
 
             c_data  = cache_by_away.get(away, cache_by_home.get(home,{}))
