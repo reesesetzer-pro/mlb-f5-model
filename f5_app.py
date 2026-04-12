@@ -8,7 +8,7 @@ st.set_page_config(page_title="MLB F5 Model", page_icon="⚾", layout="wide",
                    initial_sidebar_state="expanded")
 
 # ── CONSTANTS ─────────────────────────────────────────────────────────────────
-API_KEY = "40cfbba84e52cd6da31272d4ac287966"
+API_KEY = st.secrets.get("ODDS_API_KEY", "40cfbba84e52cd6da31272d4ac287966")
 SPORT   = "baseball_mlb"
 BOOKS   = "draftkings,fanduel,betmgm,williamhill_us,espnbet"
 REGIONS = "us,us2"
@@ -339,33 +339,76 @@ def calc_pnl(row):
     except: return None
 
 # ── MULTI-MARKET MODEL MATH ───────────────────────────────────────────────────
-def calc_model_total(away_sp_score, home_sp_score, away_lu, home_lu, pf, ump_k):
-    """Estimate F5 total runs. League avg F5 ≈ 4.5 runs."""
+def calc_model_total(away_sp_score, home_sp_score, away_lu, home_lu, pf, ump_k,
+                     away_era=None, home_era=None):
+    """
+    Estimate F5 total runs. League avg F5 ≈ 4.5 runs.
+    Incorporates SP score, lineup quality, park factor, ump K tendency,
+    and SP ERA as a secondary validation signal.
+    """
     base   = 4.5
     avg_sp = ((away_sp_score or 50) + (home_sp_score or 50)) / 2
     avg_lu = ((away_lu or 50) + (home_lu or 50)) / 2
-    sp_adj  = 1 + (50 - avg_sp) / 100 * 0.40   # poor SP → more runs
-    lu_adj  = 1 + (avg_lu - 50)  / 100 * 0.25  # better lineup → more runs
-    ump_adj = 1 - abs(ump_k or 0) * 0.08        # high-K ump → fewer runs
-    return round(base * sp_adj * lu_adj * (pf or 1.0) * ump_adj, 2)
+
+    sp_adj  = 1 + (50 - avg_sp) / 100 * 0.42   # poor SP → more runs
+    lu_adj  = 1 + (avg_lu - 50)  / 100 * 0.28  # better lineup → more runs
+    ump_adj = 1 - (ump_k or 0) * 0.10           # high-K ump → fewer runs (directional)
+
+    # ERA validation: if SPs have high ERA, nudge total up slightly
+    if away_era and home_era:
+        avg_era = (away_era + home_era) / 2
+        era_adj = 1 + (avg_era - 4.20) / 100 * 0.15  # baseline ERA 4.20
+    else:
+        era_adj = 1.0
+
+    return round(base * sp_adj * lu_adj * (pf or 1.0) * ump_adj * era_adj, 2)
 
 def calc_model_team_totals(model_total, away_lu, home_lu, away_sp_score, home_sp_score):
-    """Split model total between the two teams."""
+    """
+    Split model total between teams.
+    Away scoring = f(away offense quality vs home pitching quality).
+    """
     a_off = (away_lu or 50); h_off = (home_lu or 50)
     h_pit = (home_sp_score or 50); a_pit = (away_sp_score or 50)
-    away_w = 0.5 + (a_off - h_pit) / 400
-    away_w = max(0.30, min(0.70, away_w))
+    # Away scores against home pitcher, weighted by offense quality
+    away_w = 0.5 + (a_off - h_pit) / 500 + (h_off - a_pit) / 500 * -1
+    away_w = max(0.32, min(0.68, away_w))
     return round(model_total * away_w, 2), round(model_total * (1 - away_w), 2)
+
+def calc_model_run_diff(model_away_prob, away_sp_score, home_sp_score,
+                        away_lu, home_lu, pf):
+    """
+    Estimate expected run differential (away − home) through 5 innings.
+    Uses both win probability and direct component differentials for a
+    more stable estimate than just probability conversion.
+    """
+    # Probability-based estimate: 10% prob gap ≈ 0.5 run differential
+    prob_diff = (model_away_prob - 0.5) * 5.0
+
+    # Component-based estimate
+    sp_diff  = ((away_sp_score or 50) - (home_sp_score or 50)) / 100 * 1.5
+    lu_diff  = ((away_lu or 50) - (home_lu or 50)) / 100 * 0.8
+    # Home field small advantage (~0.15 runs/game through 5)
+    hfa      = -0.15
+    comp_diff = sp_diff + lu_diff + hfa
+
+    # Blend: 60% probability signal, 40% component signal
+    return round(0.60 * prob_diff + 0.40 * comp_diff, 3)
 
 def _norm_cdf(x):
     import math
     return (1 + math.erf(x / math.sqrt(2))) / 2
 
-def cover_prob(model_diff, spread_line, sigma=2.8):
-    """P(away covers spread_line). model_diff = expected away run advantage."""
+def cover_prob(model_diff, spread_line, sigma=2.6):
+    """
+    P(away covers spread_line) using normal distribution.
+    model_diff = expected away run advantage (positive = away wins).
+    sigma calibrated to F5 run distribution (~2.6 std dev).
+    """
     return round(_norm_cdf((model_diff - spread_line) / sigma), 4)
 
-def over_prob(model_total, line, sigma=2.5):
+def over_prob(model_total, line, sigma=2.3):
+    """P(total goes over line). sigma calibrated to F5 total distribution."""
     return round(_norm_cdf((model_total - line) / sigma), 4)
 
 # ── MODEL PICK TRACKING & LEARNING ───────────────────────────────────────────
@@ -453,6 +496,16 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
     st.caption(f"🕐 {datetime.now().strftime('%I:%M %p')} · Season 2026")
+    # Show last data sync status
+    _status_path = "sync_status.json"
+    if os.path.exists(_status_path):
+        try:
+            with open(_status_path) as _f: _s = json.load(_f)
+            _ok_icon = "🟢" if _s.get("ok") else "🔴"
+            _ts = _s.get("last_sync","")[:16]
+            st.caption(f"{_ok_icon} Data synced: {_ts}")
+            if _s.get("games_today"): st.caption(f"📅 {_s['games_today']} games today")
+        except: pass
     st.divider()
     st.markdown("**💰 Bankroll**")
     bankroll   = st.number_input("Bankroll ($)", value=1000, step=100, min_value=100, label_visibility="collapsed")
@@ -696,7 +749,7 @@ elif page == "🎯 Bet Signals":
                                   for b in spread_books if "away" in odds_data["spread"][b] and odds_data["spread"][b]["away"].get("line") is not None]
                 if all_away_lines:
                     consensus_spread = sum(all_away_lines)/len(all_away_lines)
-                    model_diff = (model_away - 0.5) * 5  # rough: 10% prob ≈ 0.5 runs
+                    model_diff = calc_model_run_diff(model_away, asp, hsp, away_lu, home_lu, pf)
                     # Away covers (favorite or dog)
                     model_cover_away = cover_prob(model_diff, consensus_spread)
                     # Best spread odds per side
@@ -735,7 +788,8 @@ elif page == "🎯 Bet Signals":
                              for b in total_books if odds_data["total"][b].get("over_line") is not None]
                 if all_lines:
                     consensus_total = sum(all_lines)/len(all_lines)
-                    model_t = calc_model_total(asp, hsp, away_lu, home_lu, pf, ump_k)
+                    model_t = calc_model_total(asp, hsp, away_lu, home_lu, pf, ump_k,
+                                           away_sp.get("era"), home_sp.get("era"))
                     over_p  = over_prob(model_t, consensus_total)
                     under_p = 1 - over_p
 
@@ -765,7 +819,8 @@ elif page == "🎯 Bet Signals":
 
             # ── F5 Team Total signals ─────────────────────────────────────────
             tt_books = [b for b in BOOK_LABELS if b in odds_data["team_total"]]
-            model_t = calc_model_total(asp, hsp, away_lu, home_lu, pf, ump_k)
+            model_t = calc_model_total(asp, hsp, away_lu, home_lu, pf, ump_k,
+                                       away_sp.get("era"), home_sp.get("era"))
             m_away_tt, m_home_tt = calc_model_team_totals(model_t, away_lu, home_lu, asp, hsp)
 
             if tt_books:
@@ -998,52 +1053,164 @@ elif page == "✏️ SP Input":
 # PAGE: BET TRACKER
 # ══════════════════════════════════════════════════════════════════════════════
 elif page == "📈 Bet Tracker":
-    st.title("📈 Season Bet Tracker & P&L")
-    if not tracker_df.empty:
-        settled = tracker_df[tracker_df["Result"].isin(["WIN","LOSS","PUSH"])]
-        wins = len(settled[settled["Result"]=="WIN"])
-        losses = len(settled[settled["Result"]=="LOSS"])
-        pending = len(tracker_df[tracker_df["Result"]=="PENDING"])
+    st.markdown("""
+    <div style="background:linear-gradient(135deg,#0c1e42 0%,#0a1a10 100%);
+                border-radius:16px;padding:24px 28px;margin-bottom:20px;
+                border:1px solid rgba(46,182,100,0.25);box-shadow:0 8px 32px rgba(0,0,0,0.4)">
+      <div style="font-size:1.6rem;font-weight:800;letter-spacing:-0.02em">📈 Bet Tracker</div>
+      <div style="font-size:0.9rem;color:#6abf88;margin-top:4px">Season P&amp;L · Win Rate · CLV · Streaks</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    if tracker_df.empty:
+        st.info("No bets logged yet. Log bets from the Bet Signals page.")
+    else:
         tracker_df["Profit_Loss"] = tracker_df.apply(
             lambda r: calc_pnl(r) if r["Result"] in ["WIN","LOSS","PUSH"] else None, axis=1)
-        net = tracker_df["Profit_Loss"].sum()
-        wag = tracker_df["Wager"].astype(float).sum()
-        roi = (net/wag*100) if wag>0 else 0
-        c1,c2,c3,c4,c5,c6 = st.columns(6)
+        settled = tracker_df[tracker_df["Result"].isin(["WIN","LOSS","PUSH"])]
+        wins    = len(settled[settled["Result"]=="WIN"])
+        losses  = len(settled[settled["Result"]=="LOSS"])
+        pending = len(tracker_df[tracker_df["Result"]=="PENDING"])
+        n       = wins + losses
+        net     = tracker_df["Profit_Loss"].dropna().sum()
+        wag     = tracker_df["Wager"].astype(float).sum()
+        roi     = (net/wag*100) if wag>0 else 0
+
+        # Streak
+        streak_val, streak_type = 0, ""
+        for res in reversed(tracker_df["Result"].tolist()):
+            if res == "PENDING": continue
+            if streak_val == 0: streak_type = res
+            if res == streak_type: streak_val += 1
+            else: break
+        streak_txt = f"{'🔥' if streak_type=='WIN' else '❄️'} {streak_val} {streak_type}" if streak_val > 0 else "—"
+
+        c1,c2,c3,c4,c5,c6,c7 = st.columns(7)
         c1.metric("Total Bets",  len(tracker_df))
         c2.metric("Record",      f"{wins}-{losses}")
-        c3.metric("Pending",     pending)
-        c4.metric("Net P&L",     f"${net:+,.2f}")
-        c5.metric("Wagered",     f"${wag:,.2f}")
-        c6.metric("ROI",         f"{roi:+.1f}%")
-        if wins+losses>0:
-            st.progress(wins/(wins+losses), text=f"Win Rate: {wins/(wins+losses)*100:.1f}%")
+        c3.metric("Win Rate",    f"{wins/n*100:.1f}%" if n>0 else "—")
+        c4.metric("Net P&L",     f"${net:+,.2f}", delta_color="normal")
+        c5.metric("ROI",         f"{roi:+.1f}%")
+        c6.metric("Pending",     pending)
+        c7.metric("Streak",      streak_txt)
+
+        if n > 0:
+            st.progress(wins/n, text=f"Win Rate: {wins/n*100:.1f}% ({wins}-{losses})")
+
         st.divider()
 
-    pending_df = tracker_df[tracker_df["Result"]=="PENDING"] if not tracker_df.empty else pd.DataFrame()
-    st.subheader("✏️ Update Results")
-    if pending_df.empty: st.caption("No pending bets.")
-    else:
-        for idx,row in pending_df.iterrows():
-            with st.expander(f"{row['Date']} — {row['Bet_Side']} @ {row['Bet_ML']}"):
-                r1,r2,r3 = st.columns(3)
-                result  = r1.selectbox("Result",["PENDING","WIN","LOSS","PUSH"],key=f"r{idx}")
-                closing = r2.number_input("Closing ML",value=0,key=f"c{idx}")
-                score   = r3.text_input("F5 Score",key=f"s{idx}")
-                if st.button("Update",key=f"u{idx}"):
-                    tracker_df.at[idx,"Result"]=result
-                    tracker_df.at[idx,"Closing_ML"]=closing if closing else ""
-                    tracker_df.at[idx,"F5_Score"]=score
-                    if closing and row["Bet_ML"]:
-                        tracker_df.at[idx,"CLV"]=float(str(row["Bet_ML"]).replace("+",""))-closing
-                    save_tracker(tracker_df); st.success("Updated!"); st.rerun()
+        # ── P&L Chart ────────────────────────────────────────────────────────
+        chart_df = tracker_df[tracker_df["Profit_Loss"].notna()].copy()
+        if not chart_df.empty:
+            chart_df = chart_df.reset_index(drop=True)
+            chart_df["Cumulative P&L"] = chart_df["Profit_Loss"].cumsum()
+            chart_df["Bet #"] = chart_df.index + 1
 
-    st.divider(); st.subheader("📋 Full Log")
-    if tracker_df.empty: st.info("No bets logged yet.")
-    else:
-        st.dataframe(tracker_df, hide_index=True, use_container_width=True)
-        st.download_button("📥 Download CSV",
-            tracker_df.to_csv(index=False).encode(),"f5_bets.csv","text/csv")
+            tab1, tab2, tab3 = st.tabs(["📈 Cumulative P&L", "📊 Win Rate by Market", "📉 CLV Tracker"])
+
+            with tab1:
+                st.line_chart(chart_df.set_index("Bet #")["Cumulative P&L"],
+                              use_container_width=True, height=280)
+                # Annotate best/worst points
+                peak     = chart_df["Cumulative P&L"].max()
+                trough   = chart_df["Cumulative P&L"].min()
+                col1,col2 = st.columns(2)
+                col1.metric("Peak P&L",   f"${peak:+,.2f}")
+                col2.metric("Max Drawdown",f"${trough:+,.2f}")
+
+            with tab2:
+                mkt_grp = settled.groupby("Market").apply(
+                    lambda g: pd.Series({
+                        "Bets":   len(g),
+                        "Wins":   sum(g["Result"]=="WIN"),
+                        "Win%":   round(sum(g["Result"]=="WIN")/len(g)*100,1) if len(g)>0 else 0,
+                        "P&L":    round(g["Profit_Loss"].dropna().sum(),2),
+                    })).reset_index() if "Market" in settled.columns else pd.DataFrame()
+                if not mkt_grp.empty:
+                    st.dataframe(mkt_grp, hide_index=True, use_container_width=True)
+                    st.bar_chart(mkt_grp.set_index("Market")["Win%"], height=220)
+                else:
+                    st.caption("Log bets with market type to see breakdown.")
+
+            with tab3:
+                clv_df = settled[settled["CLV"].notna() & (settled["CLV"] != "")].copy()
+                if not clv_df.empty:
+                    try:
+                        clv_df["CLV"] = pd.to_numeric(clv_df["CLV"], errors="coerce")
+                        clv_df = clv_df.dropna(subset=["CLV"])
+                        avg_clv = clv_df["CLV"].mean()
+                        pos_clv = len(clv_df[clv_df["CLV"] > 0])
+                        st.metric("Avg CLV", f"{avg_clv:+.1f}", help="Positive = beat closing line")
+                        st.metric("% Positive CLV", f"{pos_clv/len(clv_df)*100:.0f}%")
+                        clv_df_reset = clv_df.reset_index(drop=True)
+                        clv_df_reset["Bet #"] = clv_df_reset.index + 1
+                        st.bar_chart(clv_df_reset.set_index("Bet #")["CLV"], height=220)
+                    except: st.caption("CLV data unavailable.")
+                else:
+                    st.caption("Enter closing line when settling bets to track CLV.")
+
+            st.divider()
+
+        # ── Quick settle ─────────────────────────────────────────────────────
+        pending_df = tracker_df[tracker_df["Result"]=="PENDING"]
+        if not pending_df.empty:
+            st.subheader(f"✏️ Settle Results ({len(pending_df)} pending)")
+
+            # One-click settle: table with inline buttons
+            for idx, row in pending_df.iterrows():
+                mkt = row.get("Market","F5 ML")
+                ml_str = f"{'+' if float(str(row['Bet_ML']).replace('+',''))>0 else ''}{row['Bet_ML']}" if row.get("Bet_ML") else "—"
+                with st.container():
+                    st.markdown(f"""
+                    <div style="background:rgba(15,28,58,0.6);border:1px solid rgba(46,117,182,0.2);
+                                border-radius:10px;padding:12px 16px;margin-bottom:6px">
+                      <span style="font-weight:700">{row['Bet_Side']}</span>
+                      <span style="color:#7a9cbf;margin:0 8px">·</span>
+                      <span style="color:#ffb74d">{mkt}</span>
+                      <span style="color:#7a9cbf;margin:0 8px">·</span>
+                      {ml_str}
+                      <span style="color:#7a9cbf;margin:0 8px">·</span>
+                      ${float(row['Wager']):.0f} wager
+                      <span style="color:#7a9cbf;font-size:0.8rem;margin-left:8px">{row['Date']}</span>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    s1,s2,s3,s4,s5 = st.columns([1,1,1,1,2])
+                    if s1.button("✅ WIN",  key=f"w{idx}", use_container_width=True):
+                        tracker_df.at[idx,"Result"]="WIN"; save_tracker(tracker_df); st.rerun()
+                    if s2.button("❌ LOSS", key=f"l{idx}", use_container_width=True):
+                        tracker_df.at[idx,"Result"]="LOSS"; save_tracker(tracker_df); st.rerun()
+                    if s3.button("➖ PUSH", key=f"p{idx}", use_container_width=True):
+                        tracker_df.at[idx,"Result"]="PUSH"; save_tracker(tracker_df); st.rerun()
+                    closing = s4.number_input("Closing ML", value=0, key=f"cl{idx}", label_visibility="collapsed")
+                    score   = s5.text_input("F5 Score (e.g. 3-1)", key=f"sc{idx}", label_visibility="collapsed",
+                                            placeholder="F5 score (optional)")
+                    if closing:
+                        try:
+                            tracker_df.at[idx,"Closing_ML"] = closing
+                            tracker_df.at[idx,"CLV"] = float(str(row["Bet_ML"]).replace("+","")) - closing
+                            save_tracker(tracker_df)
+                        except: pass
+                    if score:
+                        tracker_df.at[idx,"F5_Score"] = score; save_tracker(tracker_df)
+
+            st.divider()
+
+        # ── Full log ──────────────────────────────────────────────────────────
+        st.subheader("📋 Full Log")
+        display_cols = ["Date","Game","Bet_Side","Market","Book","Bet_ML",
+                        "Model_Prob","Edge_Pct","Wager","Result","Profit_Loss","CLV","Notes"]
+        show_cols = [c for c in display_cols if c in tracker_df.columns]
+        st.dataframe(tracker_df[show_cols].sort_values("Date",ascending=False)
+                     if not tracker_df.empty else tracker_df,
+                     hide_index=True, use_container_width=True)
+        col1, col2 = st.columns(2)
+        col1.download_button("📥 Download CSV",
+            tracker_df.to_csv(index=False).encode(), "f5_bets.csv", "text/csv")
+        with col2:
+            up = st.file_uploader("📤 Import CSV", type="csv", label_visibility="collapsed")
+            if up:
+                imported = pd.read_csv(up)
+                save_tracker(imported); st.success("✅ Imported!"); st.rerun()
 
 # ══════════════════════════════════════════════════════════════════════════════
 # PAGE: PARK FACTORS
