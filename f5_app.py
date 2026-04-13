@@ -40,6 +40,7 @@ TRACKER_FILE      = "bet_tracker.csv"
 SP_FILE           = "sp_data.csv"
 CACHE_FILE        = "game_cache.json"
 MODEL_PICKS_FILE  = "model_picks.csv"
+SNAPSHOT_FILE     = "odds_snapshot.json"
 
 # ESPN logo URL builder
 def logo_url(abv):
@@ -344,6 +345,130 @@ def fetch_f5(event_id, away, home):
     except: pass
     return result
 
+@st.cache_data(ttl=60)
+def fetch_live_scores():
+    """MLB Stats API live/final scores — free, no key needed. Refreshes every 60s."""
+    today = _to_et(datetime.utcnow()).strftime("%Y-%m-%d")
+    try:
+        r = requests.get(
+            f"https://statsapi.mlb.com/api/v1/schedule?sportId=1&date={today}&hydrate=linescore",
+            timeout=10); r.raise_for_status()
+        scores = {}
+        for de in r.json().get("dates", []):
+            for g in de.get("games", []):
+                away = g["teams"]["away"]["team"]["name"]
+                home = g["teams"]["home"]["team"]["name"]
+                status    = g.get("status", {})
+                state     = status.get("abstractGameState", "Preview")
+                ls        = g.get("linescore", {})
+                innings   = ls.get("innings", [])
+                f5a = sum((i.get("away") or {}).get("runs", 0) or 0 for i in innings[:5])
+                f5h = sum((i.get("home") or {}).get("runs", 0) or 0 for i in innings[:5])
+                fi_a = (innings[0].get("away") or {}).get("runs", 0) or 0 if innings else 0
+                fi_h = (innings[0].get("home") or {}).get("runs", 0) or 0 if innings else 0
+                cur  = ls.get("currentInning", 0)
+                half = ls.get("inningHalf", "")
+                f5_done = (state == "Final") or (cur > 5) or (cur == 5 and half in ("Bottom","End","Middle"))
+                scores[f"{away} @ {home}"] = {
+                    "state": state, "detail": status.get("detailedState",""),
+                    "inning": cur, "inning_half": half,
+                    "away_score": g["teams"]["away"].get("score",0) or 0,
+                    "home_score": g["teams"]["home"].get("score",0) or 0,
+                    "f5_away": f5a, "f5_home": f5h, "f5_total": f5a+f5h,
+                    "fi_away": fi_a, "fi_home": fi_h, "fi_total": fi_a+fi_h,
+                    "f5_done": f5_done, "innings_played": len(innings),
+                }
+        return scores
+    except: return {}
+
+@st.cache_data(ttl=300)
+def fetch_probable_pitchers():
+    """Today's probable starters from MLB Stats API."""
+    today = _to_et(datetime.utcnow()).strftime("%Y-%m-%d")
+    try:
+        r = requests.get(
+            f"https://statsapi.mlb.com/api/v1/schedule?sportId=1&date={today}&hydrate=probablePitcher",
+            timeout=10); r.raise_for_status()
+        pitchers = {}
+        for de in r.json().get("dates", []):
+            for g in de.get("games", []):
+                for side in ("away","home"):
+                    team = g["teams"][side]["team"]["name"]
+                    pp   = g["teams"][side].get("probablePitcher", {})
+                    if pp: pitchers[team] = pp.get("fullName","")
+        return pitchers
+    except: return {}
+
+def load_odds_snapshot():
+    today = _to_et(datetime.utcnow()).strftime("%Y-%m-%d")
+    if os.path.exists(SNAPSHOT_FILE):
+        try:
+            with open(SNAPSHOT_FILE) as f: snap = json.load(f)
+            if snap.get("date") == today: return snap.get("odds", {})
+        except: pass
+    return {}
+
+def save_odds_snapshot(odds_dict):
+    today = _to_et(datetime.utcnow()).strftime("%Y-%m-%d")
+    try:
+        with open(SNAPSHOT_FILE,"w") as f: json.dump({"date":today,"odds":odds_dict},f)
+    except: pass
+
+def get_line_movement(game_key, book_key, side, current_price, snapshot):
+    """Returns (delta, 'better'|'worse'|None). Higher American odds = better for bettor."""
+    try:
+        opening = snapshot.get(game_key,{}).get(book_key,{}).get(side)
+        if opening is None or opening == current_price: return 0, None
+        delta = int(current_price) - int(opening)
+        return abs(delta), ("better" if delta > 0 else "worse")
+    except: return 0, None
+
+def auto_settle_f5(df, live_scores):
+    """Mark PENDING F5 bets WIN/LOSS/PUSH when the F5 is final. Returns (df, changed)."""
+    changed = False
+    for idx, row in df[df["Result"]=="PENDING"].iterrows():
+        game = str(row.get("Game",""))
+        if " @ " not in game: continue
+        ls = live_scores.get(game)
+        if not ls or not ls["f5_done"]: continue
+        away, home = game.split(" @ ",1)
+        market = str(row.get("Market",""))
+        side   = str(row.get("Bet_Side",""))
+        f5a, f5h = ls["f5_away"], ls["f5_home"]
+        result = None
+        if market == "F5 ML":
+            winner = away if f5a > f5h else (home if f5h > f5a else None)
+            if winner is None: result = "PUSH"
+            elif winner == away and ("Away" in side or away in side): result = "WIN"
+            elif winner == home and ("Home" in side or home in side): result = "WIN"
+            else: result = "LOSS"
+        elif market == "F5 Total":
+            total = f5a + f5h
+            try:
+                line = float(row.get("Market_Line") or str(side).split()[-1])
+                if   "Over"  in side: result = "WIN" if total>line else ("PUSH" if total==line else "LOSS")
+                elif "Under" in side: result = "WIN" if total<line else ("PUSH" if total==line else "LOSS")
+            except: pass
+        elif market == "F5 Spread":
+            diff = f5a - f5h
+            try:
+                line = float(row.get("Market_Line") or 0)
+                if   away in side: result = "WIN" if diff>-line else ("PUSH" if diff==-line else "LOSS")
+                elif home in side: result = "WIN" if diff<-line else ("PUSH" if diff==-line else "LOSS")
+            except: pass
+        elif market == "NRFI/YRFI":
+            fi = ls["fi_total"]
+            if   "NRFI" in side: result = "WIN" if fi==0 else "LOSS"
+            elif "YRFI" in side: result = "WIN" if fi>0  else "LOSS"
+        elif market == "1st Inn U1.5":
+            fi = ls["fi_total"]
+            result = "WIN" if fi <= 1 else "LOSS"
+        if result:
+            df.at[idx,"Result"]  = result
+            df.at[idx,"F5_Score"]= f"{f5a}-{f5h}"
+            changed = True
+    return df, changed
+
 def load_sp_data():
     if os.path.exists(SP_FILE): return pd.read_csv(SP_FILE)
     return pd.DataFrame(columns=["Team","Pitcher","Hand","xFIP","K_BB_pct","Hard_Hit_pct","SP_Score"])
@@ -620,6 +745,9 @@ tracker_df       = load_tracker()
 cache            = load_cache()
 model_picks_df   = load_model_picks()
 cal_map          = get_calibration_map(model_picks_df)
+live_scores      = fetch_live_scores()
+probable_pitchers= fetch_probable_pitchers()
+odds_snapshot    = load_odds_snapshot()
 
 # Build cache lookup by team name
 cache_by_away = {g["away_team"]: g for g in cache}
@@ -658,8 +786,19 @@ if page == "📋 Today's Slate":
             except:
                 time_et = ""
                 game_started = False
+            # Live score lookup
+            game_key = f"{away} @ {home}"
+            ls = live_scores.get(game_key, {})
             if game_started:
-                time_et = "🔴 Live / Final"
+                if ls.get("state") == "Final":
+                    time_et = f"Final: {ls['away_score']}-{ls['home_score']}"
+                elif ls.get("state") == "Live":
+                    inn_label = f"{ls.get('inning_half','')[:3]} {ls.get('inning','')}".strip()
+                    time_et = f"🔴 {ls['away_score']}-{ls['home_score']}  {inn_label}"
+                    if ls.get("f5_done"):
+                        time_et += f"  |  F5: {ls['f5_away']}-{ls['f5_home']}"
+                else:
+                    time_et = "🔴 Live / Final"
 
             # Get enriched data from cache
             c_data = cache_by_away.get(away, cache_by_home.get(home, {}))
@@ -672,6 +811,14 @@ if page == "📋 Today's Slate":
             away_sp_data = c_data.get("away_sp",{})
             home_sp_data = c_data.get("home_sp",{})
 
+            # SP scratch detection
+            cached_away_sp = (away_sp_data.get("name","") or "").split()[-1].lower()
+            cached_home_sp = (home_sp_data.get("name","") or "").split()[-1].lower()
+            mlb_away_sp    = (probable_pitchers.get(away,"") or "").split()[-1].lower()
+            mlb_home_sp    = (probable_pitchers.get(home,"") or "").split()[-1].lower()
+            away_sp_scratch = bool(mlb_away_sp and cached_away_sp and mlb_away_sp != cached_away_sp)
+            home_sp_scratch = bool(mlb_home_sp and cached_home_sp and mlb_home_sp != cached_home_sp)
+
             with st.container():
                 st.markdown('<div class="game-card">', unsafe_allow_html=True)
                 # Team logos + header
@@ -682,7 +829,14 @@ if page == "📋 Today's Slate":
                 with c2:
                     sp = away_sp_data
                     if sp:
-                        st.caption(f"🎯 SP: {sp.get('name','TBD')}")
+                        sp_name = sp.get('name','TBD')
+                        mlb_name = probable_pitchers.get(away,"")
+                        if away_sp_scratch:
+                            st.markdown(f"⚠️ **SP CHANGE**")
+                            st.caption(f"Cache: {sp_name}")
+                            st.caption(f"MLB: **{mlb_name}**")
+                        else:
+                            st.caption(f"🎯 SP: {sp_name}")
                         if sp.get('sp_score'): st.caption(f"Score: **{sp['sp_score']}**")
                         if sp.get('xfip'):     st.caption(f"xFIP: {sp['xfip']}")
                 with c3:
@@ -693,7 +847,14 @@ if page == "📋 Today's Slate":
                 with c4:
                     sp = home_sp_data
                     if sp:
-                        st.caption(f"🎯 SP: {sp.get('name','TBD')}")
+                        sp_name = sp.get('name','TBD')
+                        mlb_name = probable_pitchers.get(home,"")
+                        if home_sp_scratch:
+                            st.markdown(f"⚠️ **SP CHANGE**")
+                            st.caption(f"Cache: {sp_name}")
+                            st.caption(f"MLB: **{mlb_name}**")
+                        else:
+                            st.caption(f"🎯 SP: {sp_name}")
                         if sp.get('sp_score'): st.caption(f"Score: **{sp['sp_score']}**")
                         if sp.get('xfip'):     st.caption(f"xFIP: {sp['xfip']}")
                 with c5:
@@ -739,6 +900,17 @@ if page == "📋 Today's Slate":
                         if bvals: st.success(f"Best: **{'+' if max(bvals)>0 else ''}{max(bvals)}**")
                     else: st.caption("Lines not yet posted")
 
+                # F5 result banner (when 5 innings are in the books)
+                if ls.get("f5_done"):
+                    f5a_s, f5h_s = ls["f5_away"], ls["f5_home"]
+                    f5_winner = away if f5a_s > f5h_s else (home if f5h_s > f5a_s else "TIE")
+                    f5_color  = "#00e676" if f5_winner != "TIE" else "#ffb74d"
+                    st.markdown(f"""<div style="background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.3);
+                    border-radius:8px;padding:8px 14px;margin:6px 0;font-weight:700">
+                    F5 Result: <span style="color:{f5_color}">{away} {f5a_s} — {home} {f5h_s}
+                    {'  ·  Winner: '+f5_winner if f5_winner!='TIE' else '  ·  TIE'}</span></div>""",
+                    unsafe_allow_html=True)
+
                 # Totals
                 tots = [(BOOK_LABELS.get(b,b), odds_data["total"][b].get("over_line"))
                         for b in BOOK_LABELS
@@ -782,9 +954,22 @@ elif page == "🎯 Bet Signals":
             away = game["away_team"]; home = game["home_team"]
             abv_away = get_abv(away);  abv_home = get_abv(home)
             odds_data = fetch_f5(game["id"], away, home)
+            game_key  = f"{away} @ {home}"
             try:
                 time_et = fmt_time_et(dt)
             except: time_et=""
+
+            # Seed snapshot with today's opening lines (first time seen)
+            if game_key not in odds_snapshot:
+                snap_entry = {}
+                for bk in REC_BOOKS:
+                    bk_ml = odds_data["ml"].get(bk,{})
+                    snap_entry[bk] = {
+                        "away_ml": bk_ml.get("away"),
+                        "home_ml": bk_ml.get("home"),
+                    }
+                odds_snapshot[game_key] = snap_entry
+            _snapshot_dirty = True
 
             c_data  = cache_by_away.get(away, cache_by_home.get(home,{}))
             pf           = c_data.get("park_factor", 1.0)
@@ -795,6 +980,14 @@ elif page == "🎯 Bet Signals":
             home_lu      = c_data.get("home_lineup_score")
             away_sp      = c_data.get("away_sp", {})
             home_sp      = c_data.get("home_sp", {})
+
+            # SP scratch detection for signal cards
+            _ca_sp = (away_sp.get("name","") or "").split()[-1].lower()
+            _ch_sp = (home_sp.get("name","") or "").split()[-1].lower()
+            _ma_sp = (probable_pitchers.get(away,"") or "").split()[-1].lower()
+            _mh_sp = (probable_pitchers.get(home,"") or "").split()[-1].lower()
+            away_scratched = bool(_ma_sp and _ca_sp and _ma_sp != _ca_sp)
+            home_scratched = bool(_mh_sp and _ch_sp and _mh_sp != _ch_sp)
 
             # Base SP scores (pre-computed in cache with barrel/velo if available)
             asp = away_sp.get("sp_score") or 50
@@ -880,6 +1073,8 @@ elif page == "🎯 Bet Signals":
                         "weather": wx,
                         "park_factor":pf,"ump_k":ump_k,"ump_zone":ump_zone,
                         "model_line":"","mkt_line":"",
+                        "sp_scratch": away_scratched if team==away else home_scratched,
+                        "game_key": game_key,
                     })
 
             # ── F5 Spread signals ─────────────────────────────────────────────
@@ -1065,6 +1260,10 @@ elif page == "🎯 Bet Signals":
                             "model_line":None,"mkt_line":None,
                         })
 
+        # Persist snapshot (only writes if new games were added today)
+        if odds_snapshot:
+            save_odds_snapshot(odds_snapshot)
+
         # ── DISPLAY ───────────────────────────────────────────────────────────
         if not signals:
             st.info("No signals found on today's slate with current data.")
@@ -1227,6 +1426,65 @@ elif page == "🎯 Bet Signals":
 
             st.divider()
 
+            # ── Parlay Builder ────────────────────────────────────────────────
+            with st.expander("🏗️ Parlay Builder  —  pick your own legs", expanded=False):
+                bettable = [s for s in signals if s["ml"] is not None and s["edge"] >= 0]
+                leg_labels = [f"[{s['market']}] {s['side']}  {'+' if float(s['ml'])>0 else ''}{s['ml']} @ {s['book']}  ({int(s['model_p']*100)}%)" for s in bettable]
+                selected_labels = st.multiselect("Select 2–6 legs", leg_labels, max_selections=6)
+                selected = [bettable[leg_labels.index(lb)] for lb in selected_labels if lb in leg_labels]
+
+                if len(selected) >= 2:
+                    def _to_dec(american):
+                        o = float(american)
+                        return (o/100)+1 if o>0 else (100/abs(o))+1
+                    def _dec_to_amr(dec):
+                        return f"+{int((dec-1)*100)}" if dec>=2 else f"{int(-100/(dec-1))}"
+
+                    parlay_dec  = 1.0
+                    parlay_prob = 1.0
+                    for leg in selected:
+                        parlay_dec  *= _to_dec(leg["ml"])
+                        parlay_prob *= leg["model_p"]
+
+                    parlay_amr    = _dec_to_amr(parlay_dec)
+                    parlay_edge   = parlay_prob - 1/parlay_dec
+                    parlay_payout = round((parlay_dec-1)*100, 2)
+
+                    pc1,pc2,pc3,pc4 = st.columns(4)
+                    pc1.metric("Legs",         len(selected))
+                    pc2.metric("Parlay Odds",  parlay_amr)
+                    pc3.metric("Model Hit %",  f"{parlay_prob*100:.1f}%")
+                    pc4.metric("Edge",         f"{parlay_edge*100:+.1f}%",
+                               delta_color="normal" if parlay_edge>0 else "inverse")
+                    st.caption(f"Win on $100 bet: **${parlay_payout:,.0f}**")
+
+                    leg_summary = " + ".join([f"{s['side']} ({'+' if float(s['ml'])>0 else ''}{s['ml']})" for s in selected])
+                    if st.button("📋 Log Parlay to Tracker", key="log_custom_parlay", use_container_width=True):
+                        today_str = date.today().strftime("%m/%d/%Y")
+                        games_str = " + ".join(list(dict.fromkeys(s["game"] for s in selected)))
+                        new_row = {
+                            "Date": today_str, "Game": games_str,
+                            "Bet_Side": f"Parlay: {leg_summary}",
+                            "Market": "Parlay", "Book": " / ".join(s["book"] for s in selected),
+                            "Bet_ML": parlay_amr,
+                            "Model_Prob": round(parlay_prob*100,1),
+                            "Market_Implied": round(1/parlay_dec*100,1),
+                            "Edge_Pct": round(parlay_edge*100,1),
+                            "Park_Factor":"","Ump_K_Boost":"","Away_LU_Score":"","Home_LU_Score":"",
+                            "Wager": 100, "F5_Score":"","Result":"PENDING",
+                            "Profit_Loss":"","Closing_ML":"","CLV":"",
+                            "Notes": f"Custom {len(selected)}-leg parlay",
+                        }
+                        tracker_df = pd.concat([tracker_df, pd.DataFrame([new_row])], ignore_index=True)
+                        save_tracker(tracker_df)
+                        st.success("✅ Parlay logged!")
+                elif len(selected) == 1:
+                    st.info("Add at least one more leg.")
+                else:
+                    st.caption("Select 2–6 legs above to build a parlay.")
+
+            st.divider()
+
             market_filter = st.multiselect("Filter by Market",
                 ["F5 ML","F5 Spread","F5 Total","F5 Team Total","NRFI/YRFI","1st Inn U1.5"],
                 default=["F5 ML","F5 Spread","F5 Total","F5 Team Total","NRFI/YRFI","1st Inn U1.5"])
@@ -1315,6 +1573,20 @@ elif page == "🎯 Bet Signals":
                     line_txt = ""
                 top_ribbon   = '<span class="top-pick-ribbon">⭐ TOP PICK</span>' if rank == 0 else ""
                 sharp_ref_txt = ""
+                # Line movement pill
+                _mv_delta, _mv_dir = get_line_movement(
+                    s.get("game_key", s["game"]),
+                    next((k for k,v in BOOK_LABELS.items() if v==s["book"]), ""),
+                    "away_ml" if "away" in s.get("side","").lower() else "home_ml",
+                    s["ml"] or 0, odds_snapshot)
+                if _mv_delta and _mv_delta >= 5:
+                    _mv_color = "#00e676" if _mv_dir=="better" else "#ff7043"
+                    _mv_arrow = "▲" if _mv_dir=="better" else "▼"
+                    move_txt = f'<span class="metric-pill" style="border-color:{_mv_color};color:{_mv_color}">{_mv_arrow}{_mv_delta} moved</span>'
+                else:
+                    move_txt = ""
+                # SP scratch warning pill
+                scratch_txt = '<span class="metric-pill" style="border-color:#ff5722;color:#ff5722;font-weight:700">⚠️ SP CHANGE</span>' if s.get("sp_scratch") else ""
                 conf_pct   = int(s["model_p"] * 100)
 
                 # DraftKings-style logo block: always both teams side by side,
@@ -1349,8 +1621,10 @@ elif page == "🎯 Bet Signals":
                 # lines that would terminate Streamlit/CommonMark's HTML block mode.
                 pills_html = "".join(filter(None, [
                     f'<span class="{mkt_cls}">{mkt}</span>',
+                    scratch_txt,
                     f'<span class="metric-pill" style="border-color:{edge_color};color:{edge_color}"><b>{edge_label}</b></span>',
                     f'<span class="metric-pill">+{ml_str} @ {s["book"]}</span>',
+                    move_txt,
                     f'<span class="metric-pill">Mkt: {s["mkt_p"]*100:.1f}%</span>',
                     f'<span class="metric-pill">SP: {s["sp_score"]:.0f}{lu_txt}</span>',
                     matchup_txt,
@@ -1437,6 +1711,82 @@ elif page == "🎯 Bet Signals":
 elif page == "📚 Best Bets":
     st.title("📚 Best Bets by Book")
     st.caption("Top model signals organized by sportsbook — see your best play at each book at a glance.")
+
+    # ── Line Shopping: per-game price grid ───────────────────────────────────
+    if games:
+        pregame = [g for g in games if datetime.strptime(g["commence_time"],"%Y-%m-%dT%H:%M:%SZ") > datetime.utcnow()]
+        if pregame:
+            with st.expander("🔍 Line Shopping — compare all books for a game", expanded=True):
+                game_names = [f"{g['away_team']} @ {g['home_team']}" for g in pregame]
+                sel_game_name = st.selectbox("Select game", game_names, label_visibility="collapsed")
+                sel_game = pregame[game_names.index(sel_game_name)]
+                _sa = sel_game["away_team"]; _sh = sel_game["home_team"]
+                _odds = fetch_f5(sel_game["id"], _sa, _sh)
+
+                # ML comparison
+                ml_rows = []
+                for bk, bn in BOOK_LABELS.items():
+                    bdata = _odds["ml"].get(bk, {})
+                    if bdata.get("away") or bdata.get("home"):
+                        aw = bdata.get("away"); hw = bdata.get("home")
+                        ml_rows.append({
+                            "Book": bn,
+                            f"{_sa[:12]} (Away)": f"{'+' if aw and aw>0 else ''}{aw}" if aw else "—",
+                            f"{_sh[:12]} (Home)": f"{'+' if hw and hw>0 else ''}{hw}" if hw else "—",
+                        })
+                if ml_rows:
+                    st.markdown("**F5 Moneyline**")
+                    ml_df = pd.DataFrame(ml_rows)
+                    # Highlight best odds in each column
+                    st.dataframe(ml_df, hide_index=True, use_container_width=True)
+                    # Best price callout
+                    aw_vals = {bn: _odds["ml"].get(bk,{}).get("away") for bk,bn in BOOK_LABELS.items() if _odds["ml"].get(bk,{}).get("away")}
+                    hw_vals = {bn: _odds["ml"].get(bk,{}).get("home") for bk,bn in BOOK_LABELS.items() if _odds["ml"].get(bk,{}).get("home")}
+                    if aw_vals:
+                        best_aw_bk = max(aw_vals, key=aw_vals.get)
+                        best_hw_bk = max(hw_vals, key=hw_vals.get) if hw_vals else None
+                        c1, c2 = st.columns(2)
+                        av = aw_vals[best_aw_bk]
+                        c1.success(f"Best Away: **{'+' if av>0 else ''}{av}** @ {best_aw_bk}")
+                        if best_hw_bk:
+                            hv = hw_vals[best_hw_bk]
+                            c2.success(f"Best Home: **{'+' if hv>0 else ''}{hv}** @ {best_hw_bk}")
+
+                # Spread comparison
+                sp_rows = []
+                for bk, bn in BOOK_LABELS.items():
+                    bdata = _odds["spread"].get(bk, {})
+                    aw = bdata.get("away",{}); hw = bdata.get("home",{})
+                    if aw.get("price") or hw.get("price"):
+                        sp_rows.append({
+                            "Book": bn,
+                            f"{_sa[:12]} Spread": f"{aw.get('line',''):+g} ({'+' if (aw.get('price') or 0)>0 else ''}{aw.get('price','')})" if aw.get("price") else "—",
+                            f"{_sh[:12]} Spread": f"{hw.get('line',''):+g} ({'+' if (hw.get('price') or 0)>0 else ''}{hw.get('price','')})" if hw.get("price") else "—",
+                        })
+                if sp_rows:
+                    st.markdown("**F5 Spread**")
+                    st.dataframe(pd.DataFrame(sp_rows), hide_index=True, use_container_width=True)
+
+                # Total + NRFI comparison
+                tot_rows = []
+                for bk, bn in BOOK_LABELS.items():
+                    td = _odds["total"].get(bk,{})
+                    fi = _odds["fi_total"].get(bk,{})
+                    if td.get("over_line") or fi.get("nrfi_price"):
+                        ov_p = td.get("over_price"); un_p = td.get("under_price")
+                        nrfi = fi.get("nrfi_price"); u15  = fi.get("u15_price")
+                        tot_rows.append({
+                            "Book": bn,
+                            f"F5 O{td.get('over_line','?')}": f"{'+' if ov_p and ov_p>0 else ''}{ov_p}" if ov_p else "—",
+                            f"F5 U{td.get('over_line','?')}": f"{'+' if un_p and un_p>0 else ''}{un_p}" if un_p else "—",
+                            "NRFI": f"{'+' if nrfi and nrfi>0 else ''}{nrfi}" if nrfi else "—",
+                            "1st U1.5": f"{'+' if u15 and u15>0 else ''}{u15}" if u15 else "—",
+                        })
+                if tot_rows:
+                    st.markdown("**F5 Total + 1st Inning**")
+                    st.dataframe(pd.DataFrame(tot_rows), hide_index=True, use_container_width=True)
+
+    st.divider()
 
     # Re-use signals from Bet Signals tab by running the same pipeline
     # We need signals already computed; they are in the same script scope
@@ -1733,6 +2083,15 @@ elif page == "📈 Bet Tracker":
                     st.caption("Enter closing line when settling bets to track CLV.")
 
             st.divider()
+
+        # ── Auto-settle ──────────────────────────────────────────────────────
+        if not tracker_df[tracker_df["Result"]=="PENDING"].empty and live_scores:
+            tracker_df, _auto_changed = auto_settle_f5(tracker_df, live_scores)
+            if _auto_changed:
+                save_tracker(tracker_df)
+                _auto_n = len([r for _,r in tracker_df.iterrows() if r["Result"] in ("WIN","LOSS","PUSH") and r.get("F5_Score")])
+                st.success(f"✅ Auto-settled {_auto_n} F5 result(s) from live scores.")
+                st.rerun()
 
         # ── Quick settle ─────────────────────────────────────────────────────
         pending_df = tracker_df[tracker_df["Result"]=="PENDING"]
