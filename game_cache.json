@@ -188,15 +188,57 @@
     "home_team_abv": "PIT",
     "venue": "PNC Park",
     "park_factor": 0.96,
-    "lineup_confirmed": false,
-    "away_lineup_score": null,
-    "home_lineup_score": null,
-    "away_matchup_score": null,
-    "home_matchup_score": null,
-    "away_platoon_adv": null,
-    "home_platoon_adv": null,
-    "away_nrfi_top3": {},
-    "home_nrfi_top3": {},
+    "lineup_confirmed": true,
+    "away_lineup_score": 43.0,
+    "home_lineup_score": 44.6,
+    "away_matchup_score": 41.6,
+    "home_matchup_score": 51.5,
+    "away_platoon_adv": -1.4,
+    "home_platoon_adv": 6.9,
+    "away_nrfi_top3": {
+      "season_ops": 0.899,
+      "vs_sp_ops": null,
+      "vs_sp_pa": 0,
+      "detail": [
+        {
+          "pid": 695578,
+          "pa": 0,
+          "ops": 0
+        },
+        {
+          "pid": 671277,
+          "pa": 0,
+          "ops": 0
+        },
+        {
+          "pid": 682928,
+          "pa": 0,
+          "ops": 0
+        }
+      ]
+    },
+    "home_nrfi_top3": {
+      "season_ops": 0.928,
+      "vs_sp_ops": null,
+      "vs_sp_pa": 0,
+      "detail": [
+        {
+          "pid": 665833,
+          "pa": 0,
+          "ops": 0
+        },
+        {
+          "pid": 664040,
+          "pa": 0,
+          "ops": 0
+        },
+        {
+          "pid": 668804,
+          "pa": 0,
+          "ops": 0
+        }
+      ]
+    },
     "away_bp_ip_3d": 11.7,
     "home_bp_ip_3d": 12.7,
     "ump_name": "Sean Barber",
@@ -225,15 +267,57 @@
     "home_team_abv": "PHI",
     "venue": "Citizens Bank Park",
     "park_factor": 0.99,
-    "lineup_confirmed": false,
-    "away_lineup_score": null,
-    "home_lineup_score": null,
-    "away_matchup_score": null,
-    "home_matchup_score": null,
-    "away_platoon_adv": null,
-    "home_platoon_adv": null,
-    "away_nrfi_top3": {},
-    "home_nrfi_top3": {},
+    "lineup_confirmed": true,
+    "away_lineup_score": 35.8,
+    "home_lineup_score": 37.2,
+    "away_matchup_score": 33.9,
+    "home_matchup_score": 46.3,
+    "away_platoon_adv": -1.9,
+    "home_platoon_adv": 9.1,
+    "away_nrfi_top3": {
+      "season_ops": 0.705,
+      "vs_sp_ops": null,
+      "vs_sp_pa": 0,
+      "detail": [
+        {
+          "pid": 663538,
+          "pa": 0,
+          "ops": 0
+        },
+        {
+          "pid": 608324,
+          "pa": 0,
+          "ops": 0
+        },
+        {
+          "pid": 673548,
+          "pa": 0,
+          "ops": 0
+        }
+      ]
+    },
+    "home_nrfi_top3": {
+      "season_ops": 0.815,
+      "vs_sp_ops": null,
+      "vs_sp_pa": 0,
+      "detail": [
+        {
+          "pid": 607208,
+          "pa": 0,
+          "ops": 0
+        },
+        {
+          "pid": 656941,
+          "pa": 0,
+          "ops": 0
+        },
+        {
+          "pid": 547180,
+          "pa": 0,
+          "ops": 0
+        }
+      ]
+    },
     "away_bp_ip_3d": 12.0,
     "home_bp_ip_3d": 15.3,
     "ump_name": "Nate Tomlinson",
@@ -276,19 +360,61 @@
     "home_team_abv": "NYY",
     "venue": "Yankee Stadium",
     "park_factor": 1.0,
-    "lineup_confirmed": false,
-    "away_lineup_score": null,
-    "home_lineup_score": null,
-    "away_matchup_score": null,
-    "home_matchup_score": null,
-    "away_platoon_adv": null,
-    "home_platoon_adv": null,
-    "away_nrfi_top3": {},
-    "home_nrfi_top3": {},
+    "lineup_confirmed": true,
+    "away_lineup_score": 37.5,
+    "home_lineup_score": 37.0,
+    "away_matchup_score": 35.6,
+    "home_matchup_score": 37.0,
+    "away_platoon_adv": -1.9,
+    "home_platoon_adv": 0.0,
+    "away_nrfi_top3": {
+      "season_ops": 0.791,
+      "vs_sp_ops": null,
+      "vs_sp_pa": 0,
+      "detail": [
+        {
+          "pid": 687263,
+          "pa": 0,
+          "ops": 0
+        },
+        {
+          "pid": 545361,
+          "pa": 0,
+          "ops": 0
+        },
+        {
+          "pid": 694384,
+          "pa": 0,
+          "ops": 0
+        }
+      ]
+    },
+    "home_nrfi_top3": {
+      "season_ops": 0.819,
+      "vs_sp_ops": 0.805,
+      "vs_sp_pa": 34,
+      "detail": [
+        {
+          "pid": 502671,
+          "pa": 0,
+          "ops": 0
+        },
+        {
+          "pid": 592450,
+          "pa": 34,
+          "ops": 0.805
+        },
+        {
+          "pid": 641355,
+          "pa": 0,
+          "ops": 0
+        }
+      ]
+    },
     "away_bp_ip_3d": 10.0,
     "home_bp_ip_3d": 8.3,
-    "ump_name": "Lance Barksdale",
-    "ump_k_boost": 0.053,
+    "ump_name": "Ryan Additon",
+    "ump_k_boost": 0.021,
     "ump_run_factor": 0.984,
     "ump_zone_size": 1.008,
     "weather": {
@@ -296,7 +422,7 @@
       "wind_speed": 9.0,
       "wind_dir": "W",
       "wind_dir_deg": 270,
-      "precip_pct": 3,
+      "precip_pct": 4,
       "is_dome": false,
       "wind_multiplier": 0.946,
       "temp_multiplier": 0.991
@@ -313,15 +439,57 @@
     "home_team_abv": "ATL",
     "venue": "Truist Park",
     "park_factor": 1.01,
-    "lineup_confirmed": false,
-    "away_lineup_score": null,
-    "home_lineup_score": null,
-    "away_matchup_score": null,
-    "home_matchup_score": null,
-    "away_platoon_adv": null,
-    "home_platoon_adv": null,
-    "away_nrfi_top3": {},
-    "home_nrfi_top3": {},
+    "lineup_confirmed": true,
+    "away_lineup_score": 37.9,
+    "home_lineup_score": 54.6,
+    "away_matchup_score": 42.3,
+    "home_matchup_score": 55.9,
+    "away_platoon_adv": 4.4,
+    "home_platoon_adv": 1.3,
+    "away_nrfi_top3": {
+      "season_ops": 0.67,
+      "vs_sp_ops": null,
+      "vs_sp_pa": 0,
+      "detail": [
+        {
+          "pid": 805300,
+          "pa": 0,
+          "ops": 0
+        },
+        {
+          "pid": 669364,
+          "pa": 0,
+          "ops": 0
+        },
+        {
+          "pid": 682663,
+          "pa": 0,
+          "ops": 0
+        }
+      ]
+    },
+    "home_nrfi_top3": {
+      "season_ops": 0.881,
+      "vs_sp_ops": null,
+      "vs_sp_pa": 0,
+      "detail": [
+        {
+          "pid": 660670,
+          "pa": 0,
+          "ops": 0
+        },
+        {
+          "pid": 686948,
+          "pa": 0,
+          "ops": 0
+        },
+        {
+          "pid": 621566,
+          "pa": 0,
+          "ops": 0
+        }
+      ]
+    },
     "away_bp_ip_3d": 7.0,
     "home_bp_ip_3d": 11.3,
     "ump_name": "Dan Iassogna",
@@ -389,19 +557,19 @@
     "home_nrfi_top3": {},
     "away_bp_ip_3d": 9.0,
     "home_bp_ip_3d": 10.0,
-    "ump_name": "",
-    "ump_k_boost": 0.0,
-    "ump_run_factor": 1.0,
-    "ump_zone_size": 1.0,
+    "ump_name": "Willie Traynor",
+    "ump_k_boost": 0.081,
+    "ump_run_factor": 0.97,
+    "ump_zone_size": 1.02,
     "weather": {
-      "temp": 56,
+      "temp": 57,
       "wind_speed": 5.0,
       "wind_dir": "NNE",
       "wind_dir_deg": 22,
       "precip_pct": 19,
       "is_dome": false,
       "wind_multiplier": 0.9673,
-      "temp_multiplier": 0.952
+      "temp_multiplier": 0.955
     },
     "away_sp": {
       "name": "Garrett Crochet",
@@ -440,10 +608,10 @@
     "home_nrfi_top3": {},
     "away_bp_ip_3d": 8.3,
     "home_bp_ip_3d": 12.0,
-    "ump_name": "",
-    "ump_k_boost": 0.0,
-    "ump_run_factor": 1.0,
-    "ump_zone_size": 1.0,
+    "ump_name": "Jim Wolf",
+    "ump_k_boost": 0.027,
+    "ump_run_factor": 0.99,
+    "ump_zone_size": 1.002,
     "weather": {
       "temp": 74,
       "wind_speed": 13.0,
