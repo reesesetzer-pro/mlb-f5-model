@@ -578,34 +578,89 @@ def calc_model_run_diff(model_away_prob, away_sp_score, home_sp_score,
     # Blend: 60% probability signal, 40% component signal
     return round(0.60 * prob_diff + 0.40 * comp_diff, 3)
 
-def calc_nrfi_prob(away_sp_score, home_sp_score, away_lu, home_lu, pf, ump_k):
+_LG_OPS = 0.720  # 2025/26 MLB average OPS
+
+def _nrfi_eff_ops(nrfi_data):
+    """
+    Compute effective top-3 OPS for NRFI model.
+    Blends season OPS with career B/P history — weight scales with PA sample size.
+      < 8 combined PA  → season OPS only (too small to trust)
+      8–14 PA          → light blend (up to 40% B/P weight)
+      15–29 PA         → moderate blend (50% B/P weight)
+      30+ PA           → strong blend (65% B/P weight)
+    """
+    if not nrfi_data:
+        return _LG_OPS
+    s_ops = nrfi_data.get("season_ops") or _LG_OPS
+    v_ops = nrfi_data.get("vs_sp_ops")
+    v_pa  = nrfi_data.get("vs_sp_pa", 0) or 0
+    if not v_ops or v_pa < 8:
+        return s_ops
+    if v_pa >= 30:
+        bp_weight = 0.65
+    elif v_pa >= 15:
+        bp_weight = 0.50
+    else:
+        # Linear ramp 8 PA → 0.15 weight, 14 PA → 0.40 weight
+        bp_weight = 0.15 + (v_pa - 8) / 6 * 0.25
+    return s_ops * (1 - bp_weight) + v_ops * bp_weight
+
+def calc_nrfi_prob(away_sp_score, home_sp_score, away_lu, home_lu, pf, ump_k,
+                   away_nrfi=None, home_nrfi=None):
     """
     Estimate P(NRFI) — no run by either team in the 1st inning.
     Base ≈ 0.52 (market typically prices NRFI at -115 to -140).
-    Stronger SPs / weaker lineups / K-heavy umps push probability up.
-    """
-    base    = 0.52
-    avg_sp  = ((away_sp_score or 50) + (home_sp_score or 50)) / 2
-    avg_lu  = ((away_lu or 50)       + (home_lu or 50))       / 2
-    sp_adj  =  (avg_sp - 50) / 200        # ±0.10 for elite / poor SP
-    lu_adj  = -(avg_lu - 50) / 300        # strong lineups hurt NRFI
-    ump_adj =  (ump_k  or 0) * 0.04       # K-heavy ump → fewer runs
-    pf_adj  = -(pf - 1.0)   * 0.25       # hitter parks → fewer NRFI
-    return round(max(0.35, min(0.72, base + sp_adj + lu_adj + ump_adj + pf_adj)), 4)
 
-def calc_fi_u15_prob(away_sp_score, home_sp_score, away_lu, home_lu, pf, ump_k):
+    away_nrfi / home_nrfi: dicts from game_cache with keys:
+      season_ops   — avg OPS for batters 1-3 this season
+      vs_sp_ops    — PA-weighted career OPS vs. opposing SP (None if <8 PA)
+      vs_sp_pa     — total combined PA sample
+    When present, OPS replaces the generic lineup quality adjustment.
+    When absent, falls back to overall lineup score.
+    """
+    base   = 0.52
+    avg_sp = ((away_sp_score or 50) + (home_sp_score or 50)) / 2
+    sp_adj =  (avg_sp - 50) / 200        # ±0.10 for elite / poor SP
+    ump_adj = (ump_k  or 0) * 0.04       # K-heavy ump → fewer runs
+    pf_adj  = -(pf - 1.0)  * 0.25       # hitter-friendly parks hurt NRFI
+
+    # OPS adjustment — top-3 batter quality vs. this specific pitcher
+    if away_nrfi or home_nrfi:
+        eff_away = _nrfi_eff_ops(away_nrfi)
+        eff_home = _nrfi_eff_ops(home_nrfi)
+        avg_ops  = (eff_away + eff_home) / 2
+        # Each 0.100 above league avg ≈ -3.5% NRFI probability
+        ops_adj  = -(avg_ops - _LG_OPS) * 0.35
+    else:
+        # Fallback: generic lineup quality (0–100 scale)
+        avg_lu  = ((away_lu or 50) + (home_lu or 50)) / 2
+        ops_adj = -(avg_lu - 50) / 300
+
+    return round(max(0.35, min(0.72, base + sp_adj + ops_adj + ump_adj + pf_adj)), 4)
+
+def calc_fi_u15_prob(away_sp_score, home_sp_score, away_lu, home_lu, pf, ump_k,
+                     away_nrfi=None, home_nrfi=None):
     """
     Estimate P(1st inning total ≤ 1.5) — at most 1 combined run.
     Base ≈ 0.76 (U1.5 1st inning typically priced -220 to -280).
+    Uses same OPS/B/P blend as calc_nrfi_prob with slightly smaller adjustments.
     """
-    base    = 0.76
-    avg_sp  = ((away_sp_score or 50) + (home_sp_score or 50)) / 2
-    avg_lu  = ((away_lu or 50)       + (home_lu or 50))       / 2
-    sp_adj  =  (avg_sp - 50) / 300
-    lu_adj  = -(avg_lu - 50) / 400
-    ump_adj =  (ump_k  or 0) * 0.03
-    pf_adj  = -(pf - 1.0)   * 0.20
-    return round(max(0.60, min(0.90, base + sp_adj + lu_adj + ump_adj + pf_adj)), 4)
+    base   = 0.76
+    avg_sp = ((away_sp_score or 50) + (home_sp_score or 50)) / 2
+    sp_adj =  (avg_sp - 50) / 300
+    ump_adj = (ump_k  or 0) * 0.03
+    pf_adj  = -(pf - 1.0)  * 0.20
+
+    if away_nrfi or home_nrfi:
+        eff_away = _nrfi_eff_ops(away_nrfi)
+        eff_home = _nrfi_eff_ops(home_nrfi)
+        avg_ops  = (eff_away + eff_home) / 2
+        ops_adj  = -(avg_ops - _LG_OPS) * 0.25
+    else:
+        avg_lu  = ((away_lu or 50) + (home_lu or 50)) / 2
+        ops_adj = -(avg_lu - 50) / 400
+
+    return round(max(0.60, min(0.90, base + sp_adj + ops_adj + ump_adj + pf_adj)), 4)
 
 def _norm_cdf(x):
     return (1 + math.erf(x / math.sqrt(2))) / 2
@@ -1227,16 +1282,23 @@ elif page == "🎯 Bet Signals":
             fi_data = odds_data.get("fi_total", {})
             fi_books_rec = [b for b in REC_BOOKS if b in fi_data]
             if fi_books_rec:
-                model_nrfi = calc_nrfi_prob(eff_asp, eff_hsp, eff_away_lu, eff_home_lu, pf, ump_k)
+                # Top-3 OPS + B/P history from cache (populated by data_sync.py)
+                away_nrfi = c_data.get("away_nrfi_top3") or {}
+                home_nrfi = c_data.get("home_nrfi_top3") or {}
+
+                model_nrfi = calc_nrfi_prob(eff_asp, eff_hsp, eff_away_lu, eff_home_lu,
+                                            pf, ump_k, away_nrfi, home_nrfi)
                 model_yrfi = round(1 - model_nrfi, 4)
-                model_u15  = calc_fi_u15_prob(eff_asp, eff_hsp, eff_away_lu, eff_home_lu, pf, ump_k)
+                model_u15  = calc_fi_u15_prob(eff_asp, eff_hsp, eff_away_lu, eff_home_lu,
+                                              pf, ump_k, away_nrfi, home_nrfi)
                 _fi_base   = {"game":game_tag,"time":time_et,
                               "away_abv":abv_away,"home_abv":abv_home,
                               "form_score":0,"days_rest":None,"weather":wx,
                               "matchup_score":0,"park_factor":pf,
                               "ump_k":ump_k,"ump_zone":ump_zone,
                               "sp_score":(eff_asp+eff_hsp)/2,
-                              "lu_score":((away_lu or 50)+(home_lu or 50))/2}
+                              "lu_score":((away_lu or 50)+(home_lu or 50))/2,
+                              "away_nrfi":away_nrfi,"home_nrfi":home_nrfi}
 
                 for label, market, model_p, price_key, team, abv in [
                     ("NRFI", "NRFI/YRFI",    model_nrfi, "nrfi_price", away, abv_away),
@@ -1559,6 +1621,21 @@ elif page == "🎯 Bet Signals":
                 _uz = s.get("ump_zone", 1.0) or 1.0
                 _zone_str = f" Z{_uz:.2f}" if abs(_uz - 1.0) >= 0.03 else ""
                 ump_txt = f"Ump K{s['ump_k']:+.2f}{_zone_str}" if s['ump_k'] else ""
+
+                # NRFI/YRFI — build B/P matchup pill if OPS data is available
+                _nrfi_pill = ""
+                if s.get("market") in ("NRFI/YRFI", "1st Inn U1.5"):
+                    _aw_nr = s.get("away_nrfi", {}) or {}
+                    _hw_nr = s.get("home_nrfi", {}) or {}
+                    _parts = []
+                    for _label, _nr in [("Away", _aw_nr), ("Home", _hw_nr)]:
+                        if _nr.get("season_ops"):
+                            if _nr.get("vs_sp_ops") and (_nr.get("vs_sp_pa") or 0) >= 8:
+                                _parts.append(f"{_label} top-3: {_nr['season_ops']:.3f} / vs SP {_nr['vs_sp_ops']:.3f} ({_nr['vs_sp_pa']} PA)")
+                            else:
+                                _parts.append(f"{_label} top-3: {_nr['season_ops']:.3f} OPS")
+                    if _parts:
+                        _nrfi_pill = f'<span class="metric-pill" style="border-color:#7986cb;color:#7986cb">' + " · ".join(_parts) + '</span>'
                 ml_str  = (f"{'+' if s['ml']>0 else ''}{s['ml']}" if s['ml'] else "-")
                 _mkt_line_val = s.get("mkt_line")
                 _mod_line_val = s.get("model_line")
@@ -1627,6 +1704,7 @@ elif page == "🎯 Bet Signals":
                     move_txt,
                     f'<span class="metric-pill">Mkt: {s["mkt_p"]*100:.1f}%</span>',
                     f'<span class="metric-pill">SP: {s["sp_score"]:.0f}{lu_txt}</span>',
+                    _nrfi_pill,
                     matchup_txt,
                     form_txt,
                     weather_txt,
