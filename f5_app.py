@@ -41,6 +41,7 @@ SP_FILE           = "sp_data.csv"
 CACHE_FILE        = "game_cache.json"
 MODEL_PICKS_FILE  = "model_picks.csv"
 SNAPSHOT_FILE     = "odds_snapshot.json"
+CLV_SNAPSHOT_FILE = "clv_snapshot.json"
 
 # ESPN logo URL builder
 def logo_url(abv):
@@ -414,6 +415,22 @@ def save_odds_snapshot(odds_dict):
         with open(SNAPSHOT_FILE,"w") as f: json.dump({"date":today,"odds":odds_dict},f)
     except: pass
 
+def load_clv_snapshot():
+    """Load closing-line odds captured at game-time for CLV calculation."""
+    today = _to_et(datetime.utcnow()).strftime("%Y-%m-%d")
+    if os.path.exists(CLV_SNAPSHOT_FILE):
+        try:
+            with open(CLV_SNAPSHOT_FILE) as f: snap = json.load(f)
+            if snap.get("date") == today: return snap.get("odds", {})
+        except: pass
+    return {}
+
+def save_clv_snapshot(odds_dict):
+    today = _to_et(datetime.utcnow()).strftime("%Y-%m-%d")
+    try:
+        with open(CLV_SNAPSHOT_FILE,"w") as f: json.dump({"date":today,"odds":odds_dict},f)
+    except: pass
+
 def get_line_movement(game_key, book_key, side, current_price, snapshot):
     """Returns (delta, 'better'|'worse'|None). Higher American odds = better for bettor."""
     try:
@@ -423,8 +440,9 @@ def get_line_movement(game_key, book_key, side, current_price, snapshot):
         return abs(delta), ("better" if delta > 0 else "worse")
     except: return 0, None
 
-def auto_settle_f5(df, live_scores):
+def auto_settle_f5(df, live_scores, clv_snap=None):
     """Mark PENDING F5 bets WIN/LOSS/PUSH when the F5 is final. Returns (df, changed)."""
+    clv_snap = clv_snap or {}
     changed = False
     for idx, row in df[df["Result"]=="PENDING"].iterrows():
         game = str(row.get("Game",""))
@@ -466,6 +484,22 @@ def auto_settle_f5(df, live_scores):
         if result:
             df.at[idx,"Result"]  = result
             df.at[idx,"F5_Score"]= f"{f5a}-{f5h}"
+            # Auto-fill CLV if closing line was captured at game time
+            if not row.get("Closing_ML") and clv_snap.get(game):
+                try:
+                    bet_ml = float(str(row.get("Bet_ML","")).replace("+",""))
+                    # Find best closing line across books
+                    closing_prices = []
+                    for bk_data in clv_snap[game].values():
+                        side_key = "away_ml" if ("Away" in str(row.get("Bet_Side","")) or
+                                                  "away" in str(row.get("Bet_Side","")).lower()) else "home_ml"
+                        p = bk_data.get(side_key)
+                        if p: closing_prices.append(float(p))
+                    if closing_prices:
+                        closing_ml = round(sum(closing_prices) / len(closing_prices), 0)
+                        df.at[idx,"Closing_ML"] = int(closing_ml)
+                        df.at[idx,"CLV"]        = round(bet_ml - closing_ml, 1)
+                except: pass
             changed = True
     return df, changed
 
@@ -763,7 +797,7 @@ with st.sidebar:
     """, unsafe_allow_html=True)
     # ── Navigation (top) ──
     page = st.radio("", [
-        "📋 Today's Slate","🎯 Bet Signals","📚 Best Bets","✏️ SP Input","📈 Bet Tracker","🏟️ Park Factors","📊 Model Performance"])
+        "📋 Today's Slate","🎯 Bet Signals","📚 Best Bets","🌅 Morning Report","✏️ SP Input","📈 Bet Tracker","🏟️ Park Factors","📊 Model Performance"])
     st.divider()
     st.caption(f"🕐 {_to_et(datetime.utcnow()).strftime('%I:%M %p')} ET · Season 2026")
     # Show last data sync status
@@ -803,6 +837,7 @@ cal_map          = get_calibration_map(model_picks_df)
 live_scores      = fetch_live_scores()
 probable_pitchers= fetch_probable_pitchers()
 odds_snapshot    = load_odds_snapshot()
+clv_snapshot     = load_clv_snapshot()
 
 # Build cache lookup by team name
 cache_by_away = {g["away_team"]: g for g in cache}
@@ -1026,6 +1061,21 @@ elif page == "🎯 Bet Signals":
                 odds_snapshot[game_key] = snap_entry
             _snapshot_dirty = True
 
+            # CLV auto-snapshot: capture odds as "closing line" for games within 10 min of first pitch
+            try:
+                _secs_to_start = (dt - datetime.utcnow()).total_seconds()
+                if 0 < _secs_to_start < 600 and game_key not in clv_snapshot:
+                    _clv_entry = {}
+                    for bk in REC_BOOKS:
+                        bk_ml = odds_data["ml"].get(bk, {})
+                        _clv_entry[bk] = {
+                            "away_ml": bk_ml.get("away"),
+                            "home_ml": bk_ml.get("home"),
+                        }
+                    clv_snapshot[game_key] = _clv_entry
+                    save_clv_snapshot(clv_snapshot)
+            except: pass
+
             c_data  = cache_by_away.get(away, cache_by_home.get(home,{}))
             pf           = c_data.get("park_factor", 1.0)
             ump_k        = c_data.get("ump_k_boost", 0.0)
@@ -1061,6 +1111,10 @@ elif page == "🎯 Bet Signals":
             home_platoon_adv = c_data.get("home_platoon_adv")
             eff_away_lu = round(away_matchup*0.55 + (away_lu or 50)*0.45, 1) if away_matchup else (away_lu or 50)
             eff_home_lu = round(home_matchup*0.55 + (home_lu or 50)*0.45, 1) if home_matchup else (home_lu or 50)
+
+            # Bullpen fatigue (last 3 completed games IP)
+            away_bp_ip = c_data.get("away_bp_ip_3d")   # float or None
+            home_bp_ip = c_data.get("home_bp_ip_3d")
 
             # Weather
             wx              = c_data.get("weather") or {}
@@ -1130,6 +1184,7 @@ elif page == "🎯 Bet Signals":
                         "model_line":"","mkt_line":"",
                         "sp_scratch": away_scratched if team==away else home_scratched,
                         "game_key": game_key,
+                        "away_bp_ip": away_bp_ip, "home_bp_ip": home_bp_ip,
                     })
 
             # ── F5 Spread signals ─────────────────────────────────────────────
@@ -1332,6 +1387,9 @@ elif page == "🎯 Bet Signals":
         else:
             # Primary sort: model probability (most likely to hit), secondary: edge
             signals.sort(key=lambda x: (x["model_p"], x["edge"]), reverse=True)
+            # Cache for Morning Report tab
+            st.session_state["signals_cache"] = signals
+            st.session_state["signals_date"]  = str(date.today())
 
             # Auto-log all signals ≥52% model_p to the learning tracker
             model_picks_df = auto_log_model_picks(signals, model_picks_df)
@@ -1622,6 +1680,21 @@ elif page == "🎯 Bet Signals":
                 _zone_str = f" Z{_uz:.2f}" if abs(_uz - 1.0) >= 0.03 else ""
                 ump_txt = f"Ump K{s['ump_k']:+.2f}{_zone_str}" if s['ump_k'] else ""
 
+                # Bullpen fatigue badge (show when unusually high or low)
+                _bp_pill = ""
+                _s_away_bp = s.get("away_bp_ip"); _s_home_bp = s.get("home_bp_ip")
+                _league_bp_avg = 10.5
+                if _s_away_bp is not None or _s_home_bp is not None:
+                    _bp_parts = []
+                    for _bp_val, _bp_label in [(_s_away_bp,"Away"), (_s_home_bp,"Home")]:
+                        if _bp_val is not None:
+                            _bp_excess = _bp_val - _league_bp_avg
+                            if abs(_bp_excess) >= 3.0:
+                                _bp_lbl = "🔥" if _bp_excess >= 3 else "❄️"
+                                _bp_parts.append(f"{_bp_lbl}{_bp_label} BP {_bp_val:.1f}IP")
+                    if _bp_parts:
+                        _bp_pill = f'<span class="metric-pill" style="border-color:#90a4ae;color:#90a4ae">' + " · ".join(_bp_parts) + '</span>'
+
                 # NRFI/YRFI — build B/P matchup pill if OPS data is available
                 _nrfi_pill = ""
                 if s.get("market") in ("NRFI/YRFI", "1st Inn U1.5"):
@@ -1708,6 +1781,7 @@ elif page == "🎯 Bet Signals":
                     matchup_txt,
                     form_txt,
                     weather_txt,
+                    _bp_pill,
                     line_txt,
                     sharp_ref_txt,
                     f'<span class="park-badge">{pf_txt}</span>',
@@ -2018,6 +2092,209 @@ elif page == "📚 Best Bets":
 </div>""", unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
+# PAGE: MORNING REPORT
+# ══════════════════════════════════════════════════════════════════════════════
+elif page == "🌅 Morning Report":
+    _today_str  = date.today().strftime("%A, %B %d, %Y")
+    _n_games    = len(games)
+    _sync_ts    = ""
+    if os.path.exists("sync_status.json"):
+        try:
+            with open("sync_status.json") as _sf: _ss = json.load(_sf)
+            _sync_ts = _ss.get("last_sync","")[:16]
+        except: pass
+
+    st.markdown(f"""
+    <div style="background:linear-gradient(135deg,#0c1e42 0%,#1a0c10 100%);
+                border-radius:16px;padding:24px 28px;margin-bottom:20px;
+                border:1px solid rgba(255,160,50,0.3);
+                box-shadow:0 8px 32px rgba(0,0,0,0.4)">
+      <div style="font-size:1.6rem;font-weight:800;letter-spacing:-0.02em">🌅 Morning Report</div>
+      <div style="font-size:0.9rem;color:#c8a060;margin-top:4px">
+        {_today_str} &nbsp;·&nbsp; {_n_games} games on slate
+        {'&nbsp;·&nbsp; Synced ' + _sync_ts if _sync_ts else ''}
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Pull signals from session state (populated by visiting Bet Signals tab)
+    _mr_signals = st.session_state.get("signals_cache", [])
+    if st.session_state.get("signals_date") != str(date.today()):
+        _mr_signals = []
+
+    if not _mr_signals:
+        st.info("Visit **🎯 Bet Signals** first to generate today's signals, then return here for the report.")
+    else:
+        # ── Top 5 plays ───────────────────────────────────────────────────────
+        _top5 = [s for s in _mr_signals if s.get("ml") and s["edge"] >= 0][:5]
+        _high  = [s for s in _mr_signals if s["model_p"] >= 0.60]
+        _solid = [s for s in _mr_signals if 0.55 <= s["model_p"] < 0.60]
+
+        _sm1, _sm2, _sm3, _sm4 = st.columns(4)
+        _sm1.metric("Total Signals",     len(_mr_signals))
+        _sm2.metric("🔥 High Conf",      len(_high))
+        _sm3.metric("🟢 Solid",          len(_solid))
+        _sm4.metric("Top Rec Wager",     f"${sum(s['kelly'] for s in _top5):,.0f}")
+
+        st.subheader("⭐ Top Plays Today")
+        for _i, _s in enumerate(_top5):
+            _conf_pct = int(_s["model_p"] * 100)
+            _ml_str   = f"{'+' if _s['ml']>0 else ''}{_s['ml']}"
+            _edge_str = f"+{_s['edge']*100:.1f}%"
+            _rank_lbl = ["#1 — TOP PICK ⭐","#2","#3","#4","#5"][_i]
+            _css = "bet-strong" if _s["model_p"] >= 0.60 else "bet-moderate" if _s["model_p"] >= 0.55 else "no-edge"
+            _mkt_badge = {
+                "F5 ML":"mkt-ml","F5 Spread":"mkt-spread","F5 Total":"mkt-total",
+                "F5 Team Total":"mkt-team","NRFI/YRFI":"mkt-ml","1st Inn U1.5":"mkt-ml"
+            }.get(_s.get("market","F5 ML"), "mkt-ml")
+            _a_abv = _s.get("away_abv", _s["abv"])
+            _h_abv = _s.get("home_abv", _s["abv"])
+            st.markdown(f"""<div class="{_css}" style="padding:14px 18px;margin:7px 0">
+<div style="display:flex;justify-content:space-between;align-items:center">
+  <div>
+    <div style="font-size:0.7rem;color:#7a9cbf;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px">{_rank_lbl}</div>
+    <div style="font-size:1rem;font-weight:700">{_s['side']}</div>
+    <div style="font-size:0.78rem;color:#7a9cbf;margin-top:2px">{_s['game']} · {_s['time']}</div>
+    <div style="margin-top:7px;display:flex;flex-wrap:wrap;gap:5px">
+      <span class="{_mkt_badge}">{_s.get('market','F5 ML')}</span>
+      <span class="metric-pill"><b>{_ml_str}</b> @ {_s['book']}</span>
+      <span class="metric-pill" style="color:#00e676">{_edge_str} edge</span>
+      <span class="metric-pill">SP: {_s['sp_score']:.0f}</span>
+      <span class="park-badge">Park {_s['park_factor']:.2f}x</span>
+    </div>
+  </div>
+  <div style="text-align:right;flex-shrink:0;margin-left:16px">
+    <div style="font-size:1.8rem;font-weight:800;line-height:1">{_conf_pct}%</div>
+    <div style="font-size:0.65rem;color:#7a9cbf;text-transform:uppercase">Model Prob</div>
+    <div style="font-size:1rem;font-weight:700;color:#00e676;margin-top:4px">${_s['kelly']:,.0f}</div>
+    <div style="font-size:0.65rem;color:#7a9cbf">Kelly Rec</div>
+  </div>
+</div>
+</div>""", unsafe_allow_html=True)
+
+        # ── Double of the Day ──────────────────────────────────────────────────
+        _bettable_mr  = [s for s in _mr_signals if s["ml"] is not None and s["edge"] >= 0]
+        _value_mr     = [s for s in _bettable_mr if 90 <= float(s["ml"]) <= 220]
+        _pool_mr      = _value_mr if len(_value_mr) >= 2 else _bettable_mr
+        _seen_g, _legs = set(), []
+        for _s in _pool_mr:
+            if _s["game"] not in _seen_g:
+                _legs.append(_s); _seen_g.add(_s["game"])
+            if len(_legs) == 2: break
+
+        if len(_legs) == 2:
+            def _d2a(o):
+                o=float(o); return (o/100)+1 if o>0 else (100/abs(o))+1
+            def _a2s(d):
+                return f"+{int((d-1)*100)}" if d>=2 else f"{int(-100/(d-1))}"
+            _pdec = _d2a(_legs[0]["ml"]) * _d2a(_legs[1]["ml"])
+            _pamr = _a2s(_pdec); _pprob = int(_legs[0]["model_p"]*_legs[1]["model_p"]*100)
+            _ppay = round((_pdec-1)*bankroll, 2)
+            st.markdown(f"""
+            <div style="background:linear-gradient(145deg,#0a1a2e,#0f2040);border-radius:14px;
+                        padding:16px 20px;margin:16px 0 10px;
+                        border:1px solid rgba(33,150,243,0.35)">
+              <div style="font-size:0.75rem;color:#5a8ab4;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px">⚡ Double of the Day</div>
+              <div style="display:flex;gap:12px;flex-wrap:wrap">
+                <div style="flex:1;min-width:180px;background:rgba(255,255,255,0.04);border-radius:8px;padding:10px 14px">
+                  <div style="font-size:0.7rem;color:#5a8ab4;text-transform:uppercase">Leg 1</div>
+                  <div style="font-weight:700;font-size:0.92rem;margin-top:2px">{_legs[0]['side']}</div>
+                  <div style="color:#64b5f6;font-size:0.82rem">{'+' if _legs[0]['ml']>0 else ''}{_legs[0]['ml']} @ {_legs[0]['book']}</div>
+                </div>
+                <div style="flex:1;min-width:180px;background:rgba(255,255,255,0.04);border-radius:8px;padding:10px 14px">
+                  <div style="font-size:0.7rem;color:#5a8ab4;text-transform:uppercase">Leg 2</div>
+                  <div style="font-weight:700;font-size:0.92rem;margin-top:2px">{_legs[1]['side']}</div>
+                  <div style="color:#64b5f6;font-size:0.82rem">{'+' if _legs[1]['ml']>0 else ''}{_legs[1]['ml']} @ {_legs[1]['book']}</div>
+                </div>
+                <div style="display:flex;gap:20px;align-items:center;flex-shrink:0;padding:10px 14px">
+                  <div style="text-align:center"><div style="font-size:1.3rem;font-weight:800">{_pamr}</div><div style="font-size:0.65rem;color:#5a8ab4;text-transform:uppercase">Parlay</div></div>
+                  <div style="text-align:center"><div style="font-size:1.3rem;font-weight:800">{_pprob}%</div><div style="font-size:0.65rem;color:#5a8ab4;text-transform:uppercase">Hit %</div></div>
+                  <div style="text-align:center"><div style="font-size:1.3rem;font-weight:800;color:#00e676">+${_ppay:,.0f}</div><div style="font-size:0.65rem;color:#5a8ab4;text-transform:uppercase">Win/${bankroll:.0f}</div></div>
+                </div>
+              </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        st.divider()
+
+        # ── Quick-reference game table ─────────────────────────────────────────
+        st.subheader("📋 Games Quick Reference")
+        _mr_cache = {g["away_team"]: g for g in cache}
+        _mr_cache.update({g["home_team"]: g for g in cache})
+        _slate_rows = []
+        for _g in games:
+            _aw = _g["away_team"]; _hw = _g["home_team"]
+            _cd  = _mr_cache.get(_aw, _mr_cache.get(_hw, {}))
+            _pf  = _cd.get("park_factor", 1.0)
+            _ump = _cd.get("ump_name","").split()[-1] if _cd.get("ump_name") else "—"
+            _ukp = _cd.get("ump_k_boost",0.0)
+            _a_sp = (_cd.get("away_sp",{}).get("name","TBD") or "TBD").split()[-1]
+            _h_sp = (_cd.get("home_sp",{}).get("name","TBD") or "TBD").split()[-1]
+            _a_sc = _cd.get("away_sp",{}).get("sp_score") or "—"
+            _h_sc = _cd.get("home_sp",{}).get("sp_score") or "—"
+            _wx   = _cd.get("weather") or {}
+            _wx_str = (f"{_wx['temp']}°F {_wx['wind_speed']}mph {_wx['wind_dir']}"
+                       if _wx and not _wx.get("is_dome") and _wx.get("wind_speed",0)>0
+                       else "Dome" if _wx and _wx.get("is_dome") else "—")
+            try:
+                _dt  = datetime.strptime(_g["commence_time"],"%Y-%m-%dT%H:%M:%SZ")
+                _tet = fmt_time_et(_dt)
+            except: _tet = "—"
+            _slate_rows.append({
+                "Time(ET)": _tet,
+                "Matchup":  f"{_aw[:12]} @ {_hw[:12]}",
+                "Away SP":  f"{_a_sp} ({_a_sc})",
+                "Home SP":  f"{_h_sp} ({_h_sc})",
+                "Park":     f"{_pf:.2f}x",
+                "Ump":      f"{_ump} K{_ukp:+.2f}",
+                "Weather":  _wx_str,
+            })
+        if _slate_rows:
+            st.dataframe(pd.DataFrame(_slate_rows), hide_index=True, use_container_width=True)
+
+        # ── Shareable text report ──────────────────────────────────────────────
+        st.divider()
+        with st.expander("📋 Copy Shareable Text Report", expanded=False):
+            _lines = [
+                f"⚾ MLB F5 Morning Report — {_today_str}",
+                f"{'='*50}",
+                f"{_n_games} games on slate | {len(_mr_signals)} signals | {len(_high)} high-conf",
+                "",
+                "TOP PLAYS",
+                "-"*40,
+            ]
+            for _i, _s in enumerate(_top5):
+                _ml_s = f"{'+' if _s['ml']>0 else ''}{_s['ml']}"
+                _lines.append(
+                    f"{_i+1}. [{_s.get('market','F5 ML')}] {_s['side']}"
+                    f"\n   {_ml_s} @ {_s['book']} | {int(_s['model_p']*100)}% model | "
+                    f"+{_s['edge']*100:.1f}% edge | ${_s['kelly']:.0f} Kelly"
+                    f"\n   {_s['game']} · {_s['time']}"
+                )
+            if len(_legs) == 2:
+                _lines += [
+                    "",
+                    "DOUBLE OF THE DAY",
+                    "-"*40,
+                    f"Leg 1: {_legs[0]['side']}  {'+' if _legs[0]['ml']>0 else ''}{_legs[0]['ml']} @ {_legs[0]['book']}",
+                    f"Leg 2: {_legs[1]['side']}  {'+' if _legs[1]['ml']>0 else ''}{_legs[1]['ml']} @ {_legs[1]['book']}",
+                    f"Parlay: {_pamr}  |  {_pprob}% hit prob  |  +${_ppay:,.0f} on ${bankroll:.0f}",
+                ]
+            _lines += [
+                "",
+                "MATCHUPS",
+                "-"*40,
+            ]
+            for _row in _slate_rows:
+                _lines.append(
+                    f"{_row['Time(ET)']:>10}  {_row['Matchup']:<26}  "
+                    f"{_row['Away SP']:<16} vs {_row['Home SP']:<16}  "
+                    f"Park:{_row['Park']}  {_row['Weather']}"
+                )
+            _lines += ["", f"Generated by MLB F5 Model · {_to_et(datetime.utcnow()).strftime('%I:%M %p')} ET"]
+            st.text_area("", "\n".join(_lines), height=500, label_visibility="collapsed")
+
+# ══════════════════════════════════════════════════════════════════════════════
 # PAGE: SP INPUT
 # ══════════════════════════════════════════════════════════════════════════════
 elif page == "✏️ SP Input":
@@ -2164,7 +2441,7 @@ elif page == "📈 Bet Tracker":
 
         # ── Auto-settle ──────────────────────────────────────────────────────
         if not tracker_df[tracker_df["Result"]=="PENDING"].empty and live_scores:
-            tracker_df, _auto_changed = auto_settle_f5(tracker_df, live_scores)
+            tracker_df, _auto_changed = auto_settle_f5(tracker_df, live_scores, clv_snapshot)
             if _auto_changed:
                 save_tracker(tracker_df)
                 _auto_n = len([r for _,r in tracker_df.iterrows() if r["Result"] in ("WIN","LOSS","PUSH") and r.get("F5_Score")])
