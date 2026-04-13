@@ -64,6 +64,11 @@ TEAM_ABV = {
 def get_abv(team_name):
     return TEAM_ABV.get(team_name, team_name[:3].lower())
 
+def _last_word(s, fallback=""):
+    """Return last word of s, or fallback if s is None/empty."""
+    parts = (s or "").split()
+    return parts[-1] if parts else fallback
+
 def fmt_time_et(dt):
     """Convert UTC datetime to Eastern and format as 12-hour time."""
     dt_et = _to_et(dt)
@@ -902,10 +907,10 @@ if page == "📋 Today's Slate":
             home_sp_data = c_data.get("home_sp",{})
 
             # SP scratch detection
-            cached_away_sp = (away_sp_data.get("name","") or "").split()[-1].lower()
-            cached_home_sp = (home_sp_data.get("name","") or "").split()[-1].lower()
-            mlb_away_sp    = (probable_pitchers.get(away,"") or "").split()[-1].lower()
-            mlb_home_sp    = (probable_pitchers.get(home,"") or "").split()[-1].lower()
+            cached_away_sp = _last_word(away_sp_data.get("name","")).lower()
+            cached_home_sp = _last_word(home_sp_data.get("name","")).lower()
+            mlb_away_sp    = _last_word(probable_pitchers.get(away,"")).lower()
+            mlb_home_sp    = _last_word(probable_pitchers.get(home,"")).lower()
             away_sp_scratch = bool(mlb_away_sp and cached_away_sp and mlb_away_sp != cached_away_sp)
             home_sp_scratch = bool(mlb_home_sp and cached_home_sp and mlb_home_sp != cached_home_sp)
 
@@ -933,7 +938,7 @@ if page == "📋 Today's Slate":
                     st.markdown(f"### {time_et}")
                     pf_color = "🔴" if pf>1.04 else "🟡" if pf>1.01 else "🟢" if pf<0.97 else "⚪"
                     st.caption(f"{pf_color} Park: **{pf:.2f}x**")
-                    if ump: st.caption(f"🧑‍⚖️ {ump.split()[-1]} ({ump_k:+.2f} K)")
+                    if ump: st.caption(f"🧑‍⚖️ {_last_word(ump)} ({ump_k:+.2f} K)")
                 with c4:
                     sp = home_sp_data
                     if sp:
@@ -1087,10 +1092,10 @@ elif page == "🎯 Bet Signals":
             home_sp      = c_data.get("home_sp", {})
 
             # SP scratch detection for signal cards
-            _ca_sp = (away_sp.get("name","") or "").split()[-1].lower()
-            _ch_sp = (home_sp.get("name","") or "").split()[-1].lower()
-            _ma_sp = (probable_pitchers.get(away,"") or "").split()[-1].lower()
-            _mh_sp = (probable_pitchers.get(home,"") or "").split()[-1].lower()
+            _ca_sp = _last_word(away_sp.get("name","")).lower()
+            _ch_sp = _last_word(home_sp.get("name","")).lower()
+            _ma_sp = _last_word(probable_pitchers.get(away,"")).lower()
+            _mh_sp = _last_word(probable_pitchers.get(home,"")).lower()
             away_scratched = bool(_ma_sp and _ca_sp and _ma_sp != _ca_sp)
             home_scratched = bool(_mh_sp and _ch_sp and _mh_sp != _ch_sp)
 
@@ -2228,8 +2233,8 @@ elif page == "🌅 Morning Report":
             _pf  = _cd.get("park_factor", 1.0)
             _ump = _cd.get("ump_name","").split()[-1] if _cd.get("ump_name") else "—"
             _ukp = _cd.get("ump_k_boost",0.0)
-            _a_sp = (_cd.get("away_sp",{}).get("name","TBD") or "TBD").split()[-1]
-            _h_sp = (_cd.get("home_sp",{}).get("name","TBD") or "TBD").split()[-1]
+            _a_sp = _last_word(_cd.get("away_sp",{}).get("name",""), "TBD")
+            _h_sp = _last_word(_cd.get("home_sp",{}).get("name",""), "TBD")
             _a_sc = _cd.get("away_sp",{}).get("sp_score") or "—"
             _h_sc = _cd.get("home_sp",{}).get("sp_score") or "—"
             _wx   = _cd.get("weather") or {}
