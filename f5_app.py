@@ -823,8 +823,8 @@ with st.sidebar:
     c1,c2 = st.columns(2)
     with c1: kelly_frac = st.slider("Kelly Frac", 0.1, 1.0, 0.25, 0.05)
     with c2: max_pct    = st.slider("Max Bet %",  1, 10, 5) / 100
-    min_edge = st.slider("Min Edge (%)", 0, 10, 3) / 100
-    min_conf = st.slider("Min Model Conf (%)", 50, 70, 60) / 100
+    min_edge = st.slider("Min Edge (%)", 0, 10, 2) / 100
+    min_conf = st.slider("Min Model Conf (%)", 50, 70, 52) / 100
     st.divider()
     st.markdown("**🔧 Model Weights**")
     w_sp   = st.slider("SP Score",       0.1, 0.8, 0.45, 0.05)
