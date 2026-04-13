@@ -9,14 +9,14 @@
     "venue": "T-Mobile Park",
     "park_factor": 0.99,
     "lineup_confirmed": true,
-    "away_lineup_score": 59.7,
-    "home_lineup_score": 29.9,
-    "away_matchup_score": 46.5,
-    "home_matchup_score": 34.7,
-    "away_platoon_adv": -13.2,
-    "home_platoon_adv": 4.8,
+    "away_lineup_score": 59.3,
+    "home_lineup_score": 32.1,
+    "away_matchup_score": 46.2,
+    "home_matchup_score": 35.7,
+    "away_platoon_adv": -13.1,
+    "home_platoon_adv": 3.6,
     "away_nrfi_top3": {
-      "season_ops": 0.968,
+      "season_ops": 0.966,
       "vs_sp_ops": 0.427,
       "vs_sp_pa": 43,
       "detail": [
@@ -38,7 +38,7 @@
       ]
     },
     "home_nrfi_top3": {
-      "season_ops": 0.672,
+      "season_ops": 0.685,
       "vs_sp_ops": null,
       "vs_sp_pa": 0,
       "detail": [
@@ -72,32 +72,32 @@
     "away_sp": {
       "name": "Mike Burrows",
       "hand": "R",
-      "xfip": 4.97,
-      "k_bb_pct": 12.33,
+      "xfip": 5.51,
+      "k_bb_pct": 12.66,
       "hard_hit": 37.3,
       "barrel_pct": 7.8,
       "avg_velo": 88.3,
-      "era": 5.63,
-      "sp_score": 48.0,
+      "era": 6.88,
+      "sp_score": 46.1,
       "recent_era": 5.53,
-      "form_score": 0.3,
+      "form_score": 4.0,
       "days_rest": 6,
-      "home_away_adj": 1.1
+      "home_away_adj": 3.6
     },
     "home_sp": {
       "name": "George Kirby",
       "hand": "R",
-      "xfip": 4.35,
-      "k_bb_pct": 14.86,
+      "xfip": 4.29,
+      "k_bb_pct": 14.1,
       "hard_hit": 51.9,
       "barrel_pct": 5.8,
       "avg_velo": 91.2,
-      "era": 3.6,
-      "sp_score": 50.0,
+      "era": 3.43,
+      "sp_score": 49.8,
       "recent_era": 3.62,
-      "form_score": -0.1,
+      "form_score": -1.1,
       "days_rest": 6,
-      "home_away_adj": -0.3
+      "home_away_adj": -1.0
     }
   },
   {
@@ -546,15 +546,57 @@
     "home_team_abv": "MIN",
     "venue": "Target Field",
     "park_factor": 0.98,
-    "lineup_confirmed": false,
-    "away_lineup_score": null,
-    "home_lineup_score": null,
-    "away_matchup_score": null,
-    "home_matchup_score": null,
-    "away_platoon_adv": null,
-    "home_platoon_adv": null,
-    "away_nrfi_top3": {},
-    "home_nrfi_top3": {},
+    "lineup_confirmed": true,
+    "away_lineup_score": 26.8,
+    "home_lineup_score": 37.6,
+    "away_matchup_score": 26.5,
+    "home_matchup_score": 45.2,
+    "away_platoon_adv": -0.3,
+    "home_platoon_adv": 7.6,
+    "away_nrfi_top3": {
+      "season_ops": 0.499,
+      "vs_sp_ops": null,
+      "vs_sp_pa": 0,
+      "detail": [
+        {
+          "pid": 701350,
+          "pa": 0,
+          "ops": 0
+        },
+        {
+          "pid": 702332,
+          "pa": 0,
+          "ops": 0
+        },
+        {
+          "pid": 680776,
+          "pa": 0,
+          "ops": 0
+        }
+      ]
+    },
+    "home_nrfi_top3": {
+      "season_ops": 0.637,
+      "vs_sp_ops": 0.8,
+      "vs_sp_pa": 10,
+      "detail": [
+        {
+          "pid": 621439,
+          "pa": 10,
+          "ops": 0.8
+        },
+        {
+          "pid": 668885,
+          "pa": 0,
+          "ops": 0
+        },
+        {
+          "pid": 807712,
+          "pa": 0,
+          "ops": 0
+        }
+      ]
+    },
     "away_bp_ip_3d": 9.0,
     "home_bp_ip_3d": 10.0,
     "ump_name": "Willie Traynor",

@@ -11,11 +11,10 @@
 # Tracking (local only — use CSV import/export on cloud)
 bet_tracker.csv
 sp_data.csv
-model_picks.csv
 sync_status.json
 odds_snapshot.json
 
-# game_cache.json is committed — push after each data_sync run to refresh cloud app
+# game_cache.json and model_picks.csv are committed — push after each data_sync run
 __pycache__/
 *.pyc
 .pybaseball/
