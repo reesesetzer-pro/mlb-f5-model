@@ -802,7 +802,7 @@ with st.sidebar:
     """, unsafe_allow_html=True)
     # ── Navigation (top) ──
     page = st.radio("", [
-        "📋 Today's Slate","🎯 Bet Signals","📚 Best Bets","🌅 Morning Report","✏️ SP Input","📈 Bet Tracker","🏟️ Park Factors","📊 Model Performance"])
+        "📋 Today's Slate","🎯 Bet Signals","📚 Best Bets","⚾ NRFI","🌅 Morning Report","✏️ SP Input","📈 Bet Tracker","🏟️ Park Factors","📊 Model Performance"])
     st.divider()
     st.caption(f"🕐 {_to_et(datetime.utcnow()).strftime('%I:%M %p')} ET · Season 2026")
     # Show last data sync status
@@ -2095,6 +2095,202 @@ elif page == "📚 Best Bets":
   </div>
   {_rows_html if _rows_html else '<div style="color:#5a8ab4;font-size:0.82rem;padding:8px 0">No lines available yet</div>'}
 </div>""", unsafe_allow_html=True)
+
+# ══════════════════════════════════════════════════════════════════════════════
+# PAGE: NRFI
+# ══════════════════════════════════════════════════════════════════════════════
+elif page == "⚾ NRFI":
+    st.markdown("""
+    <div style="background:linear-gradient(135deg,#0c1e42 0%,#1a0f2e 100%);
+                border-radius:16px;padding:24px 28px;margin-bottom:20px;
+                border:1px solid rgba(123,97,255,0.25);
+                box-shadow:0 8px 32px rgba(0,0,0,0.4)">
+      <div style="font-size:1.6rem;font-weight:800;letter-spacing:-0.02em">
+        ⚾ NRFI / YRFI Analysis
+      </div>
+      <div style="font-size:0.9rem;color:#9b8fcc;margin-top:4px">
+        First-inning run model · Top-3 OPS matchup · Best price across books
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    if not games:
+        st.info("No games today.")
+    else:
+        _now_utc_nr = datetime.utcnow()
+        _nr_rows = []
+
+        for _g in games:
+            try:
+                _dt = datetime.strptime(_g["commence_time"], "%Y-%m-%dT%H:%M:%SZ")
+                _time_et = fmt_time_et(_dt)
+                _started = _dt <= _now_utc_nr
+            except:
+                _time_et = ""; _started = False
+
+            _away = _g["away_team"]; _home = _g["home_team"]
+            _odds = fetch_f5(_g["id"], _away, _home)
+            _fi   = _odds.get("fi_total", {})
+            _cd   = cache_by_away.get(_away, cache_by_home.get(_home, {}))
+
+            _pf       = _cd.get("park_factor", 1.0)
+            _ump_k    = _cd.get("ump_k_boost", 0.0)
+            _ump_name = _cd.get("ump_name", "")
+            _a_lu     = _cd.get("away_lineup_score")
+            _h_lu     = _cd.get("home_lineup_score")
+            _a_sp     = _cd.get("away_sp", {})
+            _h_sp     = _cd.get("home_sp", {})
+            _a_nrfi   = _cd.get("away_nrfi_top3") or {}
+            _h_nrfi   = _cd.get("home_nrfi_top3") or {}
+
+            # SP effective scores (form + split adj)
+            _asp = (_a_sp.get("sp_score") or 50) + (_a_sp.get("form_score",0) or 0) + (_a_sp.get("home_away_adj",0) or 0)
+            _hsp = (_h_sp.get("sp_score") or 50) + (_h_sp.get("form_score",0) or 0) + (_h_sp.get("home_away_adj",0) or 0)
+            _asp = max(0, min(100, _asp)); _hsp = max(0, min(100, _hsp))
+
+            _a_match = _cd.get("away_matchup_score"); _h_match = _cd.get("home_matchup_score")
+            _elu = round(_a_match*0.55+(_a_lu or 50)*0.45,1) if _a_match else (_a_lu or 50)
+            _hlu = round(_h_match*0.55+(_h_lu or 50)*0.45,1) if _h_match else (_h_lu or 50)
+
+            # Model probs
+            _mnrfi = calc_nrfi_prob(_asp, _hsp, _elu, _hlu, _pf, _ump_k, _a_nrfi, _h_nrfi)
+            _mu15  = calc_fi_u15_prob(_asp, _hsp, _elu, _hlu, _pf, _ump_k, _a_nrfi, _h_nrfi)
+            _myrfi = round(1 - _mnrfi, 4)
+
+            # Best prices across rec books
+            _best_nrfi = _best_yrfi = _best_u15 = None
+            _mkt_nrfi_p = None
+            for _bk in REC_BOOKS:
+                _bfi = _fi.get(_bk, {})
+                _np = _bfi.get("nrfi_price"); _yp = _bfi.get("yrfi_price"); _up = _bfi.get("u15_price")
+                if _np and (_best_nrfi is None or _np > _best_nrfi): _best_nrfi = _np
+                if _yp and (_best_yrfi is None or _yp > _best_yrfi): _best_yrfi = _yp
+                if _up and (_best_u15 is None or _up > _best_u15):   _best_u15  = _up
+
+            if _best_nrfi: _mkt_nrfi_p = american_to_prob(_best_nrfi)
+
+            # Edge
+            _nrfi_edge = round((_mnrfi - _mkt_nrfi_p) * 100, 1) if _mkt_nrfi_p else None
+
+            _nr_rows.append({
+                "game": f"{_away} @ {_home}",
+                "away": _away, "home": _home,
+                "time": _time_et,
+                "started": _started,
+                "a_sp_name": _a_sp.get("name","TBD"),
+                "h_sp_name": _h_sp.get("name","TBD"),
+                "a_sp_score": round(_asp,1),
+                "h_sp_score": round(_hsp,1),
+                "a_xfip": _a_sp.get("xfip"), "h_xfip": _h_sp.get("xfip"),
+                "a_kbb":  _a_sp.get("k_bb_pct"), "h_kbb": _h_sp.get("k_bb_pct"),
+                "a_ops": _a_nrfi.get("season_ops"), "h_ops": _h_nrfi.get("season_ops"),
+                "a_vssp": _a_nrfi.get("vs_sp_ops"), "h_vssp": _h_nrfi.get("vs_sp_ops"),
+                "a_vspa": _a_nrfi.get("vs_sp_pa",0), "h_vspa": _h_nrfi.get("vs_sp_pa",0),
+                "model_nrfi": _mnrfi, "model_yrfi": _myrfi, "model_u15": _mu15,
+                "mkt_nrfi_p": _mkt_nrfi_p,
+                "nrfi_edge": _nrfi_edge,
+                "best_nrfi": _best_nrfi, "best_yrfi": _best_yrfi, "best_u15": _best_u15,
+                "pf": _pf, "ump_k": _ump_k, "ump_name": _ump_name,
+            })
+
+        if not _nr_rows:
+            st.info("No game data available yet.")
+        else:
+            # Sort: pre-game first, then by model NRFI% desc (strongest NRFI plays first)
+            _nr_rows.sort(key=lambda r: (r["started"], -r["model_nrfi"]))
+
+            for _r in _nr_rows:
+                _abv_a = get_abv(_r["away"]); _abv_h = get_abv(_r["home"])
+                _status = "🔴 Live/Final" if _r["started"] else _r["time"]
+
+                # Edge badge color
+                _edge = _r["nrfi_edge"]
+                if _edge is not None and _edge >= 4:
+                    _edge_color = "#4caf50"; _edge_label = f"+{_edge:.1f}% edge"
+                elif _edge is not None and _edge >= 2:
+                    _edge_color = "#ffb300"; _edge_label = f"+{_edge:.1f}% edge"
+                elif _edge is not None:
+                    _edge_color = "#5a8ab4"; _edge_label = f"{_edge:.1f}%"
+                else:
+                    _edge_color = "#5a8ab4"; _edge_label = "—"
+
+                with st.container():
+                    st.markdown('<div class="game-card">', unsafe_allow_html=True)
+
+                    # ── Header row ──
+                    _hc1, _hc2, _hc3 = st.columns([3, 1, 3])
+                    with _hc1:
+                        st.image(logo_url(_abv_a), width=40)
+                        _a_sc = _r["a_sp_score"]
+                        _a_scratch = bool(_last_word(probable_pitchers.get(_r["away"],"")))
+                        st.markdown(f"**{_r['away']}**  \n"
+                                    f"<span style='font-size:0.8rem;color:#6a9cbf'>"
+                                    f"{_last_word(_r['a_sp_name'],'TBD')} · SP {_a_sc:.0f}</span>",
+                                    unsafe_allow_html=True)
+                    with _hc2:
+                        st.markdown(f"<div style='text-align:center;padding-top:8px'>"
+                                    f"<span style='color:#6a9cbf;font-size:0.85rem'>{_status}</span><br>"
+                                    f"<span style='font-size:1.1rem;font-weight:700'>vs</span></div>",
+                                    unsafe_allow_html=True)
+                    with _hc3:
+                        st.image(logo_url(_abv_h), width=40)
+                        _h_sc = _r["h_sp_score"]
+                        st.markdown(f"**{_r['home']}**  \n"
+                                    f"<span style='font-size:0.8rem;color:#6a9cbf'>"
+                                    f"{_last_word(_r['h_sp_name'],'TBD')} · SP {_h_sc:.0f}</span>",
+                                    unsafe_allow_html=True)
+
+                    st.divider()
+
+                    # ── Model vs Market ──
+                    _mc1, _mc2, _mc3, _mc4 = st.columns(4)
+                    _mc1.metric("Model NRFI", f"{_r['model_nrfi']*100:.1f}%")
+                    _mc2.metric("Model YRFI", f"{_r['model_yrfi']*100:.1f}%")
+                    _mc3.metric("Mkt NRFI", f"{_r['mkt_nrfi_p']*100:.1f}%" if _r['mkt_nrfi_p'] else "—")
+                    _mc4.metric("Edge", _edge_label,
+                                delta_color="normal" if (_edge or 0) >= 2 else "off")
+
+                    # ── Best prices row ──
+                    _pc1, _pc2, _pc3, _pc4 = st.columns(4)
+                    def _fmt_odds(o): return f"{'+' if o and o>0 else ''}{o}" if o else "—"
+                    _pc1.markdown(f"**Best NRFI:** `{_fmt_odds(_r['best_nrfi'])}`")
+                    _pc2.markdown(f"**Best YRFI:** `{_fmt_odds(_r['best_yrfi'])}`")
+                    _pc3.markdown(f"**Best U1.5:** `{_fmt_odds(_r['best_u15'])}`")
+                    _pc4.markdown(f"**Model U1.5:** `{_r['model_u15']*100:.1f}%`")
+
+                    # ── SP detail + OPS matchup ──
+                    with st.expander("SP Stats · Top-3 OPS Matchup · Context"):
+                        _sc1, _sc2 = st.columns(2)
+                        with _sc1:
+                            st.markdown(f"**Away SP — {_r['a_sp_name']}**")
+                            _a_xfip = f"{_r['a_xfip']:.2f}" if _r['a_xfip'] else "—"
+                            _a_kbb  = f"{_r['a_kbb']:.1f}%" if _r['a_kbb'] else "—"
+                            st.caption(f"xFIP {_a_xfip} · K-BB% {_a_kbb}")
+                            if _r["a_ops"]:
+                                _vssp_txt = (f" (vs SP: {_r['a_vssp']:.3f} OPS over {_r['a_vspa']} PA)"
+                                             if _r["a_vssp"] and (_r["a_vspa"] or 0) >= 8 else "")
+                                st.caption(f"Away top-3 OPS: {_r['a_ops']:.3f}{_vssp_txt}")
+                            else:
+                                st.caption("Away top-3 OPS: not available")
+                        with _sc2:
+                            st.markdown(f"**Home SP — {_r['h_sp_name']}**")
+                            _h_xfip = f"{_r['h_xfip']:.2f}" if _r['h_xfip'] else "—"
+                            _h_kbb  = f"{_r['h_kbb']:.1f}%" if _r['h_kbb'] else "—"
+                            st.caption(f"xFIP {_h_xfip} · K-BB% {_h_kbb}")
+                            if _r["h_ops"]:
+                                _vssp_txt = (f" (vs SP: {_r['h_vssp']:.3f} OPS over {_r['h_vspa']} PA)"
+                                             if _r["h_vssp"] and (_r["h_vspa"] or 0) >= 8 else "")
+                                st.caption(f"Home top-3 OPS: {_r['h_ops']:.3f}{_vssp_txt}")
+                            else:
+                                st.caption("Home top-3 OPS: not available")
+
+                        st.divider()
+                        _ctx1, _ctx2, _ctx3 = st.columns(3)
+                        _ctx1.metric("Park Factor", f"{_r['pf']:.2f}")
+                        _ctx2.metric("Ump K Boost", f"{_r['ump_k']:+.3f}")
+                        _ctx3.caption(f"Ump: {_r['ump_name'] or '—'}")
+
+                    st.markdown('</div>', unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # PAGE: MORNING REPORT
