@@ -2587,8 +2587,7 @@ elif page == "🏟️ Park Factors":
         rows.append({"🏟️ Park":park,"Team":team,"F5 Factor":pf,"Classification":cls})
 
     df = pd.DataFrame(rows)
-    st.dataframe(df.style.background_gradient(subset=["F5 Factor"],cmap="RdYlGn",
-                 vmin=0.90,vmax=1.30), hide_index=True, use_container_width=True)
+    st.dataframe(df, hide_index=True, use_container_width=True)
     st.caption("Factors updated annually. Coors Field (+28%) and Great American Ball Park (+12%) are the most significant outliers.")
 
 # ══════════════════════════════════════════════════════════════════════════════
