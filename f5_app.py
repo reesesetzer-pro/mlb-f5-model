@@ -290,21 +290,31 @@ def fetch_games():
         today_games = [g for g in data
                        if _to_et(datetime.strptime(g["commence_time"],"%Y-%m-%dT%H:%M:%SZ")).date()==today]
         # Deduplicate: same matchup can appear with multiple event IDs.
-        # Keep the entry with the most bookmakers (better coverage).
-        seen, deduped = {}, []
+        # Keep the entry with the most bookmakers for H2H display, but also
+        # store ALL event IDs so fetch_f5 can try each one (F5 markets may
+        # live under a different event ID than the one with most H2H books).
+        seen = {}  # pair -> {"game": g, "n_bks": n, "all_ids": [id1, id2, ...]}
         for g in today_games:
             pair = (g["away_team"], g["home_team"])
             n_bks = len(g.get("bookmakers", []))
-            if pair not in seen or n_bks > seen[pair][1]:
-                seen[pair] = (g, n_bks)
-        for pair in seen:
-            deduped.append(seen[pair][0])
+            if pair not in seen:
+                seen[pair] = {"game": g, "n_bks": n_bks, "all_ids": [g["id"]]}
+            else:
+                seen[pair]["all_ids"].append(g["id"])
+                if n_bks > seen[pair]["n_bks"]:
+                    seen[pair]["game"] = g
+                    seen[pair]["n_bks"] = n_bks
+        deduped = []
+        for entry in seen.values():
+            g = entry["game"]
+            g["_extra_ids"] = tuple(i for i in entry["all_ids"] if i != g["id"])
+            deduped.append(g)
         deduped.sort(key=lambda g: g["commence_time"])
         return deduped, None
     except Exception as e: return [], str(e)
 
-@st.cache_data(ttl=300)
-def fetch_f5(event_id, away, home):
+def _fetch_f5_for_id(event_id, away, home):
+    """Inner fetch for a single event ID — returns result dict (may be empty)."""
     url = f"https://api.the-odds-api.com/v4/sports/{SPORT}/events/{event_id}/odds"
     params = {"apiKey":API_KEY,"regions":REGIONS,
               "markets":"h2h_1st_5_innings,spreads_1st_5_innings,totals_1st_5_innings,team_totals_1st_5_innings,totals_1st_inning,alternate_totals_1st_inning",
@@ -361,6 +371,18 @@ def fetch_f5(event_id, away, home):
                             result["team_total"][k][side][direction.lower()+"_line"]  = o.get("point")
                             result["team_total"][k][side][direction.lower()+"_price"] = o.get("price")
     except: pass
+    return result
+
+@st.cache_data(ttl=300)
+def fetch_f5(event_id, away, home, extra_ids=()):
+    """Fetch F5 odds, falling back to extra_ids if the primary event has no F5 markets.
+    extra_ids is a tuple so it is hashable for st.cache_data."""
+    result = _fetch_f5_for_id(event_id, away, home)
+    if not any(result.values()):
+        for eid in extra_ids:
+            alt = _fetch_f5_for_id(eid, away, home)
+            if any(alt.values()):
+                return alt
     return result
 
 @st.cache_data(ttl=60)
@@ -885,7 +907,7 @@ if page == "📋 Today's Slate":
         for game in games:
             away = game["away_team"]; home = game["home_team"]
             abv_away = get_abv(away);  abv_home = get_abv(home)
-            odds_data = fetch_f5(game["id"], away, home)
+            odds_data = fetch_f5(game["id"], away, home, game.get("_extra_ids", ()))
             try:
                 dt = datetime.strptime(game["commence_time"],"%Y-%m-%dT%H:%M:%SZ")
                 time_et = fmt_time_et(dt)
@@ -1060,7 +1082,7 @@ elif page == "🎯 Bet Signals":
 
             away = game["away_team"]; home = game["home_team"]
             abv_away = get_abv(away);  abv_home = get_abv(home)
-            odds_data = fetch_f5(game["id"], away, home)
+            odds_data = fetch_f5(game["id"], away, home, game.get("_extra_ids", ()))
             game_key  = f"{away} @ {home}"
             try:
                 time_et = fmt_time_et(dt)
@@ -1890,7 +1912,7 @@ elif page == "📚 Best Bets":
                 sel_game_name = st.selectbox("Select game", game_names, label_visibility="collapsed")
                 sel_game = pregame[game_names.index(sel_game_name)]
                 _sa = sel_game["away_team"]; _sh = sel_game["home_team"]
-                _odds = fetch_f5(sel_game["id"], _sa, _sh)
+                _odds = fetch_f5(sel_game["id"], _sa, _sh, sel_game.get("_extra_ids", ()))
 
                 # ML comparison
                 ml_rows = []
@@ -1976,7 +1998,7 @@ elif page == "📚 Best Bets":
         except: pass
 
         _away = _game["away_team"]; _home = _game["home_team"]
-        _odds = fetch_f5(_game["id"], _away, _home)
+        _odds = fetch_f5(_game["id"], _away, _home, _game.get("_extra_ids", ()))
         try: _time_et = fmt_time_et(_dt)
         except: _time_et = ""
 
@@ -2141,7 +2163,7 @@ elif page == "⚾ NRFI":
                 _time_et = ""; _started = False
 
             _away = _g["away_team"]; _home = _g["home_team"]
-            _odds = fetch_f5(_g["id"], _away, _home)
+            _odds = fetch_f5(_g["id"], _away, _home, _g.get("_extra_ids", ()))
             _fi   = _odds.get("fi_total", {})
             _cd   = cache_by_away.get(_away, cache_by_home.get(_home, {}))
 
