@@ -2471,24 +2471,28 @@ elif page == "📈 Bet Tracker":
                       <span style="color:#7a9cbf;font-size:0.8rem;margin-left:8px">{row['Date']}</span>
                     </div>
                     """, unsafe_allow_html=True)
-                    s1,s2,s3,s4,s5 = st.columns([1,1,1,1,2])
+                    s1,s2,s3,s4,s5,s6 = st.columns([1,1,1,0.8,1.3,1.5])
                     if s1.button("✅ WIN",  key=f"w{idx}", use_container_width=True):
                         tracker_df.at[idx,"Result"]="WIN"; save_tracker(tracker_df); st.rerun()
                     if s2.button("❌ LOSS", key=f"l{idx}", use_container_width=True):
                         tracker_df.at[idx,"Result"]="LOSS"; save_tracker(tracker_df); st.rerun()
                     if s3.button("➖ PUSH", key=f"p{idx}", use_container_width=True):
                         tracker_df.at[idx,"Result"]="PUSH"; save_tracker(tracker_df); st.rerun()
-                    closing = s4.number_input("Closing ML", value=0, key=f"cl{idx}", label_visibility="collapsed")
-                    score   = s5.text_input("F5 Score (e.g. 3-1)", key=f"sc{idx}", label_visibility="collapsed",
-                                            placeholder="F5 score (optional)")
+                    if s4.button("🗑️", key=f"del_p{idx}", use_container_width=True, help="Delete this bet"):
+                        tracker_df = tracker_df.drop(index=idx).reset_index(drop=True)
+                        save_tracker(tracker_df); st.rerun()
+                    new_wager = s5.number_input("Wager", value=float(row.get("Wager",0) or 0),
+                                                min_value=1.0, step=5.0, key=f"wg{idx}",
+                                                label_visibility="collapsed")
+                    if new_wager != float(row.get("Wager",0) or 0):
+                        tracker_df.at[idx,"Wager"] = new_wager; save_tracker(tracker_df)
+                    closing = s6.number_input("Closing ML", value=0, key=f"cl{idx}", label_visibility="collapsed")
                     if closing:
                         try:
                             tracker_df.at[idx,"Closing_ML"] = closing
                             tracker_df.at[idx,"CLV"] = float(str(row["Bet_ML"]).replace("+","")) - closing
                             save_tracker(tracker_df)
                         except: pass
-                    if score:
-                        tracker_df.at[idx,"F5_Score"] = score; save_tracker(tracker_df)
 
             st.divider()
 
@@ -2500,6 +2504,40 @@ elif page == "📈 Bet Tracker":
         st.dataframe(tracker_df[show_cols].sort_values("Date",ascending=False)
                      if not tracker_df.empty else tracker_df,
                      hide_index=True, use_container_width=True)
+
+        # ── Edit / Delete ──────────────────────────────────────────────────────
+        if not tracker_df.empty:
+            with st.expander(f"✏️ Edit or Delete Bets ({len(tracker_df)} total)", expanded=False):
+                for idx, row in tracker_df.sort_values("Date", ascending=False).iterrows():
+                    _res_color = {"WIN":"#00e676","LOSS":"#ff5252","PENDING":"#ffb74d","PUSH":"#90a4ae"}.get(str(row.get("Result","")),"#90a4ae")
+                    _label = f"{row.get('Date','')}  ·  {str(row.get('Bet_Side',''))[:40]}  ·  {str(row.get('Market',''))}"
+                    with st.container():
+                        st.markdown(f"""
+                        <div style="display:flex;justify-content:space-between;align-items:center;
+                                    background:rgba(15,28,58,0.5);border-radius:8px;
+                                    padding:8px 14px;margin-bottom:4px">
+                          <span style="font-size:0.84rem">{_label}</span>
+                          <span style="font-size:0.78rem;color:{_res_color};font-weight:700">{row.get('Result','')}</span>
+                        </div>
+                        """, unsafe_allow_html=True)
+                        _ec1, _ec2, _ec3 = st.columns([2, 1, 0.6])
+                        _cur_wager = float(row.get("Wager", 0) or 0)
+                        _new_wager = _ec1.number_input(
+                            f"Wager for row {idx}", value=_cur_wager,
+                            min_value=1.0, step=5.0,
+                            key=f"edit_wg_{idx}", label_visibility="collapsed")
+                        if _new_wager != _cur_wager:
+                            tracker_df.at[idx, "Wager"] = _new_wager
+                            save_tracker(tracker_df)
+                            st.success("Updated.")
+                        if _ec2.button("💾 Save Wager", key=f"save_wg_{idx}", use_container_width=True):
+                            tracker_df.at[idx, "Wager"] = _new_wager
+                            save_tracker(tracker_df); st.rerun()
+                        if _ec3.button("🗑️ Delete", key=f"del_all_{idx}", use_container_width=True):
+                            tracker_df = tracker_df.drop(index=idx).reset_index(drop=True)
+                            save_tracker(tracker_df); st.rerun()
+
+        st.divider()
         col1, col2 = st.columns(2)
         col1.download_button("📥 Download CSV",
             tracker_df.to_csv(index=False).encode(), "f5_bets.csv", "text/csv")
