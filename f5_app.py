@@ -267,6 +267,12 @@ def kelly(edge, odds, bankroll, frac=0.25, max_pct=0.05):
         return round(min(k*bankroll, bankroll*max_pct), 2)
     except: return 0
 
+def kelly_rounded(edge, odds, bankroll, frac=0.25, max_pct=0.05, step=20):
+    """Kelly amount snapped to nearest $20 increment. Min $20 for any real signal."""
+    k = kelly(edge, odds, bankroll, frac, max_pct)
+    if k <= 0: return 0
+    return max(step, round(k / step) * step)
+
 # ── DATA FETCHING ─────────────────────────────────────────────────────────────
 @st.cache_data(ttl=300)
 def fetch_games():
@@ -283,9 +289,9 @@ def fetch_games():
 def fetch_f5(event_id, away, home):
     url = f"https://api.the-odds-api.com/v4/sports/{SPORT}/events/{event_id}/odds"
     params = {"apiKey":API_KEY,"regions":REGIONS,
-              "markets":"h2h_1st_5_innings,spreads_1st_5_innings,totals_1st_5_innings,team_totals_1st_5_innings",
+              "markets":"h2h_1st_5_innings,spreads_1st_5_innings,totals_1st_5_innings,team_totals_1st_5_innings,totals_1st_inning,alternate_totals_1st_inning",
               "bookmakers":BOOKS,"oddsFormat":"american"}
-    result = {"ml":{}, "spread":{}, "total":{}, "team_total":{}}
+    result = {"ml":{}, "spread":{}, "total":{}, "team_total":{}, "fi_total":{}}
     try:
         r = requests.get(url, params=params, timeout=15); r.raise_for_status()
         for bm in r.json().get("bookmakers",[]):
@@ -310,6 +316,20 @@ def fetch_f5(event_id, away, home):
                         elif o["name"]=="Under": bk_tot["under_price"] = o.get("price")
                     if bk_tot:
                         result["total"][k] = bk_tot
+                elif mk in ("totals_1st_inning", "alternate_totals_1st_inning"):
+                    if k not in result["fi_total"]:
+                        result["fi_total"][k] = {}
+                    for o in mkt["outcomes"]:
+                        line  = o.get("point")
+                        price = o.get("price")
+                        name  = o.get("name","")
+                        if line is None: continue
+                        if abs(line - 0.5) < 0.01:
+                            if name == "Under": result["fi_total"][k]["nrfi_price"] = price
+                            elif name == "Over": result["fi_total"][k]["yrfi_price"] = price
+                        elif abs(line - 1.5) < 0.01:
+                            if name == "Under": result["fi_total"][k]["u15_price"] = price
+                            elif name == "Over": result["fi_total"][k]["o15_price"] = price
                 elif mk == "team_totals_1st_5_innings":
                     for o in mkt["outcomes"]:
                         desc = o.get("description","")
@@ -433,6 +453,35 @@ def calc_model_run_diff(model_away_prob, away_sp_score, home_sp_score,
 
     # Blend: 60% probability signal, 40% component signal
     return round(0.60 * prob_diff + 0.40 * comp_diff, 3)
+
+def calc_nrfi_prob(away_sp_score, home_sp_score, away_lu, home_lu, pf, ump_k):
+    """
+    Estimate P(NRFI) — no run by either team in the 1st inning.
+    Base ≈ 0.52 (market typically prices NRFI at -115 to -140).
+    Stronger SPs / weaker lineups / K-heavy umps push probability up.
+    """
+    base    = 0.52
+    avg_sp  = ((away_sp_score or 50) + (home_sp_score or 50)) / 2
+    avg_lu  = ((away_lu or 50)       + (home_lu or 50))       / 2
+    sp_adj  =  (avg_sp - 50) / 200        # ±0.10 for elite / poor SP
+    lu_adj  = -(avg_lu - 50) / 300        # strong lineups hurt NRFI
+    ump_adj =  (ump_k  or 0) * 0.04       # K-heavy ump → fewer runs
+    pf_adj  = -(pf - 1.0)   * 0.25       # hitter parks → fewer NRFI
+    return round(max(0.35, min(0.72, base + sp_adj + lu_adj + ump_adj + pf_adj)), 4)
+
+def calc_fi_u15_prob(away_sp_score, home_sp_score, away_lu, home_lu, pf, ump_k):
+    """
+    Estimate P(1st inning total ≤ 1.5) — at most 1 combined run.
+    Base ≈ 0.76 (U1.5 1st inning typically priced -220 to -280).
+    """
+    base    = 0.76
+    avg_sp  = ((away_sp_score or 50) + (home_sp_score or 50)) / 2
+    avg_lu  = ((away_lu or 50)       + (home_lu or 50))       / 2
+    sp_adj  =  (avg_sp - 50) / 300
+    lu_adj  = -(avg_lu - 50) / 400
+    ump_adj =  (ump_k  or 0) * 0.03
+    pf_adj  = -(pf - 1.0)   * 0.20
+    return round(max(0.60, min(0.90, base + sp_adj + lu_adj + ump_adj + pf_adj)), 4)
 
 def _norm_cdf(x):
     return (1 + math.erf(x / math.sqrt(2))) / 2
@@ -823,7 +872,7 @@ elif page == "🎯 Bet Signals":
                  hsp, home_lu, eff_home_lu, home_matchup, home_platoon_adv, home, abv_home),
             ]:
                 if model_p >= 0.52:
-                    k = kelly(max(edge,0), ml, bankroll, kelly_frac, max_pct)
+                    k = kelly_rounded(max(edge,0), ml, bankroll, kelly_frac, max_pct)
                     signals.append({
                         "game":game_tag,"time":time_et,"team":team,"abv":abv,
                         "away_abv":abv_away,"home_abv":abv_home,
@@ -872,7 +921,7 @@ elif page == "🎯 Bet Signals":
                     ]:
                         edge = model_p - mkt_p
                         if model_p >= 0.52:
-                            k = kelly(max(edge,0), ml, bankroll, kelly_frac, max_pct)
+                            k = kelly_rounded(max(edge,0), ml, bankroll, kelly_frac, max_pct)
                             signals.append({
                                 "game":game_tag,"time":time_et,"team":team,"abv":abv,
                                 "away_abv":abv_away,"home_abv":abv_home,
@@ -926,7 +975,7 @@ elif page == "🎯 Bet Signals":
                     ]:
                         edge = model_p - mkt_p
                         if model_p >= 0.52:
-                            k = kelly(max(edge,0), ml, bankroll, kelly_frac, max_pct)
+                            k = kelly_rounded(max(edge,0), ml, bankroll, kelly_frac, max_pct)
                             signals.append({
                                 "game":game_tag,"time":time_et,"team":team,
                                 "abv":abv_away,"away_abv":abv_away,"home_abv":abv_home,
@@ -971,7 +1020,7 @@ elif page == "🎯 Bet Signals":
                     ]:
                         edge = model_p - mkt_p
                         if model_p >= 0.52:
-                            k = kelly(max(edge,0), ml, bankroll, kelly_frac, max_pct)
+                            k = kelly_rounded(max(edge,0), ml, bankroll, kelly_frac, max_pct)
                             signals.append({
                                 "game":game_tag,"time":time_et,"team":tm,"abv":abv,
                                 "away_abv":abv_away,"home_abv":abv_home,
@@ -1001,6 +1050,43 @@ elif page == "🎯 Bet Signals":
                             "sp_score":sp_s,"lu_score":lu_s,
                             "park_factor":pf,"ump_k":ump_k,"ump_zone":ump_zone,
                             "model_line":m_tt,"mkt_line":"—",
+                        })
+
+            # ── NRFI / YRFI / 1st Inning U1.5 signals ────────────────────────
+            fi_data = odds_data.get("fi_total", {})
+            fi_books_rec = [b for b in REC_BOOKS if b in fi_data]
+            if fi_books_rec:
+                model_nrfi = calc_nrfi_prob(eff_asp, eff_hsp, eff_away_lu, eff_home_lu, pf, ump_k)
+                model_yrfi = round(1 - model_nrfi, 4)
+                model_u15  = calc_fi_u15_prob(eff_asp, eff_hsp, eff_away_lu, eff_home_lu, pf, ump_k)
+                _fi_base   = {"game":game_tag,"time":time_et,
+                              "away_abv":abv_away,"home_abv":abv_home,
+                              "form_score":0,"days_rest":None,"weather":wx,
+                              "matchup_score":0,"park_factor":pf,
+                              "ump_k":ump_k,"ump_zone":ump_zone,"sharp_ref":False,
+                              "sp_score":(eff_asp+eff_hsp)/2,
+                              "lu_score":((away_lu or 50)+(home_lu or 50))/2}
+
+                for label, market, model_p, price_key, team, abv in [
+                    ("NRFI", "NRFI/YRFI",    model_nrfi, "nrfi_price", away, abv_away),
+                    ("YRFI", "NRFI/YRFI",    model_yrfi, "yrfi_price", away, abv_away),
+                    (f"1st Inn U1.5", "1st Inn U1.5", model_u15, "u15_price", away, abv_away),
+                ]:
+                    prices = [fi_data[b][price_key] for b in fi_books_rec if fi_data[b].get(price_key)]
+                    if not prices: continue
+                    best_price = max(prices)
+                    best_bk    = max(fi_books_rec, key=lambda b: fi_data[b].get(price_key, -9999))
+                    mkt_p      = american_to_prob(best_price) or 0.524
+                    edge       = model_p - mkt_p
+                    if model_p >= 0.52:
+                        k = kelly_rounded(max(edge, 0), best_price, bankroll, kelly_frac, max_pct)
+                        signals.append({**_fi_base,
+                            "team":team,"abv":abv,
+                            "side":f"{label} — {away} @ {home}","market":market,
+                            "edge":edge,"ml":best_price,
+                            "book":BOOK_LABELS.get(best_bk, best_bk),
+                            "model_p":model_p,"mkt_p":mkt_p,"kelly":k,
+                            "model_line":None,"mkt_line":None,
                         })
 
         # ── DISPLAY ───────────────────────────────────────────────────────────
@@ -1166,8 +1252,8 @@ elif page == "🎯 Bet Signals":
             st.divider()
 
             market_filter = st.multiselect("Filter by Market",
-                ["F5 ML","F5 Spread","F5 Total","F5 Team Total"],
-                default=["F5 ML","F5 Spread","F5 Total","F5 Team Total"])
+                ["F5 ML","F5 Spread","F5 Total","F5 Team Total","NRFI/YRFI","1st Inn U1.5"],
+                default=["F5 ML","F5 Spread","F5 Total","F5 Team Total","NRFI/YRFI","1st Inn U1.5"])
             st.divider()
 
             display_signals = [s for s in signals
@@ -1304,7 +1390,7 @@ elif page == "🎯 Bet Signals":
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div style="display:flex;align-items:center;gap:12px">{logo_html}<div><div style="font-size:1.05rem;font-weight:700;line-height:1.2"><span class="{dot}"></span>{badge_label}{top_ribbon}</div><div style="font-size:0.9rem;font-weight:600;margin-top:2px">{s['side']}</div><div style="font-size:0.78rem;color:#7a9cbf;margin-top:1px">{s['game']} | {s['time']}</div></div></div><div style="text-align:right"><div style="font-size:2rem;font-weight:800;line-height:1">{conf_pct}%</div><div style="font-size:0.7rem;color:#7a9cbf;text-transform:uppercase;letter-spacing:0.05em">Model Prob{cal_txt}</div></div></div>
 <div class="conf-bar-wrap"><div class="conf-bar-fill" style="width:{conf_pct}%;background:{bar_color}"></div></div>
 <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;margin-bottom:10px">{pills_html}</div>
-<div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,0.06);padding-top:10px;margin-top:4px"><span style="color:#b0bec5;font-size:0.82rem">Suggested bet</span><span style="font-size:1.1rem;font-weight:700;color:#00e676">${s['kelly']:,.2f}</span></div>
+<div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,0.06);padding-top:10px;margin-top:4px"><span style="color:#b0bec5;font-size:0.82rem">Suggested bet</span><span style="font-size:1.1rem;font-weight:700;color:#00e676">${s['kelly']:,.0f}</span></div>
 </div>""", unsafe_allow_html=True)
 
                 # One-click log button (below card, outside HTML)
