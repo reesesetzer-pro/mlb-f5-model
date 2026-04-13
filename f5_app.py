@@ -287,8 +287,20 @@ def fetch_games():
     try:
         r = requests.get(url, params=params, timeout=15); r.raise_for_status()
         data = r.json(); today = _to_et(datetime.utcnow()).date()
-        return [g for g in data
-                if _to_et(datetime.strptime(g["commence_time"],"%Y-%m-%dT%H:%M:%SZ")).date()==today], None
+        today_games = [g for g in data
+                       if _to_et(datetime.strptime(g["commence_time"],"%Y-%m-%dT%H:%M:%SZ")).date()==today]
+        # Deduplicate: same matchup can appear with multiple event IDs.
+        # Keep the entry with the most bookmakers (better coverage).
+        seen, deduped = {}, []
+        for g in today_games:
+            pair = (g["away_team"], g["home_team"])
+            n_bks = len(g.get("bookmakers", []))
+            if pair not in seen or n_bks > seen[pair][1]:
+                seen[pair] = (g, n_bks)
+        for pair in seen:
+            deduped.append(seen[pair][0])
+        deduped.sort(key=lambda g: g["commence_time"])
+        return deduped, None
     except Exception as e: return [], str(e)
 
 @st.cache_data(ttl=300)
