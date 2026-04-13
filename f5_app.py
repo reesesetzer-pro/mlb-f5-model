@@ -24,19 +24,18 @@ st.set_page_config(page_title="MLB F5 Model", page_icon="https://a.espncdn.com/i
 # ── CONSTANTS ─────────────────────────────────────────────────────────────────
 API_KEY = st.secrets.get("ODDS_API_KEY", "40cfbba84e52cd6da31272d4ac287966")
 SPORT   = "baseball_mlb"
-BOOKS   = "draftkings,fanduel,betmgm,williamhill_us,espnbet,pinnacle"
-REGIONS = "us,us2,eu"
+BOOKS   = "draftkings,fanduel,betmgm,williamhill_us,espnbet,fanatics,hardrockbet"
+REGIONS = "us,us2"
 BOOK_LABELS = {
     "draftkings":     "DraftKings",
     "fanduel":        "FanDuel",
     "betmgm":         "BetMGM",
     "williamhill_us": "Caesars",
-    "espnbet":        "theScore",
-    "pinnacle":       "Pinnacle",
+    "espnbet":        "TheScore",
+    "fanatics":       "Fanatics",
+    "hardrockbet":    "Hard Rock",
 }
-# Pinnacle is the reference/sharp book — used for market probability calibration only.
-# Recreational books are where we display the best available price for wagering.
-REC_BOOKS = {"draftkings","fanduel","betmgm","williamhill_us","espnbet"}
+REC_BOOKS = {"draftkings","fanduel","betmgm","williamhill_us","espnbet","fanatics","hardrockbet"}
 TRACKER_FILE      = "bet_tracker.csv"
 SP_FILE           = "sp_data.csv"
 CACHE_FILE        = "game_cache.json"
@@ -584,7 +583,7 @@ with st.sidebar:
     """, unsafe_allow_html=True)
     # ── Navigation (top) ──
     page = st.radio("", [
-        "📋 Today's Slate","🎯 Bet Signals","✏️ SP Input","📈 Bet Tracker","🏟️ Park Factors","📊 Model Performance"])
+        "📋 Today's Slate","🎯 Bet Signals","📚 Best Bets","✏️ SP Input","📈 Bet Tracker","🏟️ Park Factors","📊 Model Performance"])
     st.divider()
     st.caption(f"🕐 {_to_et(datetime.utcnow()).strftime('%I:%M %p')} ET · Season 2026")
     # Show last data sync status
@@ -838,16 +837,9 @@ elif page == "🎯 Bet Signals":
             best_home_bk = max((b for b in REC_BOOKS if b in odds_data["ml"] and odds_data["ml"][b]["home"]),
                                key=lambda b: odds_data["ml"][b]["home"])
 
-            # Reference probability — Pinnacle vig-free (sharpest) when available,
-            # else vig-free from recreational book average.
-            pin_ml = odds_data["ml"].get("pinnacle", {})
-            if pin_ml.get("away") and pin_ml.get("home"):
-                true_away, true_home = vig_free(pin_ml["away"], pin_ml["home"])
-                using_pinnacle = True
-            else:
-                true_away, true_home = vig_free(
-                    sum(away_mls_rec)/len(away_mls_rec), sum(home_mls_rec)/len(home_mls_rec))
-                using_pinnacle = False
+            # Reference probability — vig-free from recreational book average
+            true_away, true_home = vig_free(
+                sum(away_mls_rec)/len(away_mls_rec), sum(home_mls_rec)/len(home_mls_rec))
             if not true_away: continue
 
             sp_edge   = (eff_asp - eff_hsp) / 100 * w_sp
@@ -859,9 +851,8 @@ elif page == "🎯 Bet Signals":
 
             model_away = max(0.05, min(0.95, true_away + sp_edge + lu_edge + park_edge + ump_edge))
             model_home = 1 - model_away
-            # mkt_p = Pinnacle vig-free if available (true market price), else one-sided rec book
-            mkt_away = true_away if using_pinnacle else american_to_prob(best_away_ml)
-            mkt_home = true_home if using_pinnacle else american_to_prob(best_home_ml)
+            mkt_away = american_to_prob(best_away_ml)
+            mkt_home = american_to_prob(best_home_ml)
             game_tag   = f"{away} @ {home}"
 
             # ── F5 ML signals ────────────────────────────────────────────────
@@ -881,7 +872,6 @@ elif page == "🎯 Bet Signals":
                         "side":side,"market":"F5 ML",
                         "edge":edge,"ml":ml,"book":BOOK_LABELS.get(bk,bk),
                         "model_p":model_p,"mkt_p":mkt_p,"kelly":k,
-                        "sharp_ref":using_pinnacle,
                         "sp_score":sp_s,"lu_score":lu_s,"eff_lu":eff_lu,
                         "matchup_score":matchup_s,"platoon_adv":plat_adv,
                         "opp_hand": home_sp.get("hand","R") if side=="Away" else away_sp.get("hand","R"),
@@ -942,32 +932,19 @@ elif page == "🎯 Bet Signals":
                 all_lines = [odds_data["total"][b]["over_line"]
                              for b in total_books_rec if odds_data["total"][b].get("over_line") is not None]
                 if all_lines:
-                    # Use Pinnacle's total line if available (sharpest consensus)
-                    pin_tot = odds_data["total"].get("pinnacle", {})
-                    if pin_tot.get("over_line"):
-                        consensus_total = round(float(pin_tot["over_line"]), 1)
-                        tot_sharp_ref   = True
-                    else:
-                        consensus_total = round(sum(all_lines)/len(all_lines), 1)
-                        tot_sharp_ref   = False
+                    consensus_total = round(sum(all_lines)/len(all_lines), 1)
                     model_t = calc_model_total(eff_asp, eff_hsp, eff_away_lu, eff_home_lu, pf, ump_k,
                                            away_sp.get("era"), home_sp.get("era"),
                                            ump_run_fac, wx_wind_mult, wx_temp_mult)
                     over_p  = over_prob(model_t, consensus_total)
                     under_p = 1 - over_p
 
-                    # Best price at rec books (where to bet)
                     best_over_bk  = max(total_books_rec, key=lambda b: odds_data["total"][b].get("over_price",-200) or -200)
                     best_under_bk = max(total_books_rec, key=lambda b: odds_data["total"][b].get("under_price",-200) or -200)
                     over_ml  = odds_data["total"][best_over_bk].get("over_price")  or -110
                     under_ml = odds_data["total"][best_under_bk].get("under_price") or -110
-                    # mkt_p: use Pinnacle's price if available (efficient reference)
-                    if pin_tot.get("over_price"):
-                        mkt_over_p  = american_to_prob(pin_tot["over_price"])  or 0.524
-                        mkt_under_p = 1 - mkt_over_p
-                    else:
-                        mkt_over_p  = american_to_prob(over_ml)  or 0.524
-                        mkt_under_p = american_to_prob(under_ml) or 0.524
+                    mkt_over_p  = american_to_prob(over_ml)  or 0.524
+                    mkt_under_p = american_to_prob(under_ml) or 0.524
 
                     for side, model_p, mkt_p, ml, bk, team in [
                         (f"Over {consensus_total}",  over_p,  mkt_over_p,  over_ml,  best_over_bk,  f"{away}/{home}"),
@@ -982,7 +959,6 @@ elif page == "🎯 Bet Signals":
                                 "side":side,"market":"F5 Total",
                                 "edge":edge,"ml":ml,"book":BOOK_LABELS.get(bk,bk),
                                 "model_p":model_p,"mkt_p":mkt_p,"kelly":k,
-                                "sharp_ref":tot_sharp_ref,
                                 "sp_score":(eff_asp+eff_hsp)/2,"lu_score":((away_lu or 50)+(home_lu or 50))/2,
                                 "form_score":0,"days_rest":None,"weather":wx,
                                 "park_factor":pf,"ump_k":ump_k,"ump_zone":ump_zone,
@@ -1063,7 +1039,7 @@ elif page == "🎯 Bet Signals":
                               "away_abv":abv_away,"home_abv":abv_home,
                               "form_score":0,"days_rest":None,"weather":wx,
                               "matchup_score":0,"park_factor":pf,
-                              "ump_k":ump_k,"ump_zone":ump_zone,"sharp_ref":False,
+                              "ump_k":ump_k,"ump_zone":ump_zone,
                               "sp_score":(eff_asp+eff_hsp)/2,
                               "lu_score":((away_lu or 50)+(home_lu or 50))/2}
 
@@ -1338,7 +1314,7 @@ elif page == "🎯 Bet Signals":
                 else:
                     line_txt = ""
                 top_ribbon   = '<span class="top-pick-ribbon">⭐ TOP PICK</span>' if rank == 0 else ""
-                sharp_ref_txt = '<span class="metric-pill" style="border-color:#9c27b0;color:#9c27b0">PIN ref</span>' if s.get("sharp_ref") else ""
+                sharp_ref_txt = ""
                 conf_pct   = int(s["model_p"] * 100)
 
                 # DraftKings-style logo block: always both teams side by side,
@@ -1454,6 +1430,164 @@ elif page == "🎯 Bet Signals":
                     tracker_df = pd.concat([tracker_df,pd.DataFrame([new])],ignore_index=True)
                     save_tracker(tracker_df)
                     st.success(f"✅ Logged: {sel}")
+
+# ══════════════════════════════════════════════════════════════════════════════
+# PAGE: BEST BETS
+# ══════════════════════════════════════════════════════════════════════════════
+elif page == "📚 Best Bets":
+    st.title("📚 Best Bets by Book")
+    st.caption("Top model signals organized by sportsbook — see your best play at each book at a glance.")
+
+    # Re-use signals from Bet Signals tab by running the same pipeline
+    # We need signals already computed; they are in the same script scope
+    # if this page is loaded after Bet Signals runs, signals exist.
+    # To be safe, load from cache the same way.
+
+    _cache_data  = load_cache()
+    _cache_by_away = {g["away_team"]: g for g in _cache_data}
+    _cache_by_home = {g["home_team"]: g for g in _cache_data}
+
+    _now_utc_bb = datetime.utcnow()
+    _bb_signals = []
+
+    for _game in games:
+        try:
+            _dt = datetime.strptime(_game["commence_time"], "%Y-%m-%dT%H:%M:%SZ")
+            if _dt <= _now_utc_bb: continue
+        except: pass
+
+        _away = _game["away_team"]; _home = _game["home_team"]
+        _odds = fetch_f5(_game["id"], _away, _home)
+        try: _time_et = fmt_time_et(_dt)
+        except: _time_et = ""
+
+        _cd = _cache_by_away.get(_away, _cache_by_home.get(_home, {}))
+        _pf = _cd.get("park_factor", 1.0)
+        _ump_k = _cd.get("ump_k_boost", 0.0)
+
+        # Collect all book-specific signals (one entry per book per side per market)
+        for _mkt_key, _mkt_label in [("ml","F5 ML"), ("spread","F5 Spread"),
+                                      ("total","F5 Total"), ("fi_total","NRFI/YRFI")]:
+            _mkt_data = _odds.get(_mkt_key, {})
+            for _bk in REC_BOOKS:
+                if _bk not in _mkt_data: continue
+                _bk_label = BOOK_LABELS.get(_bk, _bk)
+                _bdata = _mkt_data[_bk]
+
+                if _mkt_key == "ml":
+                    for _side_key, _team in [("away", _away), ("home", _home)]:
+                        _price = _bdata.get(_side_key)
+                        if not _price: continue
+                        _mkt_p = american_to_prob(_price) or 0.524
+                        _bb_signals.append({
+                            "book": _bk_label, "game": f"{_away} @ {_home}",
+                            "time": _time_et,
+                            "side": f"{_team} F5 ML",
+                            "market": "F5 ML", "ml": _price, "mkt_p": _mkt_p,
+                            "park_factor": _pf,
+                        })
+                elif _mkt_key == "spread":
+                    for _side_key, _team in [("away", _away), ("home", _home)]:
+                        _sd = _bdata.get(_side_key, {})
+                        _price = _sd.get("price"); _line = _sd.get("line")
+                        if not _price or _line is None: continue
+                        _sign = "+" if _line > 0 else ""
+                        _bb_signals.append({
+                            "book": _bk_label, "game": f"{_away} @ {_home}",
+                            "time": _time_et,
+                            "side": f"{_team} {_sign}{_line}",
+                            "market": "F5 Spread", "ml": _price,
+                            "mkt_p": american_to_prob(_price) or 0.524,
+                            "park_factor": _pf,
+                        })
+                elif _mkt_key == "total":
+                    _ov_p = _bdata.get("over_price"); _un_p = _bdata.get("under_price")
+                    _line = _bdata.get("over_line")
+                    if _line and _ov_p:
+                        _bb_signals.append({
+                            "book": _bk_label, "game": f"{_away} @ {_home}",
+                            "time": _time_et, "side": f"Over {_line} (F5)",
+                            "market": "F5 Total", "ml": _ov_p,
+                            "mkt_p": american_to_prob(_ov_p) or 0.524, "park_factor": _pf,
+                        })
+                    if _line and _un_p:
+                        _bb_signals.append({
+                            "book": _bk_label, "game": f"{_away} @ {_home}",
+                            "time": _time_et, "side": f"Under {_line} (F5)",
+                            "market": "F5 Total", "ml": _un_p,
+                            "mkt_p": american_to_prob(_un_p) or 0.524, "park_factor": _pf,
+                        })
+                elif _mkt_key == "fi_total":
+                    for _pk, _slabel, _smkt in [
+                        ("nrfi_price","NRFI","NRFI/YRFI"),
+                        ("yrfi_price","YRFI","NRFI/YRFI"),
+                        ("u15_price","1st Inn U1.5","1st Inn U1.5"),
+                    ]:
+                        _price = _bdata.get(_pk)
+                        if not _price: continue
+                        _bb_signals.append({
+                            "book": _bk_label, "game": f"{_away} @ {_home}",
+                            "time": _time_et, "side": f"{_slabel}",
+                            "market": _smkt, "ml": _price,
+                            "mkt_p": american_to_prob(_price) or 0.524, "park_factor": _pf,
+                        })
+
+    if not _bb_signals:
+        st.info("No odds data yet. Refresh odds or check back closer to game time.")
+    else:
+        # Group by book, sort each book's signals by best price (most value to bettor)
+        _by_book = {}
+        for _s in _bb_signals:
+            _by_book.setdefault(_s["book"], []).append(_s)
+        for _bk in _by_book:
+            _by_book[_bk].sort(key=lambda x: x["ml"], reverse=True)
+
+        # Book display order matches BOOK_LABELS order
+        _ordered_books = [BOOK_LABELS[k] for k in BOOK_LABELS if BOOK_LABELS[k] in _by_book]
+
+        _BOOK_COLORS = {
+            "DraftKings":  "#00d47e",
+            "FanDuel":     "#1493ff",
+            "BetMGM":      "#f5a623",
+            "Caesars":     "#0066cc",
+            "TheScore":    "#e81a2a",
+            "Fanatics":    "#cc0000",
+            "Hard Rock":   "#c8932a",
+        }
+
+        # 2 columns of book cards
+        _cols = st.columns(2)
+        for _i, _bk_name in enumerate(_ordered_books):
+            _sigs = _by_book[_bk_name][:8]  # top 8 per book
+            _color = _BOOK_COLORS.get(_bk_name, "#4a6fa5")
+            with _cols[_i % 2]:
+                _rows_html = ""
+                for _s in _sigs:
+                    _ml_str = f"+{_s['ml']}" if float(_s['ml']) > 0 else str(int(_s['ml']))
+                    _imp = int(_s['mkt_p'] * 100)
+                    _rows_html += f"""
+<div style="display:flex;justify-content:space-between;align-items:center;
+            padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.05)">
+  <div>
+    <div style="font-size:0.88rem;font-weight:600">{_s['side']}</div>
+    <div style="font-size:0.74rem;color:#7a9cbf">{_s['game']} · {_s['time']}</div>
+  </div>
+  <div style="text-align:right;min-width:80px">
+    <span style="font-size:0.95rem;font-weight:700;color:{_color}">{_ml_str}</span>
+    <div style="font-size:0.70rem;color:#5a8ab4">{_imp}% implied</div>
+  </div>
+</div>"""
+
+                st.markdown(f"""
+<div style="background:linear-gradient(145deg,#0a1a2e,#0f2040);
+            border:1px solid {_color}44;border-radius:12px;
+            padding:14px 16px;margin-bottom:14px">
+  <div style="font-size:1.05rem;font-weight:800;color:{_color};
+              border-bottom:1px solid {_color}33;padding-bottom:8px;margin-bottom:4px">
+    {_bk_name}
+  </div>
+  {_rows_html if _rows_html else '<div style="color:#5a8ab4;font-size:0.82rem;padding:8px 0">No lines available yet</div>'}
+</div>""", unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # PAGE: SP INPUT
