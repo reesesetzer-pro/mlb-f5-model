@@ -306,7 +306,7 @@ def fetch_games():
 @st.cache_data(ttl=300)
 def fetch_f5(event_id, away, home):
     url = f"https://api.the-odds-api.com/v4/sports/{SPORT}/events/{event_id}/odds"
-    params = {"apiKey":API_KEY,
+    params = {"apiKey":API_KEY,"regions":REGIONS,
               "markets":"h2h_1st_5_innings,spreads_1st_5_innings,totals_1st_5_innings,team_totals_1st_5_innings,totals_1st_inning,alternate_totals_1st_inning",
               "bookmakers":BOOKS,"oddsFormat":"american"}
     result = {"ml":{}, "spread":{}, "total":{}, "team_total":{}, "fi_total":{}}
