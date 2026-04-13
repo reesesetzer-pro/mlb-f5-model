@@ -731,7 +731,7 @@ def load_model_picks():
 def save_model_picks(df):
     df.to_csv(MODEL_PICKS_FILE, index=False)
 
-def auto_log_model_picks(signals, picks_df, min_model_prob=0.52):
+def auto_log_model_picks(signals, picks_df, min_model_prob=0.60):
     today = date.today().strftime("%m/%d/%Y")
     new_rows = []
     for s in signals:
@@ -2596,7 +2596,7 @@ elif page == "🏟️ Park Factors":
 # ══════════════════════════════════════════════════════════════════════════════
 elif page == "📊 Model Performance":
     st.title("📊 Model Performance & Learning")
-    st.caption("All signals ≥52% model confidence are auto-tracked here. Settle results to train the model.")
+    st.caption("Signals ≥60% model confidence are auto-tracked here. Settle results to grade the model.")
 
     if model_picks_df.empty:
         st.info("No model picks tracked yet. Signals ≥52% model prob are auto-logged on game days.")
@@ -2722,9 +2722,15 @@ elif page == "📊 Model Performance":
 
         # ── Full history ───────────────────────────────────────────────────────
         st.divider()
-        st.subheader("📋 Full Model Pick History")
-        disp_df = model_picks_df.sort_values("Date", ascending=False) if not model_picks_df.empty else model_picks_df
-        st.dataframe(disp_df, hide_index=True, use_container_width=True)
+        st.subheader("📋 Full Model Pick History (≥60%)")
+        st.caption("Model_Prob = model's raw confidence · Market_Prob = market implied · Edge = difference · Use these to grade.")
         if not model_picks_df.empty:
+            disp_df = model_picks_df.sort_values("Date", ascending=False).copy()
+            # Highlight columns used for grading
+            grade_cols = ["Date","Side","Market","ML","Book","Model_Prob","Market_Prob","Edge_Pct","Result","F5_Score"]
+            show_cols  = [c for c in grade_cols if c in disp_df.columns]
+            st.dataframe(disp_df[show_cols], hide_index=True, use_container_width=True)
             st.download_button("📥 Download CSV",
                 model_picks_df.to_csv(index=False).encode(),"model_picks.csv","text/csv")
+        else:
+            st.info("No picks tracked yet — signals ≥60% model prob will appear here on game days.")
