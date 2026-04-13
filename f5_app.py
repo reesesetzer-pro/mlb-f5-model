@@ -981,7 +981,7 @@ if page == "📋 Today's Slate":
                         st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
                         bvals = [odds_data["ml"][b]["away"] for b in BOOK_LABELS if b in odds_data["ml"] and odds_data["ml"][b]["away"]]
                         if bvals: st.success(f"Best: **{'+' if max(bvals)>0 else ''}{max(bvals)}**")
-                    else: st.caption("Lines not yet posted")
+                    else: st.caption("📴 Lines off the board" if game_started else "⏳ Lines not yet posted")
                 with col2:
                     st.markdown(f"**🏠 {home} (Home) F5 ML**")
                     rows = []
@@ -993,7 +993,7 @@ if page == "📋 Today's Slate":
                         st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
                         bvals = [odds_data["ml"][b]["home"] for b in BOOK_LABELS if b in odds_data["ml"] and odds_data["ml"][b]["home"]]
                         if bvals: st.success(f"Best: **{'+' if max(bvals)>0 else ''}{max(bvals)}**")
-                    else: st.caption("Lines not yet posted")
+                    else: st.caption("📴 Lines off the board" if game_started else "⏳ Lines not yet posted")
 
                 # F5 result banner (when 5 innings are in the books)
                 if ls.get("f5_done"):
