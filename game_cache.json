@@ -8,21 +8,63 @@
     "home_team_abv": "SEA",
     "venue": "T-Mobile Park",
     "park_factor": 0.99,
-    "lineup_confirmed": false,
-    "away_lineup_score": null,
-    "home_lineup_score": null,
-    "away_matchup_score": null,
-    "home_matchup_score": null,
-    "away_platoon_adv": null,
-    "home_platoon_adv": null,
-    "away_nrfi_top3": {},
-    "home_nrfi_top3": {},
+    "lineup_confirmed": true,
+    "away_lineup_score": 59.7,
+    "home_lineup_score": 29.9,
+    "away_matchup_score": 46.5,
+    "home_matchup_score": 34.7,
+    "away_platoon_adv": -13.2,
+    "home_platoon_adv": 4.8,
+    "away_nrfi_top3": {
+      "season_ops": 0.968,
+      "vs_sp_ops": 0.427,
+      "vs_sp_pa": 43,
+      "detail": [
+        {
+          "pid": 514888,
+          "pa": 19,
+          "ops": 0.387
+        },
+        {
+          "pid": 670541,
+          "pa": 14,
+          "ops": 0.5
+        },
+        {
+          "pid": 670623,
+          "pa": 10,
+          "ops": 0.4
+        }
+      ]
+    },
+    "home_nrfi_top3": {
+      "season_ops": 0.672,
+      "vs_sp_ops": null,
+      "vs_sp_pa": 0,
+      "detail": [
+        {
+          "pid": 680977,
+          "pa": 0,
+          "ops": 0
+        },
+        {
+          "pid": 663728,
+          "pa": 0,
+          "ops": 0
+        },
+        {
+          "pid": 677594,
+          "pa": 0,
+          "ops": 0
+        }
+      ]
+    },
     "away_bp_ip_3d": 18.7,
     "home_bp_ip_3d": 11.7,
-    "ump_name": "",
-    "ump_k_boost": 0.0,
-    "ump_run_factor": 1.0,
-    "ump_zone_size": 1.0,
+    "ump_name": "Todd Tichenor",
+    "ump_k_boost": 0.03,
+    "ump_run_factor": 0.989,
+    "ump_zone_size": 1.004,
     "weather": {
       "is_dome": true,
       "wind_multiplier": 1.0
@@ -124,7 +166,7 @@
       "wind_speed": 6.0,
       "wind_dir": "SW",
       "wind_dir_deg": 225,
-      "precip_pct": 18,
+      "precip_pct": 30,
       "is_dome": false,
       "wind_multiplier": 0.9814,
       "temp_multiplier": 0.988
@@ -249,7 +291,7 @@
       "wind_speed": 0.0,
       "wind_dir": "",
       "wind_dir_deg": 0,
-      "precip_pct": 1,
+      "precip_pct": 0,
       "is_dome": false,
       "wind_multiplier": 1.0,
       "temp_multiplier": 0.991
@@ -361,14 +403,14 @@
     "ump_run_factor": 1.0,
     "ump_zone_size": 1.0,
     "weather": {
-      "temp": 73,
+      "temp": 74,
       "wind_speed": 13.0,
       "wind_dir": "S",
       "wind_dir_deg": 180,
-      "precip_pct": 11,
+      "precip_pct": 5,
       "is_dome": false,
       "wind_multiplier": 0.8805,
-      "temp_multiplier": 1.003
+      "temp_multiplier": 1.006
     },
     "away_sp": {
       "name": "Gavin Williams",
@@ -454,14 +496,14 @@
     "ump_run_factor": 1.0,
     "ump_zone_size": 1.0,
     "weather": {
-      "temp": 52,
+      "temp": 53,
       "wind_speed": 0.0,
       "wind_dir": "",
       "wind_dir_deg": 0,
       "precip_pct": 0,
       "is_dome": false,
       "wind_multiplier": 1.0,
-      "temp_multiplier": 0.94
+      "temp_multiplier": 0.943
     },
     "away_sp": {},
     "home_sp": {}
