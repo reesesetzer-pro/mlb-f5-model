@@ -314,12 +314,13 @@ def fetch_games():
     except Exception as e: return [], str(e)
 
 def _fetch_f5_for_id(event_id, away, home):
-    """Inner fetch for a single event ID — returns result dict (may be empty)."""
+    """Fetch F5 markets only (no NRFI). Keeping NRFI markets out prevents
+    the Odds API from returning an empty response when those lines don't exist yet."""
     url = f"https://api.the-odds-api.com/v4/sports/{SPORT}/events/{event_id}/odds"
     params = {"apiKey":API_KEY,"regions":REGIONS,
-              "markets":"h2h_1st_5_innings,spreads_1st_5_innings,totals_1st_5_innings,team_totals_1st_5_innings,totals_1st_inning,alternate_totals_1st_inning",
+              "markets":"h2h_1st_5_innings,spreads_1st_5_innings,totals_1st_5_innings,team_totals_1st_5_innings",
               "bookmakers":BOOKS,"oddsFormat":"american"}
-    result = {"ml":{}, "spread":{}, "total":{}, "team_total":{}, "fi_total":{}}
+    result = {"ml":{}, "spread":{}, "total":{}, "team_total":{}}
     try:
         r = requests.get(url, params=params, timeout=15); r.raise_for_status()
         for bm in r.json().get("bookmakers",[]):
@@ -344,20 +345,6 @@ def _fetch_f5_for_id(event_id, away, home):
                         elif o["name"]=="Under": bk_tot["under_price"] = o.get("price")
                     if bk_tot:
                         result["total"][k] = bk_tot
-                elif mk in ("totals_1st_inning", "alternate_totals_1st_inning"):
-                    if k not in result["fi_total"]:
-                        result["fi_total"][k] = {}
-                    for o in mkt["outcomes"]:
-                        line  = o.get("point")
-                        price = o.get("price")
-                        name  = o.get("name","")
-                        if line is None: continue
-                        if abs(line - 0.5) < 0.01:
-                            if name == "Under": result["fi_total"][k]["nrfi_price"] = price
-                            elif name == "Over": result["fi_total"][k]["yrfi_price"] = price
-                        elif abs(line - 1.5) < 0.01:
-                            if name == "Under": result["fi_total"][k]["u15_price"] = price
-                            elif name == "Over": result["fi_total"][k]["o15_price"] = price
                 elif mk == "team_totals_1st_5_innings":
                     for o in mkt["outcomes"]:
                         desc = o.get("description","")
@@ -373,16 +360,53 @@ def _fetch_f5_for_id(event_id, away, home):
     except: pass
     return result
 
+def _fetch_fi_for_id(event_id):
+    """Fetch 1st-inning NRFI markets in a separate call.
+    These markets cause an empty response for the whole game when absent — must be split out."""
+    url = f"https://api.the-odds-api.com/v4/sports/{SPORT}/events/{event_id}/odds"
+    params = {"apiKey":API_KEY,"regions":REGIONS,
+              "markets":"totals_1st_inning,alternate_totals_1st_inning",
+              "bookmakers":BOOKS,"oddsFormat":"american"}
+    fi_total = {}
+    try:
+        r = requests.get(url, params=params, timeout=15); r.raise_for_status()
+        for bm in r.json().get("bookmakers",[]):
+            k = bm["key"]
+            for mkt in bm.get("markets",[]):
+                mk = mkt["key"]
+                if mk in ("totals_1st_inning", "alternate_totals_1st_inning"):
+                    if k not in fi_total: fi_total[k] = {}
+                    for o in mkt["outcomes"]:
+                        line  = o.get("point"); price = o.get("price"); name = o.get("name","")
+                        if line is None: continue
+                        if abs(line - 0.5) < 0.01:
+                            if name == "Under": fi_total[k]["nrfi_price"] = price
+                            elif name == "Over": fi_total[k]["yrfi_price"] = price
+                        elif abs(line - 1.5) < 0.01:
+                            if name == "Under": fi_total[k]["u15_price"] = price
+                            elif name == "Over": fi_total[k]["o15_price"] = price
+    except: pass
+    return fi_total
+
 @st.cache_data(ttl=300)
 def fetch_f5(event_id, away, home, extra_ids=()):
-    """Fetch F5 odds, falling back to extra_ids if the primary event has no F5 markets.
-    extra_ids is a tuple so it is hashable for st.cache_data."""
+    """Fetch F5 odds. Falls back to extra_ids if primary event has no F5 markets.
+    NRFI markets are fetched in a separate call to prevent them from killing F5 lines
+    for games that don't yet have 1st-inning totals posted."""
     result = _fetch_f5_for_id(event_id, away, home)
     if not any(result.values()):
         for eid in extra_ids:
             alt = _fetch_f5_for_id(eid, away, home)
             if any(alt.values()):
-                return alt
+                result = alt
+                break
+    # NRFI markets fetched separately — won't affect F5 line availability
+    fi = _fetch_fi_for_id(event_id)
+    if not fi:
+        for eid in extra_ids:
+            fi = _fetch_fi_for_id(eid)
+            if fi: break
+    result["fi_total"] = fi
     return result
 
 @st.cache_data(ttl=60)
