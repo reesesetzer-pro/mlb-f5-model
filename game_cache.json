@@ -109,29 +109,71 @@
     "home_team_abv": "BAL",
     "venue": "Oriole Park at Camden Yards",
     "park_factor": 1.0,
-    "lineup_confirmed": false,
-    "away_lineup_score": null,
-    "home_lineup_score": null,
-    "away_matchup_score": null,
-    "home_matchup_score": null,
-    "away_platoon_adv": null,
-    "home_platoon_adv": null,
-    "away_nrfi_top3": {},
-    "home_nrfi_top3": {},
+    "lineup_confirmed": true,
+    "away_lineup_score": 36.2,
+    "home_lineup_score": 40.2,
+    "away_matchup_score": 33.8,
+    "home_matchup_score": 50.7,
+    "away_platoon_adv": -2.4,
+    "home_platoon_adv": 10.5,
+    "away_nrfi_top3": {
+      "season_ops": 0.735,
+      "vs_sp_ops": null,
+      "vs_sp_pa": 0,
+      "detail": [
+        {
+          "pid": 606466,
+          "pa": 0,
+          "ops": 0
+        },
+        {
+          "pid": 682998,
+          "pa": 0,
+          "ops": 0
+        },
+        {
+          "pid": 672695,
+          "pa": 0,
+          "ops": 0
+        }
+      ]
+    },
+    "home_nrfi_top3": {
+      "season_ops": 0.823,
+      "vs_sp_ops": 2.0,
+      "vs_sp_pa": 11,
+      "detail": [
+        {
+          "pid": 683002,
+          "pa": 0,
+          "ops": 0
+        },
+        {
+          "pid": 621493,
+          "pa": 0,
+          "ops": 0
+        },
+        {
+          "pid": 624413,
+          "pa": 11,
+          "ops": 2.0
+        }
+      ]
+    },
     "away_bp_ip_3d": 9.3,
     "home_bp_ip_3d": 10.7,
-    "ump_name": "",
-    "ump_k_boost": 0.0,
-    "ump_run_factor": 1.0,
-    "ump_zone_size": 1.0,
+    "ump_name": "Brennan Miller",
+    "ump_k_boost": 0.013,
+    "ump_run_factor": 0.985,
+    "ump_zone_size": 1.009,
     "weather": {
       "temp": 71,
       "wind_speed": 3.0,
-      "wind_dir": "SW",
-      "wind_dir_deg": 225,
-      "precip_pct": 4,
+      "wind_dir": "W",
+      "wind_dir_deg": 270,
+      "precip_pct": 2,
       "is_dome": false,
-      "wind_multiplier": 0.9641,
+      "wind_multiplier": 0.9724,
       "temp_multiplier": 0.997
     },
     "away_sp": {},
@@ -157,10 +199,10 @@
     "home_nrfi_top3": {},
     "away_bp_ip_3d": 11.7,
     "home_bp_ip_3d": 12.7,
-    "ump_name": "",
-    "ump_k_boost": 0.0,
-    "ump_run_factor": 1.0,
-    "ump_zone_size": 1.0,
+    "ump_name": "Sean Barber",
+    "ump_k_boost": 0.024,
+    "ump_run_factor": 0.989,
+    "ump_zone_size": 1.006,
     "weather": {
       "temp": 68,
       "wind_speed": 6.0,
@@ -194,16 +236,16 @@
     "home_nrfi_top3": {},
     "away_bp_ip_3d": 12.0,
     "home_bp_ip_3d": 15.3,
-    "ump_name": "",
-    "ump_k_boost": 0.0,
-    "ump_run_factor": 1.0,
-    "ump_zone_size": 1.0,
+    "ump_name": "Nate Tomlinson",
+    "ump_k_boost": 0.07,
+    "ump_run_factor": 0.966,
+    "ump_zone_size": 1.019,
     "weather": {
       "temp": 69,
       "wind_speed": 5.0,
       "wind_dir": "SW",
       "wind_dir_deg": 225,
-      "precip_pct": 2,
+      "precip_pct": 1,
       "is_dome": false,
       "wind_multiplier": 1.0591,
       "temp_multiplier": 0.991
@@ -245,10 +287,10 @@
     "home_nrfi_top3": {},
     "away_bp_ip_3d": 10.0,
     "home_bp_ip_3d": 8.3,
-    "ump_name": "",
-    "ump_k_boost": 0.0,
-    "ump_run_factor": 1.0,
-    "ump_zone_size": 1.0,
+    "ump_name": "Lance Barksdale",
+    "ump_k_boost": 0.053,
+    "ump_run_factor": 0.984,
+    "ump_zone_size": 1.008,
     "weather": {
       "temp": 69,
       "wind_speed": 9.0,
@@ -282,19 +324,19 @@
     "home_nrfi_top3": {},
     "away_bp_ip_3d": 7.0,
     "home_bp_ip_3d": 11.3,
-    "ump_name": "",
-    "ump_k_boost": 0.0,
-    "ump_run_factor": 1.0,
-    "ump_zone_size": 1.0,
+    "ump_name": "Dan Iassogna",
+    "ump_k_boost": -0.025,
+    "ump_run_factor": 1.014,
+    "ump_zone_size": 0.993,
     "weather": {
-      "temp": 69,
+      "temp": 68,
       "wind_speed": 0.0,
       "wind_dir": "",
       "wind_dir_deg": 0,
       "precip_pct": 0,
       "is_dome": false,
       "wind_multiplier": 1.0,
-      "temp_multiplier": 0.991
+      "temp_multiplier": 0.988
     },
     "away_sp": {
       "name": "Eury P\u00e9rez",
@@ -352,14 +394,14 @@
     "ump_run_factor": 1.0,
     "ump_zone_size": 1.0,
     "weather": {
-      "temp": 58,
+      "temp": 56,
       "wind_speed": 5.0,
       "wind_dir": "NNE",
       "wind_dir_deg": 22,
-      "precip_pct": 28,
+      "precip_pct": 19,
       "is_dome": false,
       "wind_multiplier": 0.9673,
-      "temp_multiplier": 0.958
+      "temp_multiplier": 0.952
     },
     "away_sp": {
       "name": "Garrett Crochet",
@@ -496,14 +538,14 @@
     "ump_run_factor": 1.0,
     "ump_zone_size": 1.0,
     "weather": {
-      "temp": 53,
+      "temp": 54,
       "wind_speed": 0.0,
       "wind_dir": "",
       "wind_dir_deg": 0,
       "precip_pct": 0,
       "is_dome": false,
       "wind_multiplier": 1.0,
-      "temp_multiplier": 0.943
+      "temp_multiplier": 0.946
     },
     "away_sp": {},
     "home_sp": {}
