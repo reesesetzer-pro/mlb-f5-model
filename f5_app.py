@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 import pandas as pd
-import json, os, math
+import json, os, math, base64, io
 from datetime import datetime, date, timezone, timedelta
 
 # Eastern Time conversion — use zoneinfo (Python 3.9+) for proper DST handling;
@@ -36,12 +36,13 @@ BOOK_LABELS = {
     "hardrockbet":    "Hard Rock",
 }
 REC_BOOKS = {"draftkings","fanduel","betmgm","williamhill_us","espnbet","fanatics","hardrockbet"}
-TRACKER_FILE      = "bet_tracker.csv"
-SP_FILE           = "sp_data.csv"
-CACHE_FILE        = "game_cache.json"
-MODEL_PICKS_FILE  = "model_picks.csv"
-SNAPSHOT_FILE     = "odds_snapshot.json"
-CLV_SNAPSHOT_FILE = "clv_snapshot.json"
+_APP_DIR          = os.path.dirname(os.path.abspath(__file__))
+TRACKER_FILE      = os.path.join(_APP_DIR, "bet_tracker.csv")
+SP_FILE           = os.path.join(_APP_DIR, "sp_data.csv")
+CACHE_FILE        = os.path.join(_APP_DIR, "game_cache.json")
+MODEL_PICKS_FILE  = os.path.join(_APP_DIR, "model_picks.csv")
+SNAPSHOT_FILE     = os.path.join(_APP_DIR, "odds_snapshot.json")
+CLV_SNAPSHOT_FILE = os.path.join(_APP_DIR, "clv_snapshot.json")
 
 # ESPN logo URL builder
 def logo_url(abv):
@@ -779,15 +780,155 @@ _MP_COLS = ["Date","Game","Team","Side","Market","ML","Book",
             "Model_Prob","Market_Prob","Edge_Pct",
             "Model_Line","Market_Line",
             "SP_Score","LU_Score","Park_Factor","Ump_K",
-            "Result","F5_Score"]
+            "Result","F5_Score","Taken"]
+
+_GITHUB_REPO       = "reesesetzer-pro/mlb-f5-model"
+_GITHUB_PICKS_FILE = "model_picks.csv"
+
+def _gh_token():
+    try:    return st.secrets.get("GITHUB_TOKEN", "")
+    except: return os.environ.get("GITHUB_TOKEN", "")
+
+def _gh_headers():
+    return {"Authorization": f"token {_gh_token()}",
+            "Accept": "application/vnd.github.v3+json"}
 
 def load_model_picks():
+    token = _gh_token()
+    if token:
+        try:
+            r = requests.get(
+                f"https://api.github.com/repos/{_GITHUB_REPO}/contents/{_GITHUB_PICKS_FILE}",
+                headers=_gh_headers(), timeout=10)
+            if r.status_code == 200:
+                df = pd.read_csv(io.StringIO(
+                    base64.b64decode(r.json()["content"]).decode("utf-8")))
+                if "Taken" not in df.columns:
+                    df["Taken"] = False
+                return df
+        except Exception:
+            pass
+    # Fallback: local file
     if os.path.exists(MODEL_PICKS_FILE):
-        return pd.read_csv(MODEL_PICKS_FILE)
+        df = pd.read_csv(MODEL_PICKS_FILE)
+        if "Taken" not in df.columns:
+            df["Taken"] = False
+        return df
     return pd.DataFrame(columns=_MP_COLS)
 
 def save_model_picks(df):
+    # Always write local copy
     df.to_csv(MODEL_PICKS_FILE, index=False)
+    # Push to GitHub so cloud app sees the update
+    token = _gh_token()
+    if not token:
+        return
+    try:
+        hdrs = _gh_headers()
+        r = requests.get(
+            f"https://api.github.com/repos/{_GITHUB_REPO}/contents/{_GITHUB_PICKS_FILE}",
+            headers=hdrs, timeout=10)
+        sha  = r.json().get("sha") if r.status_code == 200 else None
+        body = {"message": f"picks: update {date.today().isoformat()}",
+                "content": base64.b64encode(df.to_csv(index=False).encode()).decode()}
+        if sha:
+            body["sha"] = sha
+        requests.put(
+            f"https://api.github.com/repos/{_GITHUB_REPO}/contents/{_GITHUB_PICKS_FILE}",
+            json=body, headers=hdrs, timeout=15)
+    except Exception:
+        pass
+
+def auto_grade_picks(picks_df):
+    """Grade PENDING picks using MLB Stats API linescores (today and prior dates)."""
+    if picks_df.empty or "Result" not in picks_df.columns:
+        return picks_df
+    pending = picks_df[picks_df["Result"] == "PENDING"]
+    if pending.empty:
+        return picks_df
+    today = date.today()
+    changed = 0
+    for pick_date_str, group in pending.groupby("Date"):
+        try:
+            pick_date = datetime.strptime(pick_date_str, "%m/%d/%Y").date()
+        except Exception:
+            continue
+        if pick_date > today:
+            continue  # future date — skip
+        d_str = pick_date.strftime("%Y-%m-%d")
+        try:
+            r = requests.get(
+                f"https://statsapi.mlb.com/api/v1/schedule?sportId=1&date={d_str}&hydrate=linescore,team",
+                timeout=15)
+            r.raise_for_status()
+            scores = {}
+            for de in r.json().get("dates", []):
+                for g in de.get("games", []):
+                    if g.get("status", {}).get("abstractGameState") != "Final":
+                        continue
+                    away_name = g["teams"]["away"]["team"]["name"]
+                    home_name = g["teams"]["home"]["team"]["name"]
+                    innings   = g.get("linescore", {}).get("innings", [])
+                    f5a = sum((i.get("away") or {}).get("runs", 0) or 0 for i in innings[:5])
+                    f5h = sum((i.get("home") or {}).get("runs", 0) or 0 for i in innings[:5])
+                    fi_a = (innings[0].get("away") or {}).get("runs", 0) or 0 if innings else 0
+                    fi_h = (innings[0].get("home") or {}).get("runs", 0) or 0 if innings else 0
+                    scores[f"{away_name} @ {home_name}"] = {
+                        "f5_away": f5a, "f5_home": f5h, "f5_total": f5a + f5h,
+                        "fi_away": fi_a, "fi_home": fi_h, "fi_total": fi_a + fi_h,
+                    }
+        except Exception:
+            continue
+
+        for idx in group.index:
+            row   = picks_df.loc[idx]
+            game  = str(row.get("Game", ""))
+            ls    = scores.get(game)
+            if not ls:
+                continue
+            away, home = (game.split(" @ ", 1) + [""])[:2] if " @ " in game else (game, game)
+            market = str(row.get("Market", ""))
+            team   = str(row.get("Team", ""))
+            side   = str(row.get("Side", ""))
+            f5a, f5h = ls["f5_away"], ls["f5_home"]
+            result = None
+
+            if market == "F5 ML":
+                winner = away if f5a > f5h else (home if f5h > f5a else None)
+                if winner is None:               result = "PUSH"
+                elif team == winner:             result = "WIN"
+                else:                            result = "LOSS"
+            elif market == "F5 Spread":
+                try:
+                    line = float(row.get("Market_Line") or 0)
+                    diff = f5a - f5h
+                    if away in team:
+                        result = "WIN" if diff > -line else ("PUSH" if diff == -line else "LOSS")
+                    elif home in team:
+                        result = "WIN" if diff < -line else ("PUSH" if diff == -line else "LOSS")
+                except Exception: pass
+            elif market == "F5 Total":
+                try:
+                    total = f5a + f5h
+                    line = float(row.get("Market_Line") or 0)
+                    if "Over"  in side: result = "WIN" if total > line else ("PUSH" if total == line else "LOSS")
+                    elif "Under" in side: result = "WIN" if total < line else ("PUSH" if total == line else "LOSS")
+                except Exception: pass
+            elif market == "NRFI/YRFI":
+                fi = ls["fi_total"]
+                if   "NRFI" in side: result = "WIN" if fi == 0 else "LOSS"
+                elif "YRFI" in side: result = "WIN" if fi  > 0 else "LOSS"
+            elif market == "1st Inn U1.5":
+                result = "WIN" if ls["fi_total"] <= 1 else "LOSS"
+
+            if result:
+                picks_df.at[idx, "Result"]   = result
+                picks_df.at[idx, "F5_Score"] = f"{f5a}-{f5h}"
+                changed += 1
+
+    if changed:
+        save_model_picks(picks_df)
+    return picks_df
 
 def auto_log_model_picks(signals, picks_df, min_model_prob=0.60):
     today = date.today().strftime("%m/%d/%Y")
@@ -822,6 +963,7 @@ def auto_log_model_picks(signals, picks_df, min_model_prob=0.60):
             "Ump_K":       s.get("ump_k",""),
             "Result":      "PENDING",
             "F5_Score":    "",
+            "Taken":       False,
         })
     if new_rows:
         picks_df = pd.concat([picks_df, pd.DataFrame(new_rows)], ignore_index=True)
@@ -864,7 +1006,7 @@ with st.sidebar:
     st.divider()
     st.caption(f"🕐 {_to_et(datetime.utcnow()).strftime('%I:%M %p')} ET · Season 2026")
     # Show last data sync status
-    _status_path = "sync_status.json"
+    _status_path = os.path.join(_APP_DIR, "sync_status.json")
     if os.path.exists(_status_path):
         try:
             with open(_status_path) as _f: _s = json.load(_f)
@@ -2357,9 +2499,9 @@ elif page == "🌅 Morning Report":
     _today_str  = date.today().strftime("%A, %B %d, %Y")
     _n_games    = len(games)
     _sync_ts    = ""
-    if os.path.exists("sync_status.json"):
+    if os.path.exists(os.path.join(_APP_DIR, "sync_status.json")):
         try:
-            with open("sync_status.json") as _sf: _ss = json.load(_sf)
+            with open(os.path.join(_APP_DIR, "sync_status.json")) as _sf: _ss = json.load(_sf)
             _sync_ts = _ss.get("last_sync","")[:16]
         except: pass
 
@@ -2851,47 +2993,53 @@ elif page == "📊 Model Performance":
     st.title("📊 Model Performance & Learning")
     st.caption("Signals ≥60% model confidence are auto-tracked here. Settle results to grade the model.")
 
-    if model_picks_df.empty:
-        st.info("No model picks tracked yet. Signals ≥52% model prob are auto-logged on game days.")
-    else:
-        settled = model_picks_df[model_picks_df["Result"].isin(["WIN","LOSS"])].copy()
-        pending_picks = model_picks_df[model_picks_df["Result"]=="PENDING"]
-        wins   = len(settled[settled["Result"]=="WIN"])
-        losses = len(settled[settled["Result"]=="LOSS"])
-        n      = wins + losses
+    # Auto-grade pending picks from prior dates
+    model_picks_df = auto_grade_picks(model_picks_df)
 
-        c1,c2,c3,c4,c5,c6 = st.columns(6)
-        c1.metric("Total Tracked", len(model_picks_df))
-        c2.metric("Settled",       n)
-        c3.metric("Pending",       len(pending_picks))
-        c4.metric("Record",        f"{wins}-{losses}")
-        c5.metric("Win Rate",      f"{wins/n*100:.1f}%" if n>0 else "—")
+    def _render_perf_tab(df, threshold_label):
+        """Render stats, calibration, market breakdown, and history for a filtered picks df."""
+        settled = df[df["Result"].isin(["WIN","LOSS"])].copy()
+        pending = df[df["Result"]=="PENDING"]
+        wins    = len(settled[settled["Result"]=="WIN"])
+        losses  = len(settled[settled["Result"]=="LOSS"])
+        n       = wins + losses
 
-        # Market breakdown
-        by_mkt = model_picks_df[model_picks_df["Result"].isin(["WIN","LOSS"])].groupby("Market").apply(
-            lambda g: pd.Series({"W":sum(g["Result"]=="WIN"),"L":sum(g["Result"]=="LOSS")})).reset_index()
-        if not by_mkt.empty:
-            by_mkt["Win%"] = (by_mkt["W"]/(by_mkt["W"]+by_mkt["L"])*100).round(1).astype(str)+"%"
-            c6.metric("Markets", len(by_mkt))
+        c1,c2,c3,c4,c5 = st.columns(5)
+        c1.metric("Total Signals", len(df))
+        c2.metric("Settled", n)
+        c3.metric("Pending", len(pending))
+        c4.metric("Record", f"{wins}-{losses}")
+        c5.metric("Win Rate", f"{wins/n*100:.1f}%" if n>0 else "—")
+
+        # Taken-only summary
+        taken_settled = df[
+            df["Taken"].astype(str).isin(["True","true","1","Yes","yes"]) &
+            df["Result"].isin(["WIN","LOSS"])
+        ]
+        if not taken_settled.empty:
+            tw = len(taken_settled[taken_settled["Result"]=="WIN"])
+            tl = len(taken_settled[taken_settled["Result"]=="LOSS"])
+            tn = tw + tl
+            st.caption(f"Bets actually taken: **{tw}-{tl}** ({tw/tn*100:.1f}% win rate on {tn} settled)")
 
         if n > 0:
+            # Calibration
             st.divider()
-            # ── Calibration ───────────────────────────────────────────────────
-            st.subheader("🎯 Probability Calibration")
-            st.caption("Does the model's confidence match reality? When it says 60%, does it hit 60% of the time?")
+            st.subheader("🎯 Calibration")
+            st.caption("Does the model's confidence match reality?")
             settled["Prob_Bucket"] = (settled["Model_Prob"] // 5 * 5).astype(int)
             cal_rows = []
             for bucket in sorted(settled["Prob_Bucket"].unique()):
                 grp = settled[settled["Prob_Bucket"]==bucket]
                 w   = len(grp[grp["Result"]=="WIN"])
                 tot = len(grp)
-                actual = w/tot*100
+                actual   = w / tot * 100
                 expected = bucket + 2.5
-                bias = actual - expected
+                bias     = actual - expected
                 bias_icon = "🟢" if abs(bias) <= 3 else "🟡" if abs(bias) <= 6 else "🔴"
                 cal_rows.append({
-                    "Prob Range":  f"{bucket}-{bucket+5}%",
-                    "# Picks":     tot,
+                    "Prob Range":    f"{bucket}-{bucket+5}%",
+                    "# Picks":       tot,
                     "Expected Win%": f"{expected:.1f}%",
                     "Actual Win%":   f"{actual:.1f}%",
                     "Bias":          f"{bias_icon} {bias:+.1f}%",
@@ -2899,91 +3047,103 @@ elif page == "📊 Model Performance":
                 })
             st.dataframe(pd.DataFrame(cal_rows), hide_index=True, use_container_width=True)
 
-            overall_wr = wins/n*100
+            overall_wr = wins / n * 100
             if overall_wr >= 55:
-                st.success(f"✅ Model is performing well — {overall_wr:.1f}% overall win rate on tracked signals.")
+                st.success(f"✅ {overall_wr:.1f}% win rate on {threshold_label} signals.")
             elif overall_wr >= 50:
-                st.info(f"📊 Model is slightly above break-even ({overall_wr:.1f}%). Keep building the sample.")
+                st.info(f"📊 Slightly above break-even ({overall_wr:.1f}%). Keep building sample.")
             else:
-                st.warning(f"⚠️ Model is below break-even ({overall_wr:.1f}%). Consider raising the min edge threshold.")
+                st.warning(f"⚠️ Below break-even ({overall_wr:.1f}%). Consider raising the threshold.")
 
-            # Market breakdown table
+            # Market breakdown
+            by_mkt = settled.groupby("Market").apply(
+                lambda g: pd.Series({"W":sum(g["Result"]=="WIN"),"L":sum(g["Result"]=="LOSS")})).reset_index()
             if not by_mkt.empty:
+                by_mkt["Win%"] = (by_mkt["W"]/(by_mkt["W"]+by_mkt["L"])*100).round(1).astype(str)+"%"
+                by_mkt["Record"] = by_mkt.apply(lambda r: f"{int(r.W)}-{int(r.L)}", axis=1)
                 st.divider()
-                st.subheader("📈 Performance by Market")
-                st.dataframe(by_mkt.rename(columns={"Market":"Market","W":"Wins","L":"Losses"}),
+                st.subheader("📈 By Market")
+                st.dataframe(by_mkt[["Market","Record","Win%"]],
                              hide_index=True, use_container_width=True)
 
-        if n >= 20:
-            st.divider()
-            st.subheader("🔬 Factor Correlation with Wins")
-            st.caption("Which model inputs actually predict outcomes? Higher correlation = more predictive.")
-            try:
-                import numpy as np
-                settled_num = settled.copy()
-                settled_num["Win_Binary"] = (settled_num["Result"]=="WIN").astype(int)
-                factor_rows = []
-                for col, label in [("SP_Score","SP Score"),("LU_Score","Lineup Quality"),
-                                    ("Park_Factor","Park Factor"),("Ump_K","Ump K Boost"),
-                                    ("Edge_Pct","Edge %"),("Model_Prob","Model Prob")]:
-                    try:
-                        vals = pd.to_numeric(settled_num[col], errors="coerce").dropna()
-                        if len(vals) < 10: continue
-                        corr = float(np.corrcoef(vals.values, settled_num.loc[vals.index,"Win_Binary"].values)[0,1])
-                        signal = "↑ Helpful" if corr > 0.05 else "↓ Hurting" if corr < -0.05 else "≈ Neutral"
-                        factor_rows.append({"Factor":label,"Correlation":round(corr,3),"Signal":signal})
-                    except: continue
-                if factor_rows:
-                    fdf = pd.DataFrame(factor_rows).sort_values("Correlation",ascending=False)
-                    st.dataframe(fdf, hide_index=True, use_container_width=True)
+            # Factor correlation (≥20 settled)
+            if n >= 20:
+                st.divider()
+                st.subheader("🔬 Factor Correlation")
+                try:
+                    import numpy as np
+                    sn = settled.copy()
+                    sn["Win_Binary"] = (sn["Result"]=="WIN").astype(int)
+                    factor_rows = []
+                    for col, lbl in [("SP_Score","SP Score"),("LU_Score","Lineup Quality"),
+                                     ("Park_Factor","Park Factor"),("Ump_K","Ump K"),
+                                     ("Edge_Pct","Edge %"),("Model_Prob","Model Prob")]:
+                        try:
+                            vals = pd.to_numeric(sn[col], errors="coerce").dropna()
+                            if len(vals) < 10: continue
+                            corr = float(np.corrcoef(vals.values, sn.loc[vals.index,"Win_Binary"].values)[0,1])
+                            sig  = "↑ Helpful" if corr > 0.05 else "↓ Hurting" if corr < -0.05 else "≈ Neutral"
+                            factor_rows.append({"Factor":lbl,"Correlation":round(corr,3),"Signal":sig})
+                        except: continue
+                    if factor_rows:
+                        st.dataframe(pd.DataFrame(factor_rows).sort_values("Correlation",ascending=False),
+                                     hide_index=True, use_container_width=True)
+                except Exception as e:
+                    st.caption(f"Correlation unavailable: {e}")
 
-                    if n >= 30:
-                        st.subheader("💡 Weight Adjustment Suggestions")
-                        sp_c  = next((f["Correlation"] for f in factor_rows if f["Factor"]=="SP Score"),    None)
-                        lu_c  = next((f["Correlation"] for f in factor_rows if f["Factor"]=="Lineup Quality"), None)
-                        pk_c  = next((f["Correlation"] for f in factor_rows if f["Factor"]=="Park Factor"), None)
-                        ump_c = next((f["Correlation"] for f in factor_rows if f["Factor"]=="Ump K Boost"), None)
-                        if sp_c is not None and lu_c is not None:
-                            if sp_c > lu_c + 0.10:
-                                st.info("📊 SP Score is more predictive than Lineup Quality. Consider increasing the SP weight slider.")
-                            elif lu_c > sp_c + 0.10:
-                                st.info("📊 Lineup Quality is more predictive than SP Score. Consider increasing the Lineup weight slider.")
-                            else:
-                                st.success("✅ SP and Lineup weights appear balanced based on history.")
-                        if pk_c is not None and abs(pk_c) < 0.03:
-                            st.info("📊 Park Factor shows low correlation with outcomes. Consider reducing its weight.")
-                        if ump_c is not None and abs(ump_c) < 0.03:
-                            st.info("📊 Ump tendency shows low correlation. Consider reducing its weight.")
-            except Exception as e:
-                st.caption(f"Correlation analysis unavailable: {e}")
-
-        # ── Settle pending model picks ─────────────────────────────────────────
-        if not pending_picks.empty:
-            st.divider()
-            st.subheader("✏️ Settle Model Picks")
-            for idx, row in pending_picks.iterrows():
-                mkt_disp = row.get("Market","F5 ML")
-                with st.expander(f"{row['Date']} | [{mkt_disp}] {row['Side']} | Model: {row['Model_Prob']}% | Edge: {row['Edge_Pct']}%"):
-                    r1, r2 = st.columns(2)
-                    result = r1.selectbox("Result",["PENDING","WIN","LOSS","PUSH"],key=f"mp_r{idx}")
-                    score  = r2.text_input("F5 Score (e.g. 3-2)",key=f"mp_s{idx}")
-                    if st.button("Update",key=f"mp_u{idx}"):
-                        model_picks_df.at[idx,"Result"]   = result
-                        model_picks_df.at[idx,"F5_Score"] = score
-                        save_model_picks(model_picks_df)
-                        st.success("Updated!"); st.rerun()
-
-        # ── Full history ───────────────────────────────────────────────────────
+        # Pick history
         st.divider()
-        st.subheader("📋 Full Model Pick History (≥60%)")
-        st.caption("Model_Prob = model's raw confidence · Market_Prob = market implied · Edge = difference · Use these to grade.")
-        if not model_picks_df.empty:
-            disp_df = model_picks_df.sort_values("Date", ascending=False).copy()
-            # Highlight columns used for grading
-            grade_cols = ["Date","Side","Market","ML","Book","Model_Prob","Market_Prob","Edge_Pct","Result","F5_Score"]
-            show_cols  = [c for c in grade_cols if c in disp_df.columns]
-            st.dataframe(disp_df[show_cols], hide_index=True, use_container_width=True)
-            st.download_button("📥 Download CSV",
-                model_picks_df.to_csv(index=False).encode(),"model_picks.csv","text/csv")
+        st.subheader(f"📋 Pick History — {threshold_label}")
+        if not df.empty:
+            disp = df.sort_values("Date", ascending=False).copy()
+            show = [c for c in ["Date","Side","Market","ML","Model_Prob","Edge_Pct","Result","F5_Score","Taken"]
+                    if c in disp.columns]
+            st.dataframe(disp[show], hide_index=True, use_container_width=True)
+            st.download_button(f"📥 Download {threshold_label} CSV",
+                df.to_csv(index=False).encode(), f"picks_{threshold_label.replace('%+','pct').replace(' ','_')}.csv",
+                "text/csv", key=f"dl_{threshold_label}")
         else:
-            st.info("No picks tracked yet — signals ≥60% model prob will appear here on game days.")
+            st.info(f"No {threshold_label} picks tracked yet.")
+
+    if model_picks_df.empty:
+        st.info("No model picks tracked yet. Signals ≥55% model prob are auto-logged on game days.")
+    else:
+        # ── Settle pending picks (shared across all tabs) ──────────────────────
+        pending_picks = model_picks_df[model_picks_df["Result"]=="PENDING"]
+        if not pending_picks.empty:
+            with st.expander(f"✏️ Settle Pending Picks ({len(pending_picks)} open)", expanded=False):
+                for idx, row in pending_picks.iterrows():
+                    mkt_disp = row.get("Market","F5 ML")
+                    is_taken = bool(row.get("Taken", False))
+                    taken_badge = " ✅" if is_taken else ""
+                    with st.expander(f"{row['Date']} | [{mkt_disp}] {row['Side']} | {row['Model_Prob']}%{taken_badge}"):
+                        r1, r2, r3 = st.columns([2,2,1])
+                        result = r1.selectbox("Result",["PENDING","WIN","LOSS","PUSH"],key=f"mp_r{idx}")
+                        score  = r2.text_input("F5 Score (e.g. 3-2)",key=f"mp_s{idx}")
+                        taken  = r3.toggle("Bet Taken?", value=is_taken, key=f"mp_t{idx}")
+                        if st.button("Update",key=f"mp_u{idx}"):
+                            model_picks_df.at[idx,"Result"]   = result
+                            model_picks_df.at[idx,"F5_Score"] = score
+                            model_picks_df.at[idx,"Taken"]    = taken
+                            save_model_picks(model_picks_df)
+                            st.success("Updated!"); st.rerun()
+
+        # ── Confidence tabs ────────────────────────────────────────────────────
+        tab_all, tab_60, tab_70 = st.tabs(["📊 All Signals", "🎯 60%+ Confident", "🔥 70%+ Confident"])
+
+        with tab_all:
+            _render_perf_tab(model_picks_df, "All")
+
+        with tab_60:
+            df_60 = model_picks_df[model_picks_df["Model_Prob"] >= 60].copy()
+            if df_60.empty:
+                st.info("No 60%+ signals tracked yet.")
+            else:
+                _render_perf_tab(df_60, "60%+")
+
+        with tab_70:
+            df_70 = model_picks_df[model_picks_df["Model_Prob"] >= 70].copy()
+            if df_70.empty:
+                st.info("No 70%+ signals tracked yet.")
+            else:
+                _render_perf_tab(df_70, "70%+")
