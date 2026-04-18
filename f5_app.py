@@ -703,62 +703,125 @@ def _nrfi_eff_ops(nrfi_data):
         bp_weight = 0.15 + (v_pa - 8) / 6 * 0.25
     return s_ops * (1 - bp_weight) + v_ops * bp_weight
 
+_LG_WHIP   = 1.25   # MLB average WHIP
+_LG_OBP    = 0.320  # MLB average OBP
+_LG_KBB    = 0.10   # MLB average K%-BB% (~10 pts)
+
+def _sp_nrfi_adj(sp_data):
+    """
+    Compute a SP quality adjustment for NRFI using the best available inputs.
+    Priority: WHIP + K_BB_pct (first-inning relevant) > xFIP > SP_score fallback.
+    Returns a signed float in roughly ±0.12 range.
+    """
+    if not sp_data:
+        return 0.0
+    adj = 0.0
+    inputs = 0
+    whip   = sp_data.get("whip")
+    kbb    = sp_data.get("k_bb_pct")
+    xfip   = sp_data.get("xfip")
+    sp_scr = sp_data.get("sp_score")
+
+    if whip is not None:
+        # WHIP 0.90 → +0.070, 1.25 → 0, 1.60 → -0.070
+        adj    += (_LG_WHIP - whip) / 5.0
+        inputs += 1
+    if kbb is not None:
+        # K_BB_pct 20 → +0.040, 10 → 0, 0 → -0.040
+        adj    += (kbb - _LG_KBB * 100) / 250.0
+        inputs += 1
+    if xfip is not None and inputs == 0:
+        # xFIP 3.50 → +0.035, 4.20 → 0, 5.00 → -0.028
+        adj    += (4.20 - xfip) / 20.0
+        inputs += 1
+    if inputs == 0 and sp_scr is not None:
+        # Fallback to SP score (full-game quality proxy)
+        adj = (sp_scr - 50) / 200.0
+
+    # Form bonus — pitcher peaking lately is sharper in inning 1
+    form = sp_data.get("form_score", 0) or 0
+    adj += form * 0.003   # ±0.024 max
+
+    return max(-0.12, min(0.12, adj))
+
+def _nrfi_eff_obp(nrfi_data):
+    """
+    Effective leadoff-weighted OBP for NRFI model.
+    OBP is more predictive than OPS for first-inning scoring — walks and singles
+    matter; extra-base power doesn't affect whether the inning scores at all.
+    Blends season OBP with career OPS vs SP (proxy for career OBP when unavailable).
+    """
+    if not nrfi_data:
+        return _LG_OBP
+    s_obp = nrfi_data.get("season_obp") or _LG_OBP
+    v_ops = nrfi_data.get("vs_sp_ops")
+    v_pa  = nrfi_data.get("vs_sp_pa", 0) or 0
+    if not v_ops or v_pa < 8:
+        return s_obp
+    # Rough OBP from career OPS vs SP (OBP ≈ OPS * 0.42 for league avg distribution)
+    v_obp = v_ops * 0.42
+    bp_weight = 0.65 if v_pa >= 30 else 0.50 if v_pa >= 15 else 0.15 + (v_pa - 8) / 6 * 0.25
+    return s_obp * (1 - bp_weight) + v_obp * bp_weight
+
 def calc_nrfi_prob(away_sp_score, home_sp_score, away_lu, home_lu, pf, ump_k,
-                   away_nrfi=None, home_nrfi=None):
+                   away_nrfi=None, home_nrfi=None,
+                   away_sp_data=None, home_sp_data=None):
     """
     Estimate P(NRFI) — no run by either team in the 1st inning.
-    Base ≈ 0.52 (market typically prices NRFI at -115 to -140).
-
-    away_nrfi / home_nrfi: dicts from game_cache with keys:
-      season_ops   — avg OPS for batters 1-3 this season
-      vs_sp_ops    — PA-weighted career OPS vs. opposing SP (None if <8 PA)
-      vs_sp_pa     — total combined PA sample
-    When present, OPS replaces the generic lineup quality adjustment.
-    When absent, falls back to overall lineup score.
+    Base ≈ 0.52.  Inputs in priority order:
+      1. WHIP + K_BB_pct  (best available first-inning SP proxies)
+      2. xFIP             (if WHIP unavailable)
+      3. SP_score         (full-game fallback)
+      4. Leadoff-weighted OBP for top-3 batters (OBP > OPS for NRFI)
+      5. Umpire K-tendency, park factor
     """
-    base   = 0.52
-    avg_sp = ((away_sp_score or 50) + (home_sp_score or 50)) / 2
-    sp_adj =  (avg_sp - 50) / 200        # ±0.10 for elite / poor SP
-    ump_adj = (ump_k  or 0) * 0.04       # K-heavy ump → fewer runs
-    pf_adj  = -(pf - 1.0)  * 0.25       # hitter-friendly parks hurt NRFI
+    base = 0.52
 
-    # OPS adjustment — top-3 batter quality vs. this specific pitcher
+    # SP quality adjustment (separate for each team's pitcher)
+    away_sp_adj = _sp_nrfi_adj(away_sp_data or {})
+    home_sp_adj = _sp_nrfi_adj(home_sp_data or {})
+    sp_adj = (away_sp_adj + home_sp_adj) / 2
+
+    ump_adj = (ump_k or 0) * 0.04
+    pf_adj  = -(pf - 1.0) * 0.25
+
+    # Batter quality — OBP-based, leadoff-weighted
     if away_nrfi or home_nrfi:
-        eff_away = _nrfi_eff_ops(away_nrfi)
-        eff_home = _nrfi_eff_ops(home_nrfi)
-        avg_ops  = (eff_away + eff_home) / 2
-        # Each 0.100 above league avg ≈ -3.5% NRFI probability
-        ops_adj  = -(avg_ops - _LG_OPS) * 0.35
+        eff_away_obp = _nrfi_eff_obp(away_nrfi)
+        eff_home_obp = _nrfi_eff_obp(home_nrfi)
+        avg_obp  = (eff_away_obp + eff_home_obp) / 2
+        # Each 0.010 OBP above league avg ≈ -1.5% NRFI probability
+        obp_adj  = -(avg_obp - _LG_OBP) * 1.50
     else:
-        # Fallback: generic lineup quality (0–100 scale)
         avg_lu  = ((away_lu or 50) + (home_lu or 50)) / 2
-        ops_adj = -(avg_lu - 50) / 300
+        obp_adj = -(avg_lu - 50) / 300
 
-    return round(max(0.35, min(0.72, base + sp_adj + ops_adj + ump_adj + pf_adj)), 4)
+    return round(max(0.35, min(0.75, base + sp_adj + obp_adj + ump_adj + pf_adj)), 4)
 
 def calc_fi_u15_prob(away_sp_score, home_sp_score, away_lu, home_lu, pf, ump_k,
-                     away_nrfi=None, home_nrfi=None):
+                     away_nrfi=None, home_nrfi=None,
+                     away_sp_data=None, home_sp_data=None):
     """
     Estimate P(1st inning total ≤ 1.5) — at most 1 combined run.
-    Base ≈ 0.76 (U1.5 1st inning typically priced -220 to -280).
-    Uses same OPS/B/P blend as calc_nrfi_prob with slightly smaller adjustments.
+    Same SP quality logic as calc_nrfi_prob, slightly smaller adjustments.
     """
-    base   = 0.76
-    avg_sp = ((away_sp_score or 50) + (home_sp_score or 50)) / 2
-    sp_adj =  (avg_sp - 50) / 300
-    ump_adj = (ump_k  or 0) * 0.03
-    pf_adj  = -(pf - 1.0)  * 0.20
+    base = 0.76
+    away_sp_adj = _sp_nrfi_adj(away_sp_data or {})
+    home_sp_adj = _sp_nrfi_adj(home_sp_data or {})
+    sp_adj  = (away_sp_adj + home_sp_adj) / 2 * 0.70   # scaled down vs NRFI
+    ump_adj = (ump_k or 0) * 0.03
+    pf_adj  = -(pf - 1.0) * 0.20
 
     if away_nrfi or home_nrfi:
-        eff_away = _nrfi_eff_ops(away_nrfi)
-        eff_home = _nrfi_eff_ops(home_nrfi)
-        avg_ops  = (eff_away + eff_home) / 2
-        ops_adj  = -(avg_ops - _LG_OPS) * 0.25
+        eff_away_obp = _nrfi_eff_obp(away_nrfi)
+        eff_home_obp = _nrfi_eff_obp(home_nrfi)
+        avg_obp = (eff_away_obp + eff_home_obp) / 2
+        obp_adj = -(avg_obp - _LG_OBP) * 1.10
     else:
         avg_lu  = ((away_lu or 50) + (home_lu or 50)) / 2
-        ops_adj = -(avg_lu - 50) / 400
+        obp_adj = -(avg_lu - 50) / 400
 
-    return round(max(0.60, min(0.90, base + sp_adj + ops_adj + ump_adj + pf_adj)), 4)
+    return round(max(0.60, min(0.92, base + sp_adj + obp_adj + ump_adj + pf_adj)), 4)
 
 def _norm_cdf(x):
     return (1 + math.erf(x / math.sqrt(2))) / 2
@@ -1547,10 +1610,14 @@ elif page == "🎯 Bet Signals":
                 home_nrfi = c_data.get("home_nrfi_top3") or {}
 
                 model_nrfi = calc_nrfi_prob(eff_asp, eff_hsp, eff_away_lu, eff_home_lu,
-                                            pf, ump_k, away_nrfi, home_nrfi)
+                                            pf, ump_k, away_nrfi, home_nrfi,
+                                            away_sp_data=c_data.get("away_sp"),
+                                            home_sp_data=c_data.get("home_sp"))
                 model_yrfi = round(1 - model_nrfi, 4)
                 model_u15  = calc_fi_u15_prob(eff_asp, eff_hsp, eff_away_lu, eff_home_lu,
-                                              pf, ump_k, away_nrfi, home_nrfi)
+                                              pf, ump_k, away_nrfi, home_nrfi,
+                                              away_sp_data=c_data.get("away_sp"),
+                                              home_sp_data=c_data.get("home_sp"))
                 _fi_base   = {"game":game_tag,"time":time_et,
                               "away_abv":abv_away,"home_abv":abv_home,
                               "form_score":0,"days_rest":None,"weather":wx,
@@ -2353,8 +2420,10 @@ elif page == "⚾ NRFI":
             _hlu = round(_h_match*0.55+(_h_lu or 50)*0.45,1) if _h_match else (_h_lu or 50)
 
             # Model probs
-            _mnrfi = calc_nrfi_prob(_asp, _hsp, _elu, _hlu, _pf, _ump_k, _a_nrfi, _h_nrfi)
-            _mu15  = calc_fi_u15_prob(_asp, _hsp, _elu, _hlu, _pf, _ump_k, _a_nrfi, _h_nrfi)
+            _mnrfi = calc_nrfi_prob(_asp, _hsp, _elu, _hlu, _pf, _ump_k, _a_nrfi, _h_nrfi,
+                                    away_sp_data=_a_sp, home_sp_data=_h_sp)
+            _mu15  = calc_fi_u15_prob(_asp, _hsp, _elu, _hlu, _pf, _ump_k, _a_nrfi, _h_nrfi,
+                                      away_sp_data=_a_sp, home_sp_data=_h_sp)
             _myrfi = round(1 - _mnrfi, 4)
 
             # Best prices across rec books
