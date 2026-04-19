@@ -856,6 +856,16 @@ def _gh_headers():
     return {"Authorization": f"token {_gh_token()}",
             "Accept": "application/vnd.github.v3+json"}
 
+_MP_STR_COLS = {"F5_Score": str, "Result": str, "SP_Score": str, "LU_Score": str,
+                "Model_Line": str, "Market_Line": str, "Notes": str, "Side": str,
+                "Market": str, "Team": str, "Game": str, "Date": str, "Book": str}
+
+def _fix_mp_dtypes(df):
+    for col in _MP_STR_COLS:
+        if col in df.columns:
+            df[col] = df[col].astype(object)
+    return df
+
 def load_model_picks():
     token = _gh_token()
     if token:
@@ -868,7 +878,7 @@ def load_model_picks():
                     base64.b64decode(r.json()["content"]).decode("utf-8")))
                 if "Taken" not in df.columns:
                     df["Taken"] = False
-                return df
+                return _fix_mp_dtypes(df)
         except Exception:
             pass
     # Fallback: local file
@@ -876,7 +886,7 @@ def load_model_picks():
         df = pd.read_csv(MODEL_PICKS_FILE)
         if "Taken" not in df.columns:
             df["Taken"] = False
-        return df
+        return _fix_mp_dtypes(df)
     return pd.DataFrame(columns=_MP_COLS)
 
 def save_model_picks(df):
@@ -1601,53 +1611,63 @@ elif page == "🎯 Bet Signals":
                             "model_line":m_tt,"mkt_line":"—",
                         })
 
-            # ── NRFI / YRFI / 1st Inning U1.5 signals ────────────────────────
+            # ── NRFI / YRFI / 1st Inning U1.5 signals ────────────────────
+            # Note: The Odds API does not support first-inning markets for baseball_mlb.
+            # We always compute the model and fall back to default prices (-115 NRFI,
+            # -105 YRFI, -120 U1.5) when no book data is available.
             fi_data = odds_data.get("fi_total", {})
             fi_books_rec = [b for b in REC_BOOKS if b in fi_data]
-            if fi_books_rec:
-                # Top-3 OPS + B/P history from cache (populated by data_sync.py)
-                away_nrfi = c_data.get("away_nrfi_top3") or {}
-                home_nrfi = c_data.get("home_nrfi_top3") or {}
 
-                model_nrfi = calc_nrfi_prob(eff_asp, eff_hsp, eff_away_lu, eff_home_lu,
-                                            pf, ump_k, away_nrfi, home_nrfi,
-                                            away_sp_data=c_data.get("away_sp"),
-                                            home_sp_data=c_data.get("home_sp"))
-                model_yrfi = round(1 - model_nrfi, 4)
-                model_u15  = calc_fi_u15_prob(eff_asp, eff_hsp, eff_away_lu, eff_home_lu,
-                                              pf, ump_k, away_nrfi, home_nrfi,
-                                              away_sp_data=c_data.get("away_sp"),
-                                              home_sp_data=c_data.get("home_sp"))
-                _fi_base   = {"game":game_tag,"time":time_et,
-                              "away_abv":abv_away,"home_abv":abv_home,
-                              "form_score":0,"days_rest":None,"weather":wx,
-                              "matchup_score":0,"park_factor":pf,
-                              "ump_k":ump_k,"ump_zone":ump_zone,
-                              "sp_score":(eff_asp+eff_hsp)/2,
-                              "lu_score":((away_lu or 50)+(home_lu or 50))/2,
-                              "away_nrfi":away_nrfi,"home_nrfi":home_nrfi}
+            # Default prices used when Odds API returns no first-inning data
+            _DEFAULT_FI_PRICE = {"nrfi_price": -115, "yrfi_price": -105, "u15_price": -120}
 
-                for label, market, model_p, price_key, team, abv in [
-                    ("NRFI", "NRFI/YRFI",    model_nrfi, "nrfi_price", away, abv_away),
-                    ("YRFI", "NRFI/YRFI",    model_yrfi, "yrfi_price", away, abv_away),
-                    (f"1st Inn U1.5", "1st Inn U1.5", model_u15, "u15_price", away, abv_away),
-                ]:
-                    prices = [fi_data[b][price_key] for b in fi_books_rec if fi_data[b].get(price_key)]
-                    if not prices: continue
+            # Top-3 OPS + B/P history from cache (populated by data_sync.py)
+            away_nrfi = c_data.get("away_nrfi_top3") or {}
+            home_nrfi = c_data.get("home_nrfi_top3") or {}
+
+            model_nrfi = calc_nrfi_prob(eff_asp, eff_hsp, eff_away_lu, eff_home_lu,
+                                        pf, ump_k, away_nrfi, home_nrfi,
+                                        away_sp_data=c_data.get("away_sp"),
+                                        home_sp_data=c_data.get("home_sp"))
+            model_yrfi = round(1 - model_nrfi, 4)
+            model_u15  = calc_fi_u15_prob(eff_asp, eff_hsp, eff_away_lu, eff_home_lu,
+                                          pf, ump_k, away_nrfi, home_nrfi,
+                                          away_sp_data=c_data.get("away_sp"),
+                                          home_sp_data=c_data.get("home_sp"))
+            _fi_base   = {"game":game_tag,"time":time_et,
+                          "away_abv":abv_away,"home_abv":abv_home,
+                          "form_score":0,"days_rest":None,"weather":wx,
+                          "matchup_score":0,"park_factor":pf,
+                          "ump_k":ump_k,"ump_zone":ump_zone,
+                          "sp_score":(eff_asp+eff_hsp)/2,
+                          "lu_score":((away_lu or 50)+(home_lu or 50))/2,
+                          "away_nrfi":away_nrfi,"home_nrfi":home_nrfi}
+
+            for label, market, model_p, price_key, team, abv in [
+                ("NRFI", "NRFI/YRFI",    model_nrfi, "nrfi_price", away, abv_away),
+                ("YRFI", "NRFI/YRFI",    model_yrfi, "yrfi_price", away, abv_away),
+                (f"1st Inn U1.5", "1st Inn U1.5", model_u15, "u15_price", away, abv_away),
+            ]:
+                prices = [fi_data[b][price_key] for b in fi_books_rec if fi_data[b].get(price_key)]
+                if prices:
                     best_price = max(prices)
-                    best_bk    = max(fi_books_rec, key=lambda b: fi_data[b].get(price_key, -9999))
-                    mkt_p      = american_to_prob(best_price) or 0.524
-                    edge       = model_p - mkt_p
-                    if model_p >= 0.52:
-                        k = kelly_rounded(max(edge, 0), best_price, bankroll, kelly_frac, max_pct)
-                        signals.append({**_fi_base,
-                            "team":team,"abv":abv,
-                            "side":f"{label} — {away} @ {home}","market":market,
-                            "edge":edge,"ml":best_price,
-                            "book":BOOK_LABELS.get(best_bk, best_bk),
-                            "model_p":model_p,"mkt_p":mkt_p,"kelly":k,
-                            "model_line":None,"mkt_line":None,
-                        })
+                    best_bk    = BOOK_LABELS.get(
+                        max(fi_books_rec, key=lambda b: fi_data[b].get(price_key, -9999)), "est.")
+                else:
+                    best_price = _DEFAULT_FI_PRICE[price_key]
+                    best_bk    = "est."
+                mkt_p = american_to_prob(best_price) or 0.524
+                edge  = model_p - mkt_p
+                if model_p >= 0.52:
+                    k = kelly_rounded(max(edge, 0), best_price, bankroll, kelly_frac, max_pct)
+                    signals.append({**_fi_base,
+                        "team":team,"abv":abv,
+                        "side":f"{label} — {away} @ {home}","market":market,
+                        "edge":edge,"ml":best_price,
+                        "book":best_bk,
+                        "model_p":model_p,"mkt_p":mkt_p,"kelly":k,
+                        "model_line":None,"mkt_line":None,
+                    })
 
         # Persist snapshot (only writes if new games were added today)
         if odds_snapshot:
