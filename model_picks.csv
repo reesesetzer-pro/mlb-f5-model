@@ -74,3 +74,29 @@ Date,Game,Team,Side,Market,ML,Book,Model_Prob,Market_Prob,Edge_Pct,Model_Line,Ma
 04/20/2026,St. Louis Cardinals @ Miami Marlins,Miami Marlins,Home,F5 Spread,-102,betmgm,75.0,50.5,24.5,-0.5,0.5,46.9,48.6,0.97,-0.003,PENDING,,False
 04/20/2026,Atlanta Braves @ Washington Nationals,Atlanta Braves,Away,F5 ML,-135,draftkings,71.8,57.4,14.3,,,63.0,49.8,0.99,0.019,PENDING,,False
 04/20/2026,Atlanta Braves @ Washington Nationals,Atlanta Braves,Away,F5 Spread,105,betmgm,75.7,48.8,26.9,-0.5,-0.5,50.5,49.8,0.99,0.019,PENDING,,False
+04/20/2026,Toronto Blue Jays @ Los Angeles Angels,Toronto Blue Jays,1st Inn U1.5 — Toronto Blue Jays @ Los Angeles Angels,1st Inn U1.5,-120,est.,82.4,54.5,27.9,,,72.55000000000001,41.650000000000006,1.02,0.014,PENDING,,False
+04/20/2026,Los Angeles Dodgers @ Colorado Rockies,Los Angeles Dodgers/Colorado Rockies,Under 6.5,F5 Total,-115,FanDuel,80.8,53.5,27.3,4.5,6.5,50.0,50.0,1.0,0.0,PENDING,,False
+04/20/2026,Houston Astros @ Cleveland Guardians,Houston Astros,1st Inn U1.5 — Houston Astros @ Cleveland Guardians,1st Inn U1.5,-120,est.,76.0,54.5,21.5,,,50.0,50.0,1.0,0.0,PENDING,,False
+04/20/2026,Cincinnati Reds @ Tampa Bay Rays,Cincinnati Reds,1st Inn U1.5 — Cincinnati Reds @ Tampa Bay Rays,1st Inn U1.5,-120,est.,76.0,54.5,21.5,,,50.0,50.0,1.0,0.0,PENDING,,False
+04/20/2026,St. Louis Cardinals @ Miami Marlins,St. Louis Cardinals,1st Inn U1.5 — St. Louis Cardinals @ Miami Marlins,1st Inn U1.5,-120,est.,76.0,54.5,21.5,,,50.0,50.0,1.0,0.0,PENDING,,False
+04/20/2026,Atlanta Braves @ Washington Nationals,Atlanta Braves,1st Inn U1.5 — Atlanta Braves @ Washington Nationals,1st Inn U1.5,-120,est.,76.0,54.5,21.5,,,50.0,50.0,1.0,0.0,PENDING,,False
+04/20/2026,Baltimore Orioles @ Kansas City Royals,Baltimore Orioles,1st Inn U1.5 — Baltimore Orioles @ Kansas City Royals,1st Inn U1.5,-120,est.,76.0,54.5,21.5,,,50.0,50.0,1.0,0.0,PENDING,,False
+04/20/2026,Philadelphia Phillies @ Chicago Cubs,Philadelphia Phillies,1st Inn U1.5 — Philadelphia Phillies @ Chicago Cubs,1st Inn U1.5,-120,est.,76.0,54.5,21.5,,,50.0,50.0,1.0,0.0,PENDING,,False
+04/20/2026,Los Angeles Dodgers @ Colorado Rockies,Los Angeles Dodgers,1st Inn U1.5 — Los Angeles Dodgers @ Colorado Rockies,1st Inn U1.5,-120,est.,76.0,54.5,21.5,,,50.0,50.0,1.0,0.0,PENDING,,False
+04/20/2026,Athletics @ Seattle Mariners,Athletics,1st Inn U1.5 — Athletics @ Seattle Mariners,1st Inn U1.5,-120,est.,76.0,54.5,21.5,,,50.0,50.0,1.0,0.0,PENDING,,False
+04/20/2026,Los Angeles Dodgers @ Colorado Rockies,Los Angeles Dodgers,Los Angeles Dodgers Under 3.5,F5 Team Total,-110,TheScore,75.6,52.4,23.2,2.25,3.5,50.0,,1.0,0.0,PENDING,,False
+04/20/2026,Atlanta Braves @ Washington Nationals,Washington Nationals,Washington Nationals Over 1.5,F5 Team Total,-115,TheScore,66.1,53.5,12.7,2.25,1.5,50.0,,1.0,0.0,PENDING,,False
+04/20/2026,Athletics @ Seattle Mariners,Athletics,Athletics Over 1.5,F5 Team Total,-120,TheScore,66.1,54.5,11.6,2.25,1.5,50.0,,1.0,0.0,PENDING,,False
+04/20/2026,Houston Astros @ Cleveland Guardians,Houston Astros,Houston Astros Over 1.5,F5 Team Total,-130,DraftKings,66.1,56.5,9.6,2.25,1.5,50.0,,1.0,0.0,PENDING,,False
+04/20/2026,Philadelphia Phillies @ Chicago Cubs,Chicago Cubs,Chicago Cubs Over 1.5,F5 Team Total,-135,DraftKings,66.1,57.4,8.7,2.25,1.5,50.0,,1.0,0.0,PENDING,,False
+04/20/2026,Cincinnati Reds @ Tampa Bay Rays,Cincinnati Reds,Cincinnati Reds Over 1.5,F5 Team Total,-140,DraftKings,66.1,58.3,7.8,2.25,1.5,50.0,,1.0,0.0,PENDING,,False
+04/20/2026,Philadelphia Phillies @ Chicago Cubs,Philadelphia Phillies,Philadelphia Phillies Over 1.5,F5 Team Total,-140,DraftKings,66.1,58.3,7.8,2.25,1.5,50.0,,1.0,0.0,PENDING,,False
+04/20/2026,Houston Astros @ Cleveland Guardians,Cleveland Guardians,Cleveland Guardians Over 1.5,F5 Team Total,-145,DraftKings,66.1,59.2,7.0,2.25,1.5,50.0,,1.0,0.0,PENDING,,False
+04/20/2026,St. Louis Cardinals @ Miami Marlins,St. Louis Cardinals,St. Louis Cardinals Over 1.5,F5 Team Total,-145,TheScore,66.1,59.2,7.0,2.25,1.5,50.0,,1.0,0.0,PENDING,,False
+04/20/2026,Philadelphia Phillies @ Chicago Cubs,Philadelphia Phillies/Chicago Cubs,Over 3.8,F5 Total,-115,BetMGM,62.0,53.5,8.5,4.5,3.8,50.0,50.0,1.0,0.0,PENDING,,False
+04/20/2026,Toronto Blue Jays @ Los Angeles Angels,Los Angeles Angels,Los Angeles Angels Over 1.5,F5 Team Total,-115,DraftKings,61.4,53.5,7.9,2.02,1.5,64.2,47.1,1.02,0.014,PENDING,,False
+04/20/2026,Toronto Blue Jays @ Los Angeles Angels,Toronto Blue Jays,Toronto Blue Jays Over 1.5,F5 Team Total,-135,DraftKings,61.4,57.4,3.9,2.02,1.5,77.4,36.2,1.02,0.014,PENDING,,False
+04/20/2026,Los Angeles Dodgers @ Colorado Rockies,Los Angeles Dodgers,Away -0.5,F5 Spread,-130,BetMGM,61.4,56.5,4.8,0.25,-0.5,50.0,,1.0,0.0,PENDING,,False
+04/20/2026,Toronto Blue Jays @ Los Angeles Angels,Toronto Blue Jays,NRFI — Toronto Blue Jays @ Los Angeles Angels,NRFI/YRFI,-115,est.,61.2,53.5,7.7,,,72.55000000000001,41.650000000000006,1.02,0.014,PENDING,,False
+04/20/2026,Athletics @ Seattle Mariners,Seattle Mariners,Home -0.5,F5 Spread,-102,BetMGM,61.1,50.5,10.6,-0.23,-0.5,50.0,,1.0,0.0,PENDING,,False
+04/20/2026,Los Angeles Dodgers @ Colorado Rockies,Los Angeles Dodgers,Away,F5 ML,-166,DraftKings,60.3,62.4,-2.1,,,50.0,,1.0,0.0,PENDING,,False
