@@ -542,9 +542,6 @@ def auto_settle_f5(df, live_scores, clv_snap=None):
             fi = ls["fi_total"]
             if   "NRFI" in side: result = "WIN" if fi==0 else "LOSS"
             elif "YRFI" in side: result = "WIN" if fi>0  else "LOSS"
-        elif market == "1st Inn U1.5":
-            fi = ls["fi_total"]
-            result = "WIN" if fi <= 1 else "LOSS"
         if result:
             df.at[idx,"Result"]  = result
             df.at[idx,"F5_Score"]= f"{f5a}-{f5h}"
@@ -991,8 +988,6 @@ def auto_grade_picks(picks_df):
                 fi = ls["fi_total"]
                 if   "NRFI" in side: result = "WIN" if fi == 0 else "LOSS"
                 elif "YRFI" in side: result = "WIN" if fi  > 0 else "LOSS"
-            elif market == "1st Inn U1.5":
-                result = "WIN" if ls["fi_total"] <= 1 else "LOSS"
 
             if result:
                 picks_df.at[idx, "Result"]   = result
@@ -1676,7 +1671,6 @@ elif page == "🎯 Bet Signals":
             for label, market, model_p, price_key, team, abv in [
                 ("NRFI", "NRFI/YRFI",    model_nrfi, "nrfi_price", away, abv_away),
                 ("YRFI", "NRFI/YRFI",    model_yrfi, "yrfi_price", away, abv_away),
-                (f"1st Inn U1.5", "1st Inn U1.5", model_u15, "u15_price", away, abv_away),
             ]:
                 prices = [fi_data[b][price_key] for b in fi_books_rec if fi_data[b].get(price_key)]
                 if prices:
@@ -1951,8 +1945,8 @@ elif page == "🎯 Bet Signals":
             st.divider()
 
             market_filter = st.multiselect("Filter by Market",
-                ["F5 ML","F5 Spread","F5 Total","F5 Team Total","NRFI/YRFI","1st Inn U1.5"],
-                default=["F5 ML","F5 Spread","F5 Total","F5 Team Total","NRFI/YRFI","1st Inn U1.5"])
+                ["F5 ML","F5 Spread","F5 Total","F5 Team Total","NRFI/YRFI"],
+                default=["F5 ML","F5 Spread","F5 Total","F5 Team Total","NRFI/YRFI"])
             st.divider()
 
             display_signals = [s for s in signals
