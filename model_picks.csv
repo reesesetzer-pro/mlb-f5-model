@@ -133,4 +133,6 @@ Date,Game,Team,Side,Market,ML,Book,Model_Prob,Market_Prob,Edge_Pct,Model_Line,Ma
 04/25/2026,Detroit Tigers @ Cincinnati Reds,Detroit Tigers/Cincinnati Reds,Under 5.2,F5 Total,-105,Caesars,66.2,51.2,15.0,4.24,5.2,51.25,27.7,1.12,0.031,PENDING,,False
 04/25/2026,Pittsburgh Pirates @ Milwaukee Brewers,Milwaukee Brewers,Home -0.5,F5 Spread,-102,BetMGM,60.7,50.5,10.2,-0.21,-0.5,64.2,47.1,1.02,0.014,PENDING,,False
 04/25/2026,Washington Nationals @ Chicago White Sox,Chicago White Sox,Home -0.5,F5 Spread,-105,BetMGM,60.1,51.2,8.9,-0.17,-0.5,54.9,36.1,0.96,0.08,PENDING,,False
-04/25/2026,San Diego Padres @ Arizona Diamondbacks,Arizona Diamondbacks,Home -0.5,F5 Spread,-105,Caesars,60.6,51.2,9.4,-0.2,-0.5,50,,1.0,0.0,PENDING,,False
+04/25/2026,San Diego Padres @ Arizona Diamondbacks,Arizona Diamondbacks,Home -0.5,F5 Spread,-105,Caesars,60.6,51.2,9.4,-0.2,-0.5,50.0,,1.0,0.0,PENDING,,False
+04/25/2026,Philadelphia Phillies @ Atlanta Braves,Philadelphia Phillies,Philadelphia Phillies Over 1.5,F5 Team Total,-150,TheScore,64.9,60.0,4.9,2.19,1.5,50.0,48.5,1.01,0.038,PENDING,,False
+04/25/2026,Cleveland Guardians @ Toronto Blue Jays,Toronto Blue Jays,Home,F5 ML,-145,TheScore,60.2,59.2,1.0,,,54.5,29.4,0.97,0.004,PENDING,,False
