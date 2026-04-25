@@ -1003,6 +1003,36 @@ def auto_grade_picks(picks_df):
         save_model_picks(picks_df)
     return picks_df
 
+def compute_market_roi(picks_df, min_n=8):
+    """Per-market historical ROI assuming flat $1 stake. Markets with fewer
+    than `min_n` settled picks return None (insufficient sample)."""
+    out = {}
+    if picks_df is None or picks_df.empty or "Result" not in picks_df.columns:
+        return out
+    settled = picks_df[picks_df["Result"].isin(["WIN", "LOSS", "PUSH"])].copy()
+    if settled.empty:
+        return out
+    for mkt, grp in settled.groupby("Market"):
+        n_bet = (grp["Result"] != "PUSH").sum()
+        if n_bet < min_n:
+            out[mkt] = None
+            continue
+        pnl = 0.0
+        for _, r in grp.iterrows():
+            if r["Result"] == "PUSH":
+                continue
+            if r["Result"] == "LOSS":
+                pnl -= 1.0
+            else:
+                try:
+                    o = float(r["ML"])
+                    pnl += (o / 100.0) if o > 0 else (100.0 / abs(o))
+                except Exception:
+                    pass
+        out[mkt] = round(pnl / n_bet, 4)  # ROI per $1 staked
+    return out
+
+
 def auto_log_model_picks(signals, picks_df, min_model_prob=0.60):
     today = date.today().strftime("%m/%d/%Y")
     new_rows = []
@@ -1702,11 +1732,34 @@ elif page == "🎯 Bet Signals":
                     if key not in _seen:
                         _seen[key] = s  # first seen = highest model_p (already sorted)
             deduped += list(_seen.values())
-            deduped.sort(key=lambda x: (x["model_p"], x["edge"]), reverse=True)
+
+            # Prioritize signals by historical per-market ROI tier:
+            #   tier 0 = profitable (ROI ≥ +5%), tier 1 = neutral (-5%..+5%),
+            #   tier 2 = unprofitable (< -5%), tier 3 = unknown (< 8 settled picks).
+            # Within tier, fall back to model prob × edge.
+            _roi_map = compute_market_roi(model_picks_df, min_n=8)
+            def _roi_tier(roi):
+                if roi is None:    return 3
+                if roi >=  0.05:   return 0
+                if roi >  -0.05:   return 1
+                return 2
+            for _s in deduped:
+                _s["_market_roi"]  = _roi_map.get(_s.get("market"))
+                _s["_market_tier"] = _roi_tier(_s["_market_roi"])
+            deduped.sort(key=lambda x: (x["_market_tier"], -x["model_p"], -x["edge"]))
             signals = deduped
 
             high_conf = [s for s in signals if s["model_p"] >= 0.60]
             solid     = [s for s in signals if 0.55 <= s["model_p"] < 0.60]
+
+            # Market performance scoreboard — surfaces which markets are paying
+            _roi_display = {k: v for k, v in _roi_map.items() if v is not None}
+            if _roi_display:
+                st.caption("📊 Market performance (historical ROI · $1 stake)")
+                _cols = st.columns(len(_roi_display))
+                for _i, (_mkt, _roi) in enumerate(sorted(_roi_display.items(), key=lambda kv: kv[1] or 0, reverse=True)):
+                    _icon = "✅" if _roi >= 0.05 else ("⚠️" if _roi > -0.05 else "❌")
+                    _cols[_i].metric(f"{_icon} {_mkt}", f"{_roi*100:+.1f}%")
 
             m1,m2,m3,m4 = st.columns(4)
             m1.metric("Total Signals",       len(signals))
