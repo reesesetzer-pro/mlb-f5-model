@@ -136,3 +136,5 @@ Date,Game,Team,Side,Market,ML,Book,Model_Prob,Market_Prob,Edge_Pct,Model_Line,Ma
 04/25/2026,San Diego Padres @ Arizona Diamondbacks,Arizona Diamondbacks,Home -0.5,F5 Spread,-105,Caesars,60.6,51.2,9.4,-0.2,-0.5,50.0,,1.0,0.0,WIN,1-4,False
 04/25/2026,Philadelphia Phillies @ Atlanta Braves,Philadelphia Phillies,Philadelphia Phillies Over 1.5,F5 Team Total,-150,TheScore,64.9,60.0,4.9,2.19,1.5,50.0,48.5,1.01,0.038,WIN,3-2,False
 04/25/2026,Cleveland Guardians @ Toronto Blue Jays,Toronto Blue Jays,Home,F5 ML,-145,TheScore,60.2,59.2,1.0,,,54.5,29.4,0.97,0.004,PUSH,1-1,False
+04/26/2026,Philadelphia Phillies @ Atlanta Braves,NRFI,NRFI,NRFI/YRFI,-115,est.,63.8,53.5,10.3,,,58.4,35.0,1.01,0.003,PENDING,,False
+04/26/2026,San Diego Padres @ Arizona Diamondbacks,Under,Under,F5 Total,-125,betmgm,96.1,55.6,40.5,4.45,8.5,52.6,50.0,1.0,0.0,PENDING,,False
