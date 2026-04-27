@@ -139,3 +139,26 @@ Date,Game,Team,Side,Market,ML,Book,Model_Prob,Market_Prob,Edge_Pct,Model_Line,Ma
 04/26/2026,Philadelphia Phillies @ Atlanta Braves,NRFI,NRFI,NRFI/YRFI,-115,est.,63.8,53.5,10.3,,,58.4,35.0,1.01,0.003,LOSS,0-6,False
 04/26/2026,San Diego Padres @ Arizona Diamondbacks,Under,Under,F5 Total,-125,betmgm,96.1,55.6,40.5,4.45,8.5,52.6,50.0,1.0,0.0,WIN,6-1,False
 04/27/2026,Miami Marlins @ Los Angeles Dodgers,Los Angeles Dodgers,Home,F5 Spread,-110,fanduel,81.4,52.4,29.0,-1.2,1.2,60.2,50.0,0.98,0.0,PENDING,,False
+04/27/2026,Miami Marlins @ Los Angeles Dodgers,Los Angeles Dodgers,Home,F5 ML,-300,BetMGM,73.1,75.0,-1.9,,,50.0,53.2,1.01,0.038,PENDING,,False
+04/27/2026,Chicago Cubs @ San Diego Padres,San Diego Padres,San Diego Padres Over 1.5,F5 Team Total,-125,DraftKings,69.9,55.6,14.4,2.44,1.5,56.8,50.7,0.99,0.046,PENDING,,False
+04/27/2026,Tampa Bay Rays @ Cleveland Guardians,Cleveland Guardians,Cleveland Guardians Under 2.5,F5 Team Total,-145,TheScore,68.4,59.2,9.2,1.64,2.5,50.0,20.1,1.02,0.084,PENDING,,False
+04/27/2026,New York Yankees @ Texas Rangers,Texas Rangers,Texas Rangers Over 1.5,F5 Team Total,-115,DraftKings,66.1,53.5,12.7,2.25,1.5,50.0,,1.0,0.0,PENDING,,False
+04/27/2026,Los Angeles Angels @ Chicago White Sox,Los Angeles Angels/Chicago White Sox,Under 4.7,F5 Total,-102,FanDuel,65.7,50.5,15.2,3.77,4.7,49.4,28.75,1.0,0.044,PENDING,,False
+04/27/2026,Miami Marlins @ Los Angeles Dodgers,Miami Marlins,Miami Marlins Over 1.5,F5 Team Total,124,DraftKings,64.9,44.6,20.3,2.19,1.5,50.0,48.5,1.01,0.038,PENDING,,False
+04/27/2026,Seattle Mariners @ Minnesota Twins,Seattle Mariners/Minnesota Twins,Under 4.7,F5 Total,105,Caesars,64.9,48.8,16.1,3.82,4.7,60.75,44.4,0.95,0.012,PENDING,,False
+04/27/2026,Boston Red Sox @ Toronto Blue Jays,Toronto Blue Jays,Home -0.5,F5 Spread,100,BetMGM,64.2,50.0,14.2,-0.45,-0.5,50.0,41.7,0.98,-0.006,PENDING,,False
+04/27/2026,Los Angeles Angels @ Chicago White Sox,Chicago White Sox,Chicago White Sox Under 2.5,F5 Team Total,-145,DraftKings,63.9,59.2,4.7,1.86,2.5,56.2,27.1,1.0,0.044,PENDING,,False
+04/27/2026,Seattle Mariners @ Minnesota Twins,Minnesota Twins,Minnesota Twins Under 2.5,F5 Team Total,-145,DraftKings,63.5,59.2,4.3,1.88,2.5,48.3,49.8,0.95,0.012,PENDING,,False
+04/27/2026,St. Louis Cardinals @ Pittsburgh Pirates,Pittsburgh Pirates,Pittsburgh Pirates Under 2.5,F5 Team Total,-150,TheScore,63.5,60.0,3.5,1.88,2.5,54.9,36.1,0.96,0.08,PENDING,,False
+04/27/2026,Chicago Cubs @ San Diego Padres,Chicago Cubs,Chicago Cubs Over 1.5,F5 Team Total,-140,DraftKings,63.1,58.3,4.7,2.1,1.5,47.7,34.8,0.99,0.046,PENDING,,False
+04/27/2026,Los Angeles Angels @ Chicago White Sox,Los Angeles Angels,Los Angeles Angels Under 2.5,F5 Team Total,-135,TheScore,62.9,57.4,5.4,1.91,2.5,50.0,30.4,1.0,0.044,PENDING,,False
+04/27/2026,Seattle Mariners @ Minnesota Twins,Seattle Mariners,Seattle Mariners Under 2.5,F5 Team Total,-135,TheScore,62.2,57.4,4.8,1.94,2.5,65.1,39.0,0.95,0.012,PENDING,,False
+04/27/2026,St. Louis Cardinals @ Pittsburgh Pirates,St. Louis Cardinals,St. Louis Cardinals Over 1.5,F5 Team Total,-140,TheScore,61.2,58.3,2.8,2.01,1.5,50.0,44.4,0.96,0.08,PENDING,,False
+04/27/2026,Boston Red Sox @ Toronto Blue Jays,Toronto Blue Jays,Home,F5 ML,-145,BetMGM,61.1,59.2,1.9,,,50.0,41.7,0.98,-0.006,PENDING,,False
+04/27/2026,St. Louis Cardinals @ Pittsburgh Pirates,Pittsburgh Pirates,Home -0.5,F5 Spread,115,BetMGM,61.1,46.5,14.5,-0.23,-0.5,54.9,36.1,0.96,0.08,PENDING,,False
+04/27/2026,Boston Red Sox @ Toronto Blue Jays,Toronto Blue Jays,Toronto Blue Jays Over 1.5,F5 Team Total,-140,TheScore,60.9,58.3,2.6,2.0,1.5,50.0,41.7,0.98,-0.006,PENDING,,False
+04/27/2026,New York Yankees @ Texas Rangers,New York Yankees,Away -0.5,F5 Spread,-110,BetMGM,60.8,52.4,8.4,0.21,-0.5,50.0,,1.0,0.0,PENDING,,False
+04/27/2026,Tampa Bay Rays @ Cleveland Guardians,Tampa Bay Rays/Cleveland Guardians,Under 4.2,F5 Total,100,Caesars,60.5,50.0,10.5,3.59,4.2,50.0,31.35,1.02,0.084,PENDING,,False
+04/27/2026,St. Louis Cardinals @ Pittsburgh Pirates,St. Louis Cardinals/Pittsburgh Pirates,Under 4.5,F5 Total,-115,Caesars,60.5,53.5,7.0,3.89,4.5,48.95,40.25,0.96,0.08,PENDING,,False
+04/27/2026,Los Angeles Angels @ Chicago White Sox,Los Angeles Angels,Away -0.5,F5 Spread,116,FanDuel,60.2,46.3,13.9,0.17,-0.5,50.0,30.4,1.0,0.044,PENDING,,False
+04/27/2026,Seattle Mariners @ Minnesota Twins,Seattle Mariners,Away -0.5,F5 Spread,120,Caesars,60.1,45.5,14.7,0.17,-0.5,65.1,39.0,0.95,0.012,PENDING,,False
