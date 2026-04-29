@@ -144,23 +144,5 @@ Date,Game,Team,Side,Market,ML,Book,Model_Prob,Market_Prob,Edge_Pct,Model_Line,Ma
 04/29/2026,Boston Red Sox @ Toronto Blue Jays,Toronto Blue Jays,Home,F5 Spread,110,betmgm,86.6,47.6,39.0,-0.5,0.5,45.6,39.1,1.01,0.04,PENDING,,False
 04/29/2026,Miami Marlins @ Los Angeles Dodgers,Los Angeles Dodgers,Home,F5 ML,-215,draftkings,84.6,68.3,16.3,,,62.59999999999999,56.2,0.98,0.077,PENDING,,False
 04/29/2026,Miami Marlins @ Los Angeles Dodgers,Los Angeles Dodgers,Home,F5 Spread,105,betmgm,88.9,48.8,40.1,-1.0,1.0,49.1,56.2,0.98,0.077,PENDING,,False
-04/29/2026,Kansas City Royals @ Athletics,Kansas City Royals/Athletics,Under 5.5,F5 Total,-110,FanDuel,73.3,52.4,20.9,4.07,5.5,51.8,23.25,0.94,0.02,PENDING,,False
-04/29/2026,Arizona Diamondbacks @ Milwaukee Brewers,Milwaukee Brewers,Home -0.5,F5 Spread,120,FanDuel,67.9,45.5,22.5,-0.71,-0.5,64.5,44.5,1.0,0.034,PENDING,,False
-04/29/2026,Arizona Diamondbacks @ Milwaukee Brewers,Milwaukee Brewers,Home,F5 ML,-114,FanDuel,67.8,53.3,14.6,,,64.5,44.5,1.0,0.034,PENDING,,False
-04/29/2026,Colorado Rockies @ Cincinnati Reds,Colorado Rockies/Cincinnati Reds,Under 5.5,F5 Total,-113,FanDuel,67.4,53.1,14.4,4.46,5.5,50.0,39.9,1.0,-0.061,PENDING,,False
-04/29/2026,Colorado Rockies @ Cincinnati Reds,Cincinnati Reds,Home -0.5,F5 Spread,105,BetMGM,67.2,48.8,18.4,-0.66,-0.5,50.0,63.6,1.0,-0.061,PENDING,,False
-04/29/2026,Detroit Tigers @ Atlanta Braves,Atlanta Braves,Atlanta Braves Over 1.5,F5 Team Total,-110,DraftKings,66.0,52.4,13.6,2.24,1.5,50.0,53.2,1.01,0.038,PENDING,,False
-04/29/2026,Colorado Rockies @ Cincinnati Reds,Cincinnati Reds,Home,F5 ML,-125,BetMGM,65.5,55.6,10.0,,,50.0,63.6,1.0,-0.061,PENDING,,False
-04/29/2026,San Francisco Giants @ Philadelphia Phillies,San Francisco Giants,San Francisco Giants Over 1.5,F5 Team Total,115,TheScore,64.7,46.5,18.2,2.18,1.5,56.2,25.0,1.12,0.031,PENDING,,False
-04/29/2026,Colorado Rockies @ Cincinnati Reds,Colorado Rockies,Colorado Rockies Under 2.5,F5 Team Total,-125,DraftKings,63.9,55.6,8.3,1.86,2.5,50.0,16.2,1.0,-0.061,PENDING,,False
-04/29/2026,St. Louis Cardinals @ Pittsburgh Pirates,Pittsburgh Pirates,Pittsburgh Pirates Under 2.5,F5 Team Total,-140,DraftKings,63.5,58.3,5.1,1.88,2.5,54.9,36.1,0.96,0.08,PENDING,,False
-04/29/2026,San Francisco Giants @ Philadelphia Phillies,San Francisco Giants/Philadelphia Phillies,Over 3.5,F5 Total,-120,FanDuel,62.6,54.5,8.1,4.24,3.5,51.25,27.7,1.12,0.031,PENDING,,False
-04/29/2026,San Francisco Giants @ Philadelphia Phillies,Philadelphia Phillies,Philadelphia Phillies Over 1.5,F5 Team Total,-140,DraftKings,62.2,58.3,3.9,2.06,1.5,50.0,30.4,1.12,0.031,PENDING,,False
-04/29/2026,San Francisco Giants @ Philadelphia Phillies,San Francisco Giants,YRFI — San Francisco Giants @ Philadelphia Phillies,NRFI/YRFI,-105,est.,62.2,51.2,11.0,,,51.25,27.7,1.12,0.031,PENDING,,False
-04/29/2026,Kansas City Royals @ Athletics,Kansas City Royals,NRFI — Kansas City Royals @ Athletics,NRFI/YRFI,-115,est.,61.2,53.5,7.8,,,51.8,23.25,0.94,0.02,PENDING,,False
-04/29/2026,San Francisco Giants @ Philadelphia Phillies,Philadelphia Phillies,Home -0.5,F5 Spread,-106,FanDuel,61.2,51.5,9.8,-0.24,-0.5,50.0,30.4,1.12,0.031,PENDING,,False
-04/29/2026,Washington Nationals @ New York Mets,Washington Nationals,Washington Nationals Over 1.5,F5 Team Total,100,DraftKings,61.2,50.0,11.2,2.01,1.5,50.0,44.4,0.96,0.08,PENDING,,False
-04/29/2026,St. Louis Cardinals @ Pittsburgh Pirates,St. Louis Cardinals,St. Louis Cardinals Over 1.5,F5 Team Total,-150,TheScore,61.2,60.0,1.2,2.01,1.5,50.0,44.4,0.96,0.08,PENDING,,False
-04/29/2026,Kansas City Royals @ Athletics,Kansas City Royals,Kansas City Royals Under 2.5,F5 Team Total,-130,DraftKings,60.7,56.5,4.2,2.01,2.5,50.0,23.4,0.94,0.02,PENDING,,False
-04/29/2026,Detroit Tigers @ Atlanta Braves,Detroit Tigers,Away -0.5,F5 Spread,-118,FanDuel,60.7,54.1,6.6,0.21,-0.5,50.0,48.5,1.01,0.038,PENDING,,False
-04/29/2026,St. Louis Cardinals @ Pittsburgh Pirates,St. Louis Cardinals/Pittsburgh Pirates,Under 4.5,F5 Total,-108,FanDuel,60.5,51.9,8.5,3.89,4.5,48.95,40.25,0.96,0.08,PENDING,,False
+04/29/2026,New York Yankees @ Texas Rangers,Over,Over,F5 Total,122,fanduel,92.7,45.0,47.6,4.84,1.5,45.4,39.4,1.08,0.052,PENDING,,False
+04/29/2026,San Francisco Giants @ Philadelphia Phillies,NRFI,NRFI,NRFI/YRFI,-115,est.,63.6,53.5,10.2,,,55.8,30.9,0.99,0.005,PENDING,,False
