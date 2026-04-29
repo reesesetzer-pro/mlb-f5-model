@@ -140,3 +140,7 @@ Date,Game,Team,Side,Market,ML,Book,Model_Prob,Market_Prob,Edge_Pct,Model_Line,Ma
 04/26/2026,San Diego Padres @ Arizona Diamondbacks,Under,Under,F5 Total,-125,betmgm,96.1,55.6,40.5,4.45,8.5,52.6,50.0,1.0,0.0,WIN,6-1,False
 04/27/2026,Miami Marlins @ Los Angeles Dodgers,Los Angeles Dodgers,Home,F5 Spread,-110,fanduel,81.4,52.4,29.0,-1.2,1.2,60.2,50.0,0.98,0.0,LOSS,4-2,False
 04/28/2026,Miami Marlins @ Los Angeles Dodgers,Los Angeles Dodgers,Home,F5 Spread,118,betmgm,82.6,45.9,36.7,-1.2,1.2,45.2,50.0,0.98,0.0,LOSS,2-0,False
+04/29/2026,Boston Red Sox @ Toronto Blue Jays,Toronto Blue Jays,Home,F5 ML,-120,draftkings,95.0,54.5,40.5,,,47.9,39.1,1.01,0.04,PENDING,,False
+04/29/2026,Boston Red Sox @ Toronto Blue Jays,Toronto Blue Jays,Home,F5 Spread,110,betmgm,86.6,47.6,39.0,-0.5,0.5,45.6,39.1,1.01,0.04,PENDING,,False
+04/29/2026,Miami Marlins @ Los Angeles Dodgers,Los Angeles Dodgers,Home,F5 ML,-215,draftkings,84.6,68.3,16.3,,,62.59999999999999,56.2,0.98,0.077,PENDING,,False
+04/29/2026,Miami Marlins @ Los Angeles Dodgers,Los Angeles Dodgers,Home,F5 Spread,105,betmgm,88.9,48.8,40.1,-1.0,1.0,49.1,56.2,0.98,0.077,PENDING,,False
