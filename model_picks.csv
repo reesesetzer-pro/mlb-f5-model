@@ -170,3 +170,7 @@ Date,Game,Team,Side,Market,ML,Book,Model_Prob,Market_Prob,Edge_Pct,Model_Line,Ma
 =======,,,,,,,,,,,,,,,,,,
 >>>>>>> Stashed changes,,,,,,,,,,,,,,,,,,
 04/30/2026,St. Louis Cardinals @ Pittsburgh Pirates,Pittsburgh Pirates,Home,F5 Spread,122.0,fanduel,80.9,45.0,35.9,-1.0,1.0,54.3,50.0,0.96,0.0,PENDING,,False
+04/30/2026,San Francisco Giants @ Philadelphia Phillies,San Francisco Giants,YRFI — San Francisco Giants @ Philadelphia Phillies,NRFI/YRFI,-105.0,est.,62.2,51.2,11.0,,,51.25,27.7,1.12,0.031,PENDING,,False
+04/30/2026,Toronto Blue Jays @ Minnesota Twins,Minnesota Twins,Minnesota Twins Over 1.5,F5 Team Total,-130.0,DraftKings,61.4,56.5,4.8,2.02,1.5,64.2,47.1,1.02,0.014,PENDING,,False
+04/30/2026,Toronto Blue Jays @ Minnesota Twins,Toronto Blue Jays,NRFI — Toronto Blue Jays @ Minnesota Twins,NRFI/YRFI,-115.0,est.,61.2,53.5,7.7,,,72.55000000000001,41.650000000000006,1.02,0.014,PENDING,,False
+04/30/2026,San Francisco Giants @ Philadelphia Phillies,Philadelphia Phillies,Home -0.5,F5 Spread,102.0,FanDuel,60.8,49.5,11.3,-0.21,-0.5,50.0,30.4,1.12,0.031,PENDING,,False
