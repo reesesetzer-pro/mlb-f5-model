@@ -169,3 +169,4 @@ Date,Game,Team,Side,Market,ML,Book,Model_Prob,Market_Prob,Edge_Pct,Model_Line,Ma
 04/29/2026,St. Louis Cardinals @ Pittsburgh Pirates,St. Louis Cardinals/Pittsburgh Pirates,Under 4.5,F5 Total,-108.0,FanDuel,60.5,51.9,8.5,3.89,4.5,48.95,40.25,0.96,0.08,WIN,3-1,False
 =======,,,,,,,,,,,,,,,,,,
 >>>>>>> Stashed changes,,,,,,,,,,,,,,,,,,
+04/30/2026,St. Louis Cardinals @ Pittsburgh Pirates,Pittsburgh Pirates,Home,F5 Spread,122.0,fanduel,80.9,45.0,35.9,-1.0,1.0,54.3,50.0,0.96,0.0,PENDING,,False
