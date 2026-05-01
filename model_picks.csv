@@ -170,3 +170,4 @@ Date,Game,Team,Side,Market,ML,Book,Model_Prob,Market_Prob,Edge_Pct,Model_Line,Ma
 =======,,,,,,,,,,,,,,,,,,
 >>>>>>> Stashed changes,,,,,,,,,,,,,,,,,,
 04/30/2026,St. Louis Cardinals @ Pittsburgh Pirates,Pittsburgh Pirates,Home,F5 Spread,122.0,fanduel,80.9,45.0,35.9,-1.0,1.0,54.3,50.0,0.96,0.0,LOSS,5-3,False
+05/01/2026,Arizona Diamondbacks @ Chicago Cubs,Over,Over,F5 Total,-122.0,fanduel,79.7,55.0,24.7,5.41,3.5,46.2,49.2,1.06,0.003,PENDING,,False
