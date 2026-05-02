@@ -1,1373 +1,1530 @@
 [
   {
-    "game_pk": 824853,
-    "time_et": "10:35 PM ET",
-    "away_team": "Arizona Diamondbacks",
-    "away_team_abv": "AZ",
-    "home_team": "Baltimore Orioles",
-    "home_team_abv": "BAL",
-    "venue": "Oriole Park at Camden Yards",
-    "park_factor": 1.0,
-    "lineup_confirmed": true,
-    "away_lineup_score": 34.2,
-    "home_lineup_score": 44.5,
-    "away_matchup_score": 35.1,
-    "home_matchup_score": 44.2,
-    "away_platoon_adv": 0.9,
-    "home_platoon_adv": -0.9,
-    "away_nrfi_top3": {
-      "season_ops": 0.864,
-      "vs_sp_ops": null,
-      "vs_sp_pa": 0,
-      "detail": [
-        {
-          "pid": 545121,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 682998,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 672695,
-          "pa": 0,
-          "ops": 0
-        }
-      ]
-    },
-    "home_nrfi_top3": {
-      "season_ops": 0.828,
-      "vs_sp_ops": 1.052,
-      "vs_sp_pa": 19,
-      "detail": [
-        {
-          "pid": 683002,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 621493,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 624413,
-          "pa": 19,
-          "ops": 1.052
-        }
-      ]
-    },
-    "away_bp_ip_3d": 8.7,
-    "home_bp_ip_3d": 10.7,
-    "ump_name": "Chris Conroy",
-    "ump_k_boost": 0.034,
-    "ump_run_factor": 0.992,
-    "ump_zone_size": 1.002,
-    "weather": {
-      "temp": 74,
-      "wind_speed": 2.0,
-      "wind_dir": "W",
-      "wind_dir_deg": 270,
-      "precip_pct": 6,
-      "is_dome": false,
-      "wind_multiplier": 0.9816,
-      "temp_multiplier": 1.006
-    },
-    "away_sp": {},
-    "home_sp": {
-      "name": "Trevor Rogers",
-      "hand": "L",
-      "xfip": 2.23,
-      "k_bb_pct": 15.39,
-      "hard_hit": 26.8,
-      "barrel_pct": 1.8,
-      "avg_velo": 88.3,
-      "era": 1.57,
-      "sp_score": 64.5,
-      "recent_era": 4.57,
-      "form_score": -8.6,
-      "days_rest": 0,
-      "home_away_adj": 3.3
-    }
-  },
-  {
-    "game_pk": 824292,
-    "time_et": "10:40 PM ET",
-    "away_team": "Kansas City Royals",
-    "away_team_abv": "KC",
-    "home_team": "Detroit Tigers",
-    "home_team_abv": "DET",
-    "venue": "Comerica Park",
-    "park_factor": 0.94,
-    "lineup_confirmed": true,
-    "away_lineup_score": 23.4,
-    "home_lineup_score": 23.1,
-    "away_matchup_score": 23.4,
-    "home_matchup_score": 22.9,
-    "away_platoon_adv": 0.4,
-    "home_platoon_adv": 0.0,
-    "away_nrfi_top3": {
-      "season_ops": 0.659,
-      "vs_sp_ops": 0.287,
-      "vs_sp_pa": 35,
-      "detail": [
-        {
-          "pid": 672580,
-          "pa": 15,
-          "ops": 0.204
-        },
-        {
-          "pid": 677951,
-          "pa": 20,
-          "ops": 0.35
-        },
-        {
-          "pid": 657041,
-          "pa": 0,
-          "ops": 0
-        }
-      ]
-    },
-    "home_nrfi_top3": {
-      "season_ops": 0.7,
-      "vs_sp_ops": 0.75,
-      "vs_sp_pa": 12,
-      "detail": [
-        {
-          "pid": 650402,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 663837,
-          "pa": 12,
-          "ops": 0.75
-        },
-        {
-          "pid": 805808,
-          "pa": 0,
-          "ops": 0
-        }
-      ]
-    },
-    "away_bp_ip_3d": 6.7,
-    "home_bp_ip_3d": 8.7,
-    "ump_name": "Cory Blaser",
-    "ump_k_boost": 0.02,
-    "ump_run_factor": 0.99,
-    "ump_zone_size": 1.001,
-    "weather": {
-      "temp": 68,
-      "wind_speed": 7.0,
-      "wind_dir": "S",
-      "wind_dir_deg": 180,
-      "precip_pct": 60,
-      "is_dome": false,
-      "wind_multiplier": 1.0727,
-      "temp_multiplier": 0.988
-    },
-    "away_sp": {},
-    "home_sp": {
-      "name": "Framber Valdez",
-      "hand": "L",
-      "xfip": 3.1,
-      "k_bb_pct": 5.32,
-      "hard_hit": 36.7,
-      "barrel_pct": 1.7,
-      "avg_velo": 88.4,
-      "era": 4.29,
-      "sp_score": 54.1,
-      "recent_era": 5.33,
-      "form_score": -8.3,
-      "days_rest": 0,
-      "home_away_adj": 7.8
-    }
-  },
-  {
-    "game_pk": 823398,
-    "time_et": "10:40 PM ET",
-    "away_team": "Washington Nationals",
-    "away_team_abv": "WSH",
-    "home_team": "Pittsburgh Pirates",
-    "home_team_abv": "PIT",
-    "venue": "PNC Park",
-    "park_factor": 0.96,
-    "lineup_confirmed": true,
-    "away_lineup_score": 44.4,
-    "home_lineup_score": 36.1,
-    "away_matchup_score": 39.3,
-    "home_matchup_score": 34.6,
-    "away_platoon_adv": -5.7,
-    "home_platoon_adv": -1.2,
-    "away_nrfi_top3": {
-      "season_ops": 0.793,
-      "vs_sp_ops": 0.688,
-      "vs_sp_pa": 16,
-      "detail": [
-        {
-          "pid": 695578,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 671277,
-          "pa": 16,
-          "ops": 0.688
-        },
-        {
-          "pid": 691781,
-          "pa": 0,
-          "ops": 0
-        }
-      ]
-    },
-    "home_nrfi_top3": {
-      "season_ops": 1.006,
-      "vs_sp_ops": null,
-      "vs_sp_pa": 0,
-      "detail": [
-        {
-          "pid": 665833,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 664040,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 668804,
-          "pa": 0,
-          "ops": 0
-        }
-      ]
-    },
-    "away_bp_ip_3d": 14.3,
-    "home_bp_ip_3d": 12.0,
-    "ump_name": "John Libka",
-    "ump_k_boost": 0.08,
-    "ump_run_factor": 0.958,
-    "ump_zone_size": 1.023,
-    "weather": {
-      "temp": 70,
-      "wind_speed": 6.0,
-      "wind_dir": "SW",
-      "wind_dir_deg": 225,
-      "precip_pct": 33,
-      "is_dome": false,
-      "wind_multiplier": 0.9814,
-      "temp_multiplier": 0.994
-    },
-    "away_sp": {},
-    "home_sp": {
-      "name": "Mitch Keller",
-      "hand": "R",
-      "xfip": 3.15,
-      "k_bb_pct": 6.25,
-      "hard_hit": 37.7,
-      "barrel_pct": 1.9,
-      "avg_velo": 84.8,
-      "era": 2.25,
-      "sp_score": 54.9,
-      "recent_era": 4.75,
-      "form_score": -9.7,
-      "days_rest": 0,
-      "home_away_adj": 2.7
-    }
-  },
-  {
-    "game_pk": 824531,
-    "time_et": "10:40 PM ET",
-    "away_team": "San Francisco Giants",
-    "away_team_abv": "SF",
-    "home_team": "Cincinnati Reds",
-    "home_team_abv": "CIN",
-    "venue": "Great American Ball Park",
-    "park_factor": 1.12,
-    "lineup_confirmed": true,
-    "away_lineup_score": 25.0,
-    "home_lineup_score": 30.4,
-    "away_matchup_score": 48.2,
-    "home_matchup_score": 35.7,
-    "away_platoon_adv": 23.4,
-    "home_platoon_adv": 5.4,
-    "away_nrfi_top3": {
-      "season_ops": 0.766,
-      "vs_sp_ops": 1.383,
-      "vs_sp_pa": 30,
-      "detail": [
-        {
-          "pid": 642715,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 650333,
-          "pa": 20,
-          "ops": 0.924
-        },
-        {
-          "pid": 656305,
-          "pa": 10,
-          "ops": 2.3
-        }
-      ]
-    },
-    "home_nrfi_top3": {
-      "season_ops": 0.708,
-      "vs_sp_ops": null,
-      "vs_sp_pa": 0,
-      "detail": [
-        {
-          "pid": 667472,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 680574,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 682829,
-          "pa": 0,
-          "ops": 0
-        }
-      ]
-    },
-    "away_bp_ip_3d": 8.3,
-    "home_bp_ip_3d": 14.7,
-    "ump_name": "Paul Clemons",
-    "ump_k_boost": 0.031,
-    "ump_run_factor": 0.968,
-    "ump_zone_size": 1.013,
-    "weather": {
-      "temp": 73,
-      "wind_speed": 8.0,
-      "wind_dir": "S",
-      "wind_dir_deg": 180,
-      "precip_pct": 2,
-      "is_dome": false,
-      "wind_multiplier": 0.9098,
-      "temp_multiplier": 1.003
-    },
-    "away_sp": {
-      "name": "Robbie Ray",
-      "hand": "L",
-      "xfip": 3.83,
-      "k_bb_pct": 19.75,
-      "hard_hit": 31.1,
-      "barrel_pct": 11.1,
-      "avg_velo": 87.2,
-      "era": 2.18,
-      "sp_score": 56.2,
-      "recent_era": 2.32,
-      "form_score": -3.7,
-      "days_rest": 0,
-      "home_away_adj": 0.0
-    },
-    "home_sp": {}
-  },
-  {
-    "game_pk": 823478,
-    "time_et": "10:40 PM ET",
-    "away_team": "Chicago Cubs",
-    "away_team_abv": "CHC",
-    "home_team": "Philadelphia Phillies",
-    "home_team_abv": "PHI",
-    "venue": "Citizens Bank Park",
-    "park_factor": 0.99,
-    "lineup_confirmed": true,
-    "away_lineup_score": 34.8,
-    "home_lineup_score": 50.7,
-    "away_matchup_score": 27.5,
-    "home_matchup_score": 42.7,
-    "away_platoon_adv": -7.2,
-    "home_platoon_adv": -8.1,
-    "away_nrfi_top3": {
-      "season_ops": 0.644,
-      "vs_sp_ops": 0.762,
-      "vs_sp_pa": 15,
-      "detail": [
-        {
-          "pid": 663538,
-          "pa": 15,
-          "ops": 0.762
-        },
-        {
-          "pid": 683737,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 608324,
-          "pa": 0,
-          "ops": 0
-        }
-      ]
-    },
-    "home_nrfi_top3": {
-      "season_ops": 0.833,
-      "vs_sp_ops": null,
-      "vs_sp_pa": 0,
-      "detail": [
-        {
-          "pid": 607208,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 656941,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 547180,
-          "pa": 0,
-          "ops": 0
-        }
-      ]
-    },
-    "away_bp_ip_3d": 12.7,
-    "home_bp_ip_3d": 14.0,
-    "ump_name": "Mark Wegner",
-    "ump_k_boost": 0.046,
-    "ump_run_factor": 0.991,
-    "ump_zone_size": 1.006,
-    "weather": {
-      "temp": 74,
-      "wind_speed": 5.0,
-      "wind_dir": "SW",
-      "wind_dir_deg": 225,
-      "precip_pct": 17,
-      "is_dome": false,
-      "wind_multiplier": 1.0591,
-      "temp_multiplier": 1.006
-    },
-    "away_sp": {
-      "name": "Riley Martin",
-      "hand": "L",
-      "xfip": 4.84,
-      "k_bb_pct": 10.61,
-      "hard_hit": 35.3,
-      "barrel_pct": 7.8,
-      "avg_velo": 88.9,
-      "era": 2.16,
-      "sp_score": 47.7,
-      "recent_era": null,
-      "form_score": 0,
-      "days_rest": null,
-      "home_away_adj": 0.0
-    },
-    "home_sp": {
-      "name": "Aaron Nola",
-      "hand": "R",
-      "xfip": 3.43,
-      "k_bb_pct": 20.93,
-      "hard_hit": 42.6,
-      "barrel_pct": 10.6,
-      "avg_velo": 87.8,
-      "era": 3.86,
-      "sp_score": 56.8,
-      "recent_era": 3.9,
-      "form_score": -3.6,
-      "days_rest": 0,
-      "home_away_adj": -2.7
-    }
-  },
-  {
-    "game_pk": 823562,
-    "time_et": "11:05 PM ET",
-    "away_team": "Los Angeles Angels",
-    "away_team_abv": "LAA",
-    "home_team": "New York Yankees",
-    "home_team_abv": "NYY",
-    "venue": "Yankee Stadium",
-    "park_factor": 1.0,
-    "lineup_confirmed": true,
-    "away_lineup_score": 30.4,
-    "home_lineup_score": 27.1,
-    "away_matchup_score": 28.9,
-    "home_matchup_score": 26.9,
-    "away_platoon_adv": 0.0,
-    "home_platoon_adv": 0.0,
-    "away_nrfi_top3": {
-      "season_ops": 0.854,
-      "vs_sp_ops": null,
-      "vs_sp_pa": 0,
-      "detail": [
-        {
-          "pid": 687263,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 545361,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 666176,
-          "pa": 0,
-          "ops": 0
-        }
-      ]
-    },
-    "home_nrfi_top3": {
-      "season_ops": 0.953,
-      "vs_sp_ops": 1.115,
-      "vs_sp_pa": 14,
-      "detail": [
-        {
-          "pid": 502671,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 592450,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 642708,
-          "pa": 14,
-          "ops": 1.115
-        }
-      ]
-    },
-    "away_bp_ip_3d": 12.7,
-    "home_bp_ip_3d": 9.7,
-    "ump_name": "Ryan Wills",
-    "ump_k_boost": 0.044,
-    "ump_run_factor": 0.98,
-    "ump_zone_size": 1.015,
-    "weather": {
-      "temp": 74,
-      "wind_speed": 8.0,
-      "wind_dir": "SW",
-      "wind_dir_deg": 225,
-      "precip_pct": 8,
-      "is_dome": false,
-      "wind_multiplier": 0.9073,
-      "temp_multiplier": 1.006
-    },
-    "away_sp": {},
-    "home_sp": {
-      "name": "Ryan Weathers",
-      "hand": "L",
-      "xfip": 3.93,
-      "k_bb_pct": 18.99,
-      "hard_hit": 40.0,
-      "barrel_pct": 6.7,
-      "avg_velo": 86.6,
-      "era": 4.0,
-      "sp_score": 56.2,
-      "recent_era": 5.83,
-      "form_score": -9.3,
-      "days_rest": 0,
-      "home_away_adj": 1.9
-    }
-  },
-  {
-    "game_pk": 824935,
-    "time_et": "11:15 PM ET",
-    "away_team": "Miami Marlins",
-    "away_team_abv": "MIA",
-    "home_team": "Atlanta Braves",
-    "home_team_abv": "ATL",
-    "venue": "Truist Park",
-    "park_factor": 1.01,
-    "lineup_confirmed": true,
-    "away_lineup_score": 48.5,
-    "home_lineup_score": 53.2,
-    "away_matchup_score": 53.4,
-    "home_matchup_score": 55.3,
-    "away_platoon_adv": 3.4,
-    "home_platoon_adv": 2.2,
-    "away_nrfi_top3": {
-      "season_ops": 0.726,
-      "vs_sp_ops": null,
-      "vs_sp_pa": 0,
-      "detail": [
-        {
-          "pid": 805300,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 669364,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 682663,
-          "pa": 0,
-          "ops": 0
-        }
-      ]
-    },
-    "home_nrfi_top3": {
-      "season_ops": 0.858,
-      "vs_sp_ops": null,
-      "vs_sp_pa": 0,
-      "detail": [
-        {
-          "pid": 660670,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 686948,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 621566,
-          "pa": 0,
-          "ops": 0
-        }
-      ]
-    },
-    "away_bp_ip_3d": 10.0,
-    "home_bp_ip_3d": 12.0,
-    "ump_name": "James Jean",
-    "ump_k_boost": 0.038,
-    "ump_run_factor": 0.976,
-    "ump_zone_size": 1.012,
-    "weather": {
-      "temp": 70,
-      "wind_speed": 0.0,
-      "wind_dir": "",
-      "wind_dir_deg": 0,
-      "precip_pct": 0,
-      "is_dome": false,
-      "wind_multiplier": 1.0,
-      "temp_multiplier": 0.994
-    },
-    "away_sp": {},
-    "home_sp": {}
-  },
-  {
-    "game_pk": 823723,
-    "time_et": "11:40 PM ET",
-    "away_team": "Boston Red Sox",
-    "away_team_abv": "BOS",
-    "home_team": "Minnesota Twins",
-    "home_team_abv": "MIN",
-    "venue": "Target Field",
-    "park_factor": 0.98,
-    "lineup_confirmed": true,
-    "away_lineup_score": 22.3,
-    "home_lineup_score": 41.7,
-    "away_matchup_score": 23.6,
-    "home_matchup_score": 37.8,
-    "away_platoon_adv": 0.3,
-    "home_platoon_adv": -3.8,
-    "away_nrfi_top3": {
-      "season_ops": 0.653,
-      "vs_sp_ops": null,
-      "vs_sp_pa": 0,
-      "detail": [
-        {
-          "pid": 701350,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 702332,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 807799,
-          "pa": 0,
-          "ops": 0
-        }
-      ]
-    },
-    "home_nrfi_top3": {
-      "season_ops": 0.674,
-      "vs_sp_ops": null,
-      "vs_sp_pa": 0,
-      "detail": [
-        {
-          "pid": 621439,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 663616,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 807712,
-          "pa": 0,
-          "ops": 0
-        }
-      ]
-    },
-    "away_bp_ip_3d": 11.7,
-    "home_bp_ip_3d": 9.0,
-    "ump_name": "Lance Barrett",
-    "ump_k_boost": -0.006,
-    "ump_run_factor": 1.002,
-    "ump_zone_size": 0.996,
-    "weather": {
-      "temp": 53,
-      "wind_speed": 5.0,
-      "wind_dir": "N",
-      "wind_dir_deg": 0,
-      "precip_pct": 4,
-      "is_dome": false,
-      "wind_multiplier": 0.9509,
-      "temp_multiplier": 0.943
-    },
-    "away_sp": {},
-    "home_sp": {}
-  },
-  {
-    "game_pk": 824616,
-    "time_et": "11:40 PM ET",
+    "game_pk": 824445,
+    "time_et": "#I:10 PM ET",
     "away_team": "Tampa Bay Rays",
     "away_team_abv": "TB",
-    "home_team": "Chicago White Sox",
-    "home_team_abv": "CWS",
-    "venue": "Rate Field",
-    "park_factor": 1.02,
+    "home_team": "Cleveland Guardians",
+    "home_team_abv": "CLE",
+    "venue": "Progressive Field",
+    "park_factor": 0.95,
     "lineup_confirmed": true,
-    "away_lineup_score": 42.6,
-    "home_lineup_score": 20.1,
-    "away_matchup_score": 41.3,
-    "home_matchup_score": 19.4,
-    "away_platoon_adv": -4.0,
-    "home_platoon_adv": 0.0,
+    "away_lineup_score": 35.5,
+    "home_lineup_score": 28.4,
+    "away_matchup_score": 41.7,
+    "home_matchup_score": 26.9,
+    "away_platoon_adv": 6.2,
+    "home_platoon_adv": -1.5,
     "away_nrfi_top3": {
-      "season_ops": 0.82,
+      "season_ops": 0.753,
+      "season_obp": 0.339,
       "vs_sp_ops": null,
       "vs_sp_pa": 0,
       "detail": [
         {
-          "pid": 650490,
+          "pid": 802415,
           "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 666018,
-          "pa": 0,
-          "ops": 0
+          "ops": 0,
+          "pos_weight": 0.5
         },
         {
           "pid": 691406,
           "pa": 0,
-          "ops": 0
+          "ops": 0,
+          "pos_weight": 0.3
+        },
+        {
+          "pid": 666018,
+          "pa": 0,
+          "ops": 0,
+          "pos_weight": 0.2
         }
       ]
     },
     "home_nrfi_top3": {
-      "season_ops": 0.659,
-      "vs_sp_ops": null,
-      "vs_sp_pa": 0,
-      "detail": [
-        {
-          "pid": 678246,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 805367,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 808959,
-          "pa": 0,
-          "ops": 0
-        }
-      ]
-    },
-    "away_bp_ip_3d": 12.3,
-    "home_bp_ip_3d": 11.0,
-    "ump_name": "Alex Tosi",
-    "ump_k_boost": 0.084,
-    "ump_run_factor": 0.955,
-    "ump_zone_size": 1.022,
-    "weather": {
-      "temp": 66,
-      "wind_speed": 10.0,
-      "wind_dir": "SSW",
-      "wind_dir_deg": 202,
-      "precip_pct": 70,
-      "is_dome": false,
-      "wind_multiplier": 0.8895,
-      "temp_multiplier": 0.982
-    },
-    "away_sp": {},
-    "home_sp": {}
-  },
-  {
-    "game_pk": 823802,
-    "time_et": "11:40 PM ET",
-    "away_team": "Toronto Blue Jays",
-    "away_team_abv": "TOR",
-    "home_team": "Milwaukee Brewers",
-    "home_team_abv": "MIL",
-    "venue": "American Family Field",
-    "park_factor": 1.02,
-    "lineup_confirmed": true,
-    "away_lineup_score": 36.2,
-    "home_lineup_score": 47.1,
-    "away_matchup_score": 36.9,
-    "home_matchup_score": 51.2,
-    "away_platoon_adv": 1.0,
-    "home_platoon_adv": 5.5,
-    "away_nrfi_top3": {
-      "season_ops": 0.775,
-      "vs_sp_ops": null,
-      "vs_sp_pa": 0,
-      "detail": [
-        {
-          "pid": 676391,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 662139,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 665489,
-          "pa": 0,
-          "ops": 0
-        }
-      ]
-    },
-    "home_nrfi_top3": {
-      "season_ops": 0.834,
-      "vs_sp_ops": null,
-      "vs_sp_pa": 0,
-      "detail": [
-        {
-          "pid": 686217,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 661388,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 668930,
-          "pa": 0,
-          "ops": 0
-        }
-      ]
-    },
-    "away_bp_ip_3d": 15.3,
-    "home_bp_ip_3d": 14.3,
-    "ump_name": "David Rackley",
-    "ump_k_boost": 0.014,
-    "ump_run_factor": 0.997,
-    "ump_zone_size": 1.0,
-    "weather": {
-      "is_dome": true,
-      "wind_multiplier": 1.0
-    },
-    "away_sp": {
-      "name": "Kevin Gausman",
-      "hand": "R",
-      "xfip": 1.2,
-      "k_bb_pct": 37.5,
-      "hard_hit": 33.3,
-      "barrel_pct": 8.3,
-      "avg_velo": 86.3,
-      "era": 1.56,
-      "sp_score": 77.4,
-      "recent_era": 1.62,
-      "form_score": 1.5,
-      "days_rest": 7,
-      "home_away_adj": 0.0
-    },
-    "home_sp": {
-      "name": "Jacob Misiorowski",
-      "hand": "R",
-      "xfip": 3.16,
-      "k_bb_pct": 28.99,
-      "hard_hit": 42.9,
-      "barrel_pct": 7.1,
-      "avg_velo": 86.0,
-      "era": 3.18,
-      "sp_score": 64.2,
-      "recent_era": 3.29,
-      "form_score": 1.0,
-      "days_rest": 7,
-      "home_away_adj": 1.0
-    }
-  },
-  {
-    "game_pk": 823072,
-    "time_et": "11:45 PM ET",
-    "away_team": "Cleveland Guardians",
-    "away_team_abv": "CLE",
-    "home_team": "St. Louis Cardinals",
-    "home_team_abv": "STL",
-    "venue": "Busch Stadium",
-    "park_factor": 0.97,
-    "lineup_confirmed": true,
-    "away_lineup_score": 31.7,
-    "home_lineup_score": 29.4,
-    "away_matchup_score": 30.0,
-    "home_matchup_score": 21.5,
-    "away_platoon_adv": -2.5,
-    "home_platoon_adv": -9.2,
-    "away_nrfi_top3": {
-      "season_ops": 0.809,
+      "season_ops": 0.691,
+      "season_obp": 0.321,
       "vs_sp_ops": null,
       "vs_sp_pa": 0,
       "detail": [
         {
           "pid": 680757,
           "pa": 0,
-          "ops": 0
+          "ops": 0,
+          "pos_weight": 0.5
         },
         {
           "pid": 800050,
           "pa": 0,
-          "ops": 0
+          "ops": 0,
+          "pos_weight": 0.3
         },
         {
           "pid": 608070,
           "pa": 0,
-          "ops": 0
+          "ops": 0,
+          "pos_weight": 0.2
         }
       ]
     },
-    "home_nrfi_top3": {
-      "season_ops": 0.695,
+    "away_bp_ip_3d": 10.7,
+    "home_bp_ip_3d": 9.7,
+    "ump_name": "Scott Barry",
+    "ump_k_boost": -0.004,
+    "ump_run_factor": 1.005,
+    "ump_zone_size": 0.998,
+    "weather": {
+      "temp": 49,
+      "wind_speed": 13.0,
+      "wind_dir": "N",
+      "wind_dir_deg": 0,
+      "precip_pct": 15,
+      "is_dome": false,
+      "wind_multiplier": 0.8649,
+      "temp_multiplier": 0.931
+    },
+    "away_sp": {
+      "name": "Drew Rasmussen",
+      "hand": "R",
+      "xfip": null,
+      "k_bb_pct": null,
+      "whip": null,
+      "hard_hit": null,
+      "barrel_pct": null,
+      "avg_velo": null,
+      "era": null,
+      "sp_score": null,
+      "recent_era": 4.52,
+      "form_score": -10.3,
+      "days_rest": 0,
+      "home_away_adj": -3.0
+    },
+    "home_sp": {
+      "name": "Gavin Williams",
+      "hand": "R",
+      "xfip": 4.13,
+      "k_bb_pct": 18.24,
+      "whip": 1.01,
+      "hard_hit": 46.8,
+      "barrel_pct": 16.5,
+      "avg_velo": 92.1,
+      "era": 2.88,
+      "sp_score": 48.5,
+      "recent_era": 3.43,
+      "form_score": -5.7,
+      "days_rest": 0,
+      "home_away_adj": 2.9
+    }
+  },
+  {
+    "game_pk": 824608,
+    "time_et": "#I:10 PM ET",
+    "away_team": "Los Angeles Angels",
+    "away_team_abv": "LAA",
+    "home_team": "Chicago White Sox",
+    "home_team_abv": "CWS",
+    "venue": "Rate Field",
+    "park_factor": 1.02,
+    "lineup_confirmed": true,
+    "away_lineup_score": 44.9,
+    "home_lineup_score": 32.1,
+    "away_matchup_score": 46.1,
+    "home_matchup_score": 37.7,
+    "away_platoon_adv": 1.2,
+    "home_platoon_adv": 5.7,
+    "away_nrfi_top3": {
+      "season_ops": 0.803,
+      "season_obp": 0.364,
       "vs_sp_ops": null,
       "vs_sp_pa": 0,
       "detail": [
         {
-          "pid": 802139,
+          "pid": 687263,
           "pa": 0,
-          "ops": 0
+          "ops": 0,
+          "pos_weight": 0.5
         },
         {
-          "pid": 671056,
+          "pid": 545361,
           "pa": 0,
-          "ops": 0
+          "ops": 0,
+          "pos_weight": 0.3
         },
         {
-          "pid": 676475,
+          "pid": 660162,
           "pa": 0,
-          "ops": 0
+          "ops": 0,
+          "pos_weight": 0.2
+        }
+      ]
+    },
+    "home_nrfi_top3": {
+      "season_ops": 0.769,
+      "season_obp": 0.353,
+      "vs_sp_ops": null,
+      "vs_sp_pa": 0,
+      "detail": [
+        {
+          "pid": 805367,
+          "pa": 0,
+          "ops": 0,
+          "pos_weight": 0.5
+        },
+        {
+          "pid": 678246,
+          "pa": 0,
+          "ops": 0,
+          "pos_weight": 0.3
+        },
+        {
+          "pid": 808959,
+          "pa": 0,
+          "ops": 0,
+          "pos_weight": 0.2
         }
       ]
     },
     "away_bp_ip_3d": 9.7,
-    "home_bp_ip_3d": 13.0,
-    "ump_name": "Roberto Ortiz",
-    "ump_k_boost": 0.004,
+    "home_bp_ip_3d": 10.0,
+    "ump_name": "Vic Carapazza",
+    "ump_k_boost": 0.034,
     "ump_run_factor": 0.992,
-    "ump_zone_size": 1.003,
+    "ump_zone_size": 1.005,
     "weather": {
-      "temp": 76,
-      "wind_speed": 12.0,
-      "wind_dir": "SW",
-      "wind_dir_deg": 225,
-      "precip_pct": 15,
+      "temp": 46,
+      "wind_speed": 15.0,
+      "wind_dir": "N",
+      "wind_dir_deg": 0,
+      "precip_pct": 25,
       "is_dome": false,
-      "wind_multiplier": 0.8565,
-      "temp_multiplier": 1.012
+      "wind_multiplier": 1.1273,
+      "temp_multiplier": 0.922
     },
-    "away_sp": {},
+    "away_sp": {
+      "name": "Yusei Kikuchi",
+      "hand": "L",
+      "xfip": null,
+      "k_bb_pct": null,
+      "whip": null,
+      "hard_hit": null,
+      "barrel_pct": null,
+      "avg_velo": null,
+      "era": null,
+      "sp_score": null,
+      "recent_era": 6.6,
+      "form_score": -2.4,
+      "days_rest": 5,
+      "home_away_adj": -4.4
+    },
     "home_sp": {
-      "name": "Michael McGreevy",
+      "name": "Erick Fedde",
       "hand": "R",
-      "xfip": 3.04,
-      "k_bb_pct": 12.9,
-      "hard_hit": 34.0,
-      "barrel_pct": 12.0,
-      "avg_velo": 87.6,
-      "era": 2.16,
-      "sp_score": 54.5,
-      "recent_era": 2.43,
-      "form_score": 0.4,
-      "days_rest": 6,
-      "home_away_adj": 5.1
+      "xfip": 4.9,
+      "k_bb_pct": 8.21,
+      "whip": 1.05,
+      "hard_hit": 38.5,
+      "barrel_pct": 7.7,
+      "avg_velo": 89.8,
+      "era": 3.24,
+      "sp_score": 45.6,
+      "recent_era": 3.32,
+      "form_score": -4.2,
+      "days_rest": 0,
+      "home_away_adj": 1.9
     }
   },
   {
-    "game_pk": 824210,
-    "time_et": "12:10 AM ET",
-    "away_team": "Colorado Rockies",
-    "away_team_abv": "COL",
-    "home_team": "Houston Astros",
-    "home_team_abv": "HOU",
-    "venue": "Daikin Park",
-    "park_factor": 1.0,
-    "lineup_confirmed": true,
-    "away_lineup_score": 16.2,
-    "home_lineup_score": 63.6,
-    "away_matchup_score": 16.2,
-    "home_matchup_score": 52.2,
-    "away_platoon_adv": 0.0,
-    "home_platoon_adv": -11.4,
-    "away_nrfi_top3": {
-      "season_ops": 0.626,
-      "vs_sp_ops": null,
-      "vs_sp_pa": 0,
-      "detail": [
-        {
-          "pid": 671289,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 686668,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 696100,
-          "pa": 0,
-          "ops": 0
-        }
-      ]
-    },
-    "home_nrfi_top3": {
-      "season_ops": 0.94,
-      "vs_sp_ops": 0.22,
-      "vs_sp_pa": 14,
-      "detail": [
-        {
-          "pid": 514888,
-          "pa": 14,
-          "ops": 0.22
-        },
-        {
-          "pid": 670541,
-          "pa": 0,
-          "ops": 0
-        },
-        {
-          "pid": 670623,
-          "pa": 0,
-          "ops": 0
-        }
-      ]
-    },
-    "away_bp_ip_3d": 13.3,
-    "home_bp_ip_3d": 13.0,
-    "ump_name": "Rob Drake",
-    "ump_k_boost": -0.061,
-    "ump_run_factor": 1.022,
-    "ump_zone_size": 0.983,
-    "weather": null,
-    "away_sp": {},
-    "home_sp": {}
-  },
-  {
-    "game_pk": 823315,
-    "time_et": "1:40 AM ET",
+    "game_pk": 823717,
+    "time_et": "#I:40 PM ET",
     "away_team": "Seattle Mariners",
     "away_team_abv": "SEA",
-    "home_team": "San Diego Padres",
-    "home_team_abv": "SD",
-    "venue": "Petco Park",
-    "park_factor": 0.95,
+    "home_team": "Minnesota Twins",
+    "home_team_abv": "MIN",
+    "venue": "Target Field",
+    "park_factor": 0.98,
     "lineup_confirmed": true,
-    "away_lineup_score": 39.0,
-    "home_lineup_score": 49.8,
-    "away_matchup_score": 50.2,
-    "home_matchup_score": 53.4,
-    "away_platoon_adv": 11.2,
-    "home_platoon_adv": 3.6,
+    "away_lineup_score": 47.9,
+    "home_lineup_score": 37.8,
+    "away_matchup_score": 49.3,
+    "home_matchup_score": 41.9,
+    "away_platoon_adv": 1.4,
+    "home_platoon_adv": 4.1,
     "away_nrfi_top3": {
-      "season_ops": 0.704,
-      "vs_sp_ops": 0.503,
-      "vs_sp_pa": 21,
+      "season_ops": 0.669,
+      "season_obp": 0.327,
+      "vs_sp_ops": 0.218,
+      "vs_sp_pa": 11,
       "detail": [
         {
-          "pid": 680977,
+          "pid": 641487,
           "pa": 0,
-          "ops": 0
+          "ops": 0,
+          "pos_weight": 0.5
         },
         {
           "pid": 663728,
-          "pa": 10,
-          "ops": 0.956
+          "pa": 0,
+          "ops": 0,
+          "pos_weight": 0.3
         },
         {
           "pid": 677594,
           "pa": 11,
-          "ops": 0.091
+          "ops": 1.091,
+          "pos_weight": 0.2
         }
       ]
     },
     "home_nrfi_top3": {
-      "season_ops": 0.735,
+      "season_ops": 0.771,
+      "season_obp": 0.339,
       "vs_sp_ops": null,
       "vs_sp_pa": 0,
       "detail": [
         {
-          "pid": 657656,
+          "pid": 621439,
           "pa": 0,
-          "ops": 0
+          "ops": 0,
+          "pos_weight": 0.5
         },
         {
-          "pid": 665487,
+          "pid": 663616,
           "pa": 0,
-          "ops": 0
+          "ops": 0,
+          "pos_weight": 0.3
         },
         {
-          "pid": 701538,
+          "pid": 605137,
           "pa": 0,
-          "ops": 0
+          "ops": 0,
+          "pos_weight": 0.2
         }
       ]
     },
-    "away_bp_ip_3d": 9.0,
-    "home_bp_ip_3d": 13.0,
-    "ump_name": "Chad Whitson",
-    "ump_k_boost": 0.012,
-    "ump_run_factor": 0.989,
-    "ump_zone_size": 1.005,
+    "away_bp_ip_3d": 10.0,
+    "home_bp_ip_3d": 10.7,
+    "ump_name": "Dexter Kelley",
+    "ump_k_boost": -0.009,
+    "ump_run_factor": 0.964,
+    "ump_zone_size": 1.019,
     "weather": {
-      "temp": 57,
-      "wind_speed": 0.0,
-      "wind_dir": "",
-      "wind_dir_deg": 0,
-      "precip_pct": 0,
+      "temp": 53,
+      "wind_speed": 10.0,
+      "wind_dir": "NW",
+      "wind_dir_deg": 315,
+      "precip_pct": 13,
       "is_dome": false,
-      "wind_multiplier": 1.0,
-      "temp_multiplier": 0.955
+      "wind_multiplier": 0.8818,
+      "temp_multiplier": 0.943
     },
     "away_sp": {
-      "name": "Bryan Woo",
+      "name": "George Kirby",
       "hand": "R",
-      "xfip": 2.04,
-      "k_bb_pct": 19.12,
-      "hard_hit": 37.0,
-      "barrel_pct": 4.3,
-      "avg_velo": 86.5,
-      "era": 1.5,
-      "sp_score": 65.1,
-      "recent_era": 1.6,
-      "form_score": -0.3,
-      "days_rest": 6,
-      "home_away_adj": 1.5
+      "xfip": 3.61,
+      "k_bb_pct": 12.92,
+      "whip": 1.13,
+      "hard_hit": 45.1,
+      "barrel_pct": 4.4,
+      "avg_velo": 90.0,
+      "era": 3.0,
+      "sp_score": 53.6,
+      "recent_era": 2.59,
+      "form_score": -2.8,
+      "days_rest": 0,
+      "home_away_adj": -0.4
     },
     "home_sp": {
-      "name": "Michael King",
+      "name": "Taj Bradley",
       "hand": "R",
-      "xfip": 3.7,
-      "k_bb_pct": 10.3,
-      "hard_hit": 39.5,
-      "barrel_pct": 14.0,
-      "avg_velo": 89.9,
-      "era": 3.24,
-      "sp_score": 48.3,
-      "recent_era": 3.12,
-      "form_score": 0.4,
-      "days_rest": 6,
-      "home_away_adj": 6.5
+      "xfip": 3.78,
+      "k_bb_pct": 16.67,
+      "whip": 1.22,
+      "hard_hit": 46.3,
+      "barrel_pct": 7.4,
+      "avg_velo": 94.1,
+      "era": 2.85,
+      "sp_score": 52.7,
+      "recent_era": 4.7,
+      "form_score": -9.6,
+      "days_rest": 0,
+      "home_away_adj": 1.3
     }
   },
   {
-    "game_pk": 825022,
-    "time_et": "1:40 AM ET",
-    "away_team": "Texas Rangers",
-    "away_team_abv": "TEX",
-    "home_team": "Athletics",
-    "home_team_abv": "ATH",
-    "venue": "Sutter Health Park",
-    "park_factor": 1.0,
+    "game_pk": 822907,
+    "time_et": "#I:35 PM ET",
+    "away_team": "New York Yankees",
+    "away_team_abv": "NYY",
+    "home_team": "Texas Rangers",
+    "home_team_abv": "TEX",
+    "venue": "Globe Life Field",
+    "park_factor": 1.08,
     "lineup_confirmed": true,
-    "away_lineup_score": 34.6,
-    "home_lineup_score": 21.9,
-    "away_matchup_score": 34.6,
-    "home_matchup_score": 22.6,
-    "away_platoon_adv": 0.0,
-    "home_platoon_adv": 0.7,
+    "away_lineup_score": 34.1,
+    "home_lineup_score": 47.9,
+    "away_matchup_score": 24.1,
+    "home_matchup_score": 52.1,
+    "away_platoon_adv": -10.0,
+    "home_platoon_adv": 4.2,
     "away_nrfi_top3": {
-      "season_ops": 0.742,
+      "season_ops": 0.858,
+      "season_obp": 0.359,
+      "vs_sp_ops": 0.186,
+      "vs_sp_pa": 41,
+      "detail": [
+        {
+          "pid": 663757,
+          "pa": 0,
+          "ops": 0,
+          "pos_weight": 0.5
+        },
+        {
+          "pid": 700250,
+          "pa": 0,
+          "ops": 0,
+          "pos_weight": 0.3
+        },
+        {
+          "pid": 592450,
+          "pa": 41,
+          "ops": 0.931,
+          "pos_weight": 0.2
+        }
+      ]
+    },
+    "home_nrfi_top3": {
+      "season_ops": 0.831,
+      "season_obp": 0.356,
       "vs_sp_ops": null,
       "vs_sp_pa": 0,
       "detail": [
         {
           "pid": 607043,
           "pa": 0,
-          "ops": 0
+          "ops": 0,
+          "pos_weight": 0.5
         },
         {
-          "pid": 694671,
+          "pid": 673962,
           "pa": 0,
-          "ops": 0
+          "ops": 0,
+          "pos_weight": 0.3
         },
         {
           "pid": 608369,
           "pa": 0,
-          "ops": 0
+          "ops": 0,
+          "pos_weight": 0.2
+        }
+      ]
+    },
+    "away_bp_ip_3d": 10.0,
+    "home_bp_ip_3d": 9.0,
+    "ump_name": "Tyler Jones",
+    "ump_k_boost": 0.052,
+    "ump_run_factor": 1.011,
+    "ump_zone_size": 1.012,
+    "weather": {
+      "is_dome": true,
+      "wind_multiplier": 1.0
+    },
+    "away_sp": {
+      "name": "Elmer Rodr\u00edguez",
+      "hand": "R",
+      "xfip": null,
+      "k_bb_pct": null,
+      "whip": null,
+      "hard_hit": null,
+      "barrel_pct": null,
+      "avg_velo": null,
+      "era": null,
+      "sp_score": null,
+      "recent_era": 0.0,
+      "form_score": -4.0,
+      "days_rest": 0,
+      "home_away_adj": 0.0
+    },
+    "home_sp": {
+      "name": "Nathan Eovaldi",
+      "hand": "R",
+      "xfip": 5.13,
+      "k_bb_pct": 17.5,
+      "whip": 1.39,
+      "hard_hit": 49.5,
+      "barrel_pct": 9.5,
+      "avg_velo": 91.5,
+      "era": 5.25,
+      "sp_score": 47.1,
+      "recent_era": 4.2,
+      "form_score": -0.9,
+      "days_rest": 0,
+      "home_away_adj": -1.5
+    }
+  },
+  {
+    "game_pk": 822821,
+    "time_et": "#I:07 PM ET",
+    "away_team": "Boston Red Sox",
+    "away_team_abv": "BOS",
+    "home_team": "Toronto Blue Jays",
+    "home_team_abv": "TOR",
+    "venue": "Rogers Centre",
+    "park_factor": 1.01,
+    "lineup_confirmed": true,
+    "away_lineup_score": 31.7,
+    "home_lineup_score": 38.2,
+    "away_matchup_score": 43.7,
+    "home_matchup_score": 40.4,
+    "away_platoon_adv": 12.3,
+    "home_platoon_adv": 2.4,
+    "away_nrfi_top3": {
+      "season_ops": 0.747,
+      "season_obp": 0.357,
+      "vs_sp_ops": 0.325,
+      "vs_sp_pa": 15,
+      "detail": [
+        {
+          "pid": 701350,
+          "pa": 0,
+          "ops": 0,
+          "pos_weight": 0.5
+        },
+        {
+          "pid": 575929,
+          "pa": 15,
+          "ops": 1.082,
+          "pos_weight": 0.3
+        },
+        {
+          "pid": 677800,
+          "pa": 0,
+          "ops": 0,
+          "pos_weight": 0.2
         }
       ]
     },
     "home_nrfi_top3": {
-      "season_ops": 0.698,
-      "vs_sp_ops": null,
-      "vs_sp_pa": 0,
+      "season_ops": 0.774,
+      "season_obp": 0.339,
+      "vs_sp_ops": 0.226,
+      "vs_sp_pa": 41,
       "detail": [
         {
-          "pid": 669127,
-          "pa": 0,
-          "ops": 0
+          "pid": 676391,
+          "pa": 10,
+          "ops": 0.425,
+          "pos_weight": 0.5
         },
         {
-          "pid": 701762,
+          "pid": 660821,
           "pa": 0,
-          "ops": 0
+          "ops": 0,
+          "pos_weight": 0.3
         },
         {
-          "pid": 805779,
-          "pa": 0,
-          "ops": 0
+          "pid": 665489,
+          "pa": 31,
+          "ops": 1.152,
+          "pos_weight": 0.2
         }
       ]
     },
-    "away_bp_ip_3d": 9.3,
-    "home_bp_ip_3d": null,
-    "ump_name": "Gabe Morales",
-    "ump_k_boost": 0.02,
-    "ump_run_factor": 0.992,
-    "ump_zone_size": 1.003,
-    "weather": null,
+    "away_bp_ip_3d": 6.7,
+    "home_bp_ip_3d": 11.3,
+    "ump_name": "James Jean",
+    "ump_k_boost": 0.04,
+    "ump_run_factor": 0.976,
+    "ump_zone_size": 1.012,
+    "weather": {
+      "is_dome": true,
+      "wind_multiplier": 1.0
+    },
     "away_sp": {
-      "name": "MacKenzie Gore",
-      "hand": "L",
-      "xfip": 2.73,
-      "k_bb_pct": 31.74,
-      "hard_hit": 34.4,
-      "barrel_pct": 12.5,
-      "avg_velo": 88.1,
-      "era": 2.76,
-      "sp_score": 65.9,
-      "recent_era": 2.62,
-      "form_score": 0.4,
-      "days_rest": 6,
-      "home_away_adj": -1.2
+      "name": "Brayan Bello",
+      "hand": "R",
+      "xfip": null,
+      "k_bb_pct": null,
+      "whip": null,
+      "hard_hit": null,
+      "barrel_pct": null,
+      "avg_velo": null,
+      "era": null,
+      "sp_score": null,
+      "recent_era": 11.1,
+      "form_score": -8,
+      "days_rest": 5,
+      "home_away_adj": -1.9
     },
     "home_sp": {
-      "name": "Jeffrey Springs",
+      "name": "Eric Lauer",
       "hand": "L",
-      "xfip": 2.45,
-      "k_bb_pct": 13.24,
-      "hard_hit": 29.8,
-      "barrel_pct": 4.3,
-      "avg_velo": 84.6,
-      "era": 1.47,
-      "sp_score": 61.7,
-      "recent_era": 1.62,
-      "form_score": -0.5,
-      "days_rest": 5,
-      "home_away_adj": -0.1
+      "xfip": null,
+      "k_bb_pct": null,
+      "whip": null,
+      "hard_hit": null,
+      "barrel_pct": null,
+      "avg_velo": null,
+      "era": null,
+      "sp_score": null,
+      "recent_era": 7.54,
+      "form_score": -0.9,
+      "days_rest": 7,
+      "home_away_adj": -2.0
     }
   },
   {
-    "game_pk": 823965,
-    "time_et": "2:10 AM ET",
-    "away_team": "New York Mets",
-    "away_team_abv": "NYM",
+    "game_pk": 823958,
+    "time_et": "#I:10 PM ET",
+    "away_team": "Miami Marlins",
+    "away_team_abv": "MIA",
     "home_team": "Los Angeles Dodgers",
     "home_team_abv": "LAD",
     "venue": "UNIQLO Field at Dodger Stadium",
     "park_factor": 0.98,
     "lineup_confirmed": true,
-    "away_lineup_score": 23.1,
-    "home_lineup_score": 60.4,
-    "away_matchup_score": 22.4,
-    "home_matchup_score": 61.0,
-    "away_platoon_adv": -0.7,
-    "home_platoon_adv": 0.6,
+    "away_lineup_score": 42.2,
+    "home_lineup_score": 65.5,
+    "away_matchup_score": 47.0,
+    "home_matchup_score": 70.3,
+    "away_platoon_adv": 4.8,
+    "home_platoon_adv": 4.8,
     "away_nrfi_top3": {
-      "season_ops": 0.644,
+      "season_ops": 0.666,
+      "season_obp": 0.328,
       "vs_sp_ops": null,
       "vs_sp_pa": 0,
       "detail": [
         {
-          "pid": 596019,
+          "pid": 805300,
           "pa": 0,
-          "ops": 0
+          "ops": 0,
+          "pos_weight": 0.5
         },
         {
-          "pid": 673357,
+          "pid": 669065,
           "pa": 0,
-          "ops": 0
+          "ops": 0,
+          "pos_weight": 0.3
         },
         {
-          "pid": 593871,
+          "pid": 672640,
           "pa": 0,
-          "ops": 0
+          "ops": 0,
+          "pos_weight": 0.2
         }
       ]
     },
     "home_nrfi_top3": {
-      "season_ops": 0.809,
-      "vs_sp_ops": null,
-      "vs_sp_pa": 0,
+      "season_ops": 0.857,
+      "season_obp": 0.375,
+      "vs_sp_ops": 0.257,
+      "vs_sp_pa": 36,
       "detail": [
         {
           "pid": 660271,
           "pa": 0,
-          "ops": 0
+          "ops": 0,
+          "pos_weight": 0.5
         },
         {
-          "pid": 663656,
-          "pa": 0,
-          "ops": 0
+          "pid": 518692,
+          "pa": 36,
+          "ops": 0.858,
+          "pos_weight": 0.3
         },
         {
-          "pid": 669257,
+          "pid": 681624,
           "pa": 0,
-          "ops": 0
+          "ops": 0,
+          "pos_weight": 0.2
         }
       ]
     },
-    "away_bp_ip_3d": 12.7,
-    "home_bp_ip_3d": 9.0,
-    "ump_name": "Hunter Wendelstedt",
-    "ump_k_boost": -0.027,
-    "ump_run_factor": 1.017,
-    "ump_zone_size": 0.991,
+    "away_bp_ip_3d": 10.7,
+    "home_bp_ip_3d": 10.0,
+    "ump_name": "Austin Jones",
+    "ump_k_boost": 0.077,
+    "ump_run_factor": 0.967,
+    "ump_zone_size": 1.021,
     "weather": {
-      "temp": 55,
-      "wind_speed": 0.0,
-      "wind_dir": "",
-      "wind_dir_deg": 0,
+      "temp": 63,
+      "wind_speed": 10.0,
+      "wind_dir": "SW",
+      "wind_dir_deg": 225,
       "precip_pct": 0,
       "is_dome": false,
-      "wind_multiplier": 1.0,
-      "temp_multiplier": 0.949
+      "wind_multiplier": 0.88,
+      "temp_multiplier": 0.973
     },
-    "away_sp": {},
-    "home_sp": {
-      "name": "Yoshinobu Yamamoto",
+    "away_sp": {
+      "name": "Sandy Alcantara",
       "hand": "R",
-      "xfip": 3.49,
-      "k_bb_pct": 17.91,
-      "hard_hit": 30.0,
-      "barrel_pct": 8.0,
-      "avg_velo": 87.5,
-      "era": 2.5,
-      "sp_score": 58.0,
-      "recent_era": 2.5,
-      "form_score": 2.0,
+      "xfip": 4.0,
+      "k_bb_pct": 8.82,
+      "whip": 1.11,
+      "hard_hit": 33.6,
+      "barrel_pct": 4.0,
+      "avg_velo": 88.2,
+      "era": 2.98,
+      "sp_score": 52.1,
+      "recent_era": 6.2,
+      "form_score": -8,
+      "days_rest": 5,
+      "home_away_adj": -8
+    },
+    "home_sp": {
+      "name": "Tyler Glasnow",
+      "hand": "R",
+      "xfip": 2.64,
+      "k_bb_pct": 25.0,
+      "whip": 0.74,
+      "hard_hit": 38.7,
+      "barrel_pct": 5.3,
+      "avg_velo": 90.8,
+      "era": 2.57,
+      "sp_score": 64.5,
+      "recent_era": 2.43,
+      "form_score": 0.4,
+      "days_rest": 6,
+      "home_away_adj": -3.9
+    }
+  },
+  {
+    "game_pk": 823312,
+    "time_et": "#I:10 PM ET",
+    "away_team": "Chicago Cubs",
+    "away_team_abv": "CHC",
+    "home_team": "San Diego Padres",
+    "home_team_abv": "SD",
+    "venue": "Petco Park",
+    "park_factor": 0.95,
+    "lineup_confirmed": true,
+    "away_lineup_score": 50.8,
+    "home_lineup_score": 41.1,
+    "away_matchup_score": 45.7,
+    "home_matchup_score": 48.4,
+    "away_platoon_adv": -5.1,
+    "home_platoon_adv": 7.3,
+    "away_nrfi_top3": {
+      "season_ops": 0.88,
+      "season_obp": 0.378,
+      "vs_sp_ops": null,
+      "vs_sp_pa": 0,
+      "detail": [
+        {
+          "pid": 663538,
+          "pa": 0,
+          "ops": 0,
+          "pos_weight": 0.5
+        },
+        {
+          "pid": 694208,
+          "pa": 0,
+          "ops": 0,
+          "pos_weight": 0.3
+        },
+        {
+          "pid": 608324,
+          "pa": 0,
+          "ops": 0,
+          "pos_weight": 0.2
+        }
+      ]
+    },
+    "home_nrfi_top3": {
+      "season_ops": 0.636,
+      "season_obp": 0.301,
+      "vs_sp_ops": null,
+      "vs_sp_pa": 0,
+      "detail": [
+        {
+          "pid": 701538,
+          "pa": 0,
+          "ops": 0,
+          "pos_weight": 0.5
+        },
+        {
+          "pid": 665487,
+          "pa": 0,
+          "ops": 0,
+          "pos_weight": 0.3
+        },
+        {
+          "pid": 592518,
+          "pa": 0,
+          "ops": 0,
+          "pos_weight": 0.2
+        }
+      ]
+    },
+    "away_bp_ip_3d": 10.0,
+    "home_bp_ip_3d": 10.3,
+    "ump_name": "Mark Ripperger",
+    "ump_k_boost": 0.059,
+    "ump_run_factor": 0.979,
+    "ump_zone_size": 1.009,
+    "weather": {
+      "temp": 62,
+      "wind_speed": 5.0,
+      "wind_dir": "NW",
+      "wind_dir_deg": 315,
+      "precip_pct": 1,
+      "is_dome": false,
+      "wind_multiplier": 1.0052,
+      "temp_multiplier": 0.97
+    },
+    "away_sp": {
+      "name": "Jameson Taillon",
+      "hand": "R",
+      "xfip": null,
+      "k_bb_pct": null,
+      "whip": null,
+      "hard_hit": null,
+      "barrel_pct": null,
+      "avg_velo": null,
+      "era": null,
+      "sp_score": null,
+      "recent_era": 5.9,
+      "form_score": -4.1,
+      "days_rest": 5,
+      "home_away_adj": -2.4
+    },
+    "home_sp": {
+      "name": "Matt Waldron",
+      "hand": "R",
+      "xfip": null,
+      "k_bb_pct": null,
+      "whip": null,
+      "hard_hit": null,
+      "barrel_pct": null,
+      "avg_velo": null,
+      "era": null,
+      "sp_score": null,
+      "recent_era": 12.76,
+      "form_score": -0.9,
+      "days_rest": 6,
+      "home_away_adj": 0.0
+    }
+  },
+  {
+    "game_pk": 823471,
+    "time_et": "#I:10 PM ET",
+    "away_team": "San Francisco Giants",
+    "away_team_abv": "SF",
+    "home_team": "Philadelphia Phillies",
+    "home_team_abv": "PHI",
+    "venue": "Citizens Bank Park",
+    "park_factor": 0.99,
+    "lineup_confirmed": true,
+    "away_lineup_score": 27.9,
+    "home_lineup_score": 26.7,
+    "away_matchup_score": 39.4,
+    "home_matchup_score": 28.2,
+    "away_platoon_adv": 11.5,
+    "home_platoon_adv": 1.5,
+    "away_nrfi_top3": {
+      "season_ops": 0.719,
+      "season_obp": 0.326,
+      "vs_sp_ops": 0.231,
+      "vs_sp_pa": 40,
+      "detail": [
+        {
+          "pid": 671218,
+          "pa": 12,
+          "ops": 0.417,
+          "pos_weight": 0.5
+        },
+        {
+          "pid": 656305,
+          "pa": 12,
+          "ops": 1.758,
+          "pos_weight": 0.3
+        },
+        {
+          "pid": 650333,
+          "pa": 16,
+          "ops": 0.134,
+          "pos_weight": 0.2
+        }
+      ]
+    },
+    "home_nrfi_top3": {
+      "season_ops": 0.775,
+      "season_obp": 0.335,
+      "vs_sp_ops": 0.223,
+      "vs_sp_pa": 14,
+      "detail": [
+        {
+          "pid": 607208,
+          "pa": 14,
+          "ops": 0.445,
+          "pos_weight": 0.5
+        },
+        {
+          "pid": 656941,
+          "pa": 0,
+          "ops": 0,
+          "pos_weight": 0.3
+        },
+        {
+          "pid": 547180,
+          "pa": 0,
+          "ops": 0,
+          "pos_weight": 0.2
+        }
+      ]
+    },
+    "away_bp_ip_3d": 8.3,
+    "home_bp_ip_3d": 10.3,
+    "ump_name": "Charlie Ramos",
+    "ump_k_boost": 0.005,
+    "ump_run_factor": 0.987,
+    "ump_zone_size": 1.008,
+    "weather": {
+      "temp": 54,
+      "wind_speed": 5.0,
+      "wind_dir": "SE",
+      "wind_dir_deg": 135,
+      "precip_pct": 86,
+      "is_dome": false,
+      "wind_multiplier": 0.9896,
+      "temp_multiplier": 0.946
+    },
+    "away_sp": {
+      "name": "Logan Webb",
+      "hand": "R",
+      "xfip": 3.29,
+      "k_bb_pct": 11.81,
+      "whip": 1.38,
+      "hard_hit": 49.6,
+      "barrel_pct": 6.2,
+      "avg_velo": 91.2,
+      "era": 4.86,
+      "sp_score": 52.5,
+      "recent_era": 4.79,
+      "form_score": 0.2,
+      "days_rest": 6,
+      "home_away_adj": -0.3
+    },
+    "home_sp": {
+      "name": "Cristopher S\u00e1nchez",
+      "hand": "L",
+      "xfip": 2.6,
+      "k_bb_pct": 21.56,
+      "whip": 1.6,
+      "hard_hit": 42.0,
+      "barrel_pct": 11.0,
+      "avg_velo": 89.4,
+      "era": 2.94,
+      "sp_score": 59.9,
+      "recent_era": 4.38,
+      "form_score": -4.3,
+      "days_rest": 6,
+      "home_away_adj": 3.6
+    }
+  },
+  {
+    "game_pk": 824525,
+    "time_et": "#I:40 PM ET",
+    "away_team": "Colorado Rockies",
+    "away_team_abv": "COL",
+    "home_team": "Cincinnati Reds",
+    "home_team_abv": "CIN",
+    "venue": "Great American Ball Park",
+    "park_factor": 1.12,
+    "lineup_confirmed": true,
+    "away_lineup_score": 30.4,
+    "home_lineup_score": 100,
+    "away_matchup_score": 35.0,
+    "home_matchup_score": 100,
+    "away_platoon_adv": 4.6,
+    "home_platoon_adv": 0,
+    "away_nrfi_top3": {
+      "season_ops": 0.557,
+      "season_obp": 0.261,
+      "vs_sp_ops": null,
+      "vs_sp_pa": 0,
+      "detail": [
+        {
+          "pid": 687597,
+          "pa": 0,
+          "ops": 0,
+          "pos_weight": 0.5
+        },
+        {
+          "pid": 686668,
+          "pa": 0,
+          "ops": 0,
+          "pos_weight": 0.3
+        },
+        {
+          "pid": 681198,
+          "pa": 0,
+          "ops": 0,
+          "pos_weight": 0.2
+        }
+      ]
+    },
+    "home_nrfi_top3": {
+      "season_ops": 0.652,
+      "season_obp": 0.31,
+      "vs_sp_ops": null,
+      "vs_sp_pa": 0,
+      "detail": [
+        {
+          "pid": 670770,
+          "pa": 0,
+          "ops": 0,
+          "pos_weight": 0.5
+        },
+        {
+          "pid": 680574,
+          "pa": 0,
+          "ops": 0,
+          "pos_weight": 0.3
+        },
+        {
+          "pid": 682829,
+          "pa": 0,
+          "ops": 0,
+          "pos_weight": 0.2
+        }
+      ]
+    },
+    "away_bp_ip_3d": 8.7,
+    "home_bp_ip_3d": 10.7,
+    "ump_name": "Nate Tomlinson",
+    "ump_k_boost": 0.069,
+    "ump_run_factor": 0.968,
+    "ump_zone_size": 1.019,
+    "weather": {
+      "temp": 54,
+      "wind_speed": 6.0,
+      "wind_dir": "NW",
+      "wind_dir_deg": 315,
+      "precip_pct": 4,
+      "is_dome": false,
+      "wind_multiplier": 1.0304,
+      "temp_multiplier": 0.946
+    },
+    "away_sp": {
+      "name": "Tomoyuki Sugano",
+      "hand": "R",
+      "xfip": null,
+      "k_bb_pct": null,
+      "whip": null,
+      "hard_hit": null,
+      "barrel_pct": null,
+      "avg_velo": null,
+      "era": null,
+      "sp_score": null,
+      "recent_era": 5.28,
+      "form_score": -3.6,
       "days_rest": 7,
-      "home_away_adj": -1.0
+      "home_away_adj": 1.8
+    },
+    "home_sp": {
+      "name": "Brandon Williamson",
+      "hand": "L",
+      "xfip": null,
+      "k_bb_pct": null,
+      "whip": null,
+      "hard_hit": null,
+      "barrel_pct": null,
+      "avg_velo": null,
+      "era": null,
+      "sp_score": null,
+      "recent_era": 6.27,
+      "form_score": -0.6,
+      "days_rest": 7,
+      "home_away_adj": -7.9
+    }
+  },
+  {
+    "game_pk": 823392,
+    "time_et": "#I:40 PM ET",
+    "away_team": "St. Louis Cardinals",
+    "away_team_abv": "STL",
+    "home_team": "Pittsburgh Pirates",
+    "home_team_abv": "PIT",
+    "venue": "PNC Park",
+    "park_factor": 0.96,
+    "lineup_confirmed": true,
+    "away_lineup_score": 41.4,
+    "home_lineup_score": 39.1,
+    "away_matchup_score": 37.7,
+    "home_matchup_score": 40.7,
+    "away_platoon_adv": -3.7,
+    "home_platoon_adv": 1.6,
+    "away_nrfi_top3": {
+      "season_ops": 0.803,
+      "season_obp": 0.377,
+      "vs_sp_ops": null,
+      "vs_sp_pa": 0,
+      "detail": [
+        {
+          "pid": 802139,
+          "pa": 0,
+          "ops": 0,
+          "pos_weight": 0.5
+        },
+        {
+          "pid": 671056,
+          "pa": 0,
+          "ops": 0,
+          "pos_weight": 0.3
+        },
+        {
+          "pid": 676475,
+          "pa": 0,
+          "ops": 0,
+          "pos_weight": 0.2
+        }
+      ]
+    },
+    "home_nrfi_top3": {
+      "season_ops": 0.837,
+      "season_obp": 0.339,
+      "vs_sp_ops": 0.195,
+      "vs_sp_pa": 36,
+      "detail": [
+        {
+          "pid": 665833,
+          "pa": 13,
+          "ops": 0.585,
+          "pos_weight": 0.5
+        },
+        {
+          "pid": 664040,
+          "pa": 0,
+          "ops": 0,
+          "pos_weight": 0.3
+        },
+        {
+          "pid": 668804,
+          "pa": 23,
+          "ops": 0.696,
+          "pos_weight": 0.2
+        }
+      ]
+    },
+    "away_bp_ip_3d": 9.7,
+    "home_bp_ip_3d": 17.0,
+    "ump_name": "Laz Diaz",
+    "ump_k_boost": -0.039,
+    "ump_run_factor": 1.019,
+    "ump_zone_size": 0.988,
+    "weather": {
+      "temp": 53,
+      "wind_speed": 8.0,
+      "wind_dir": "NW",
+      "wind_dir_deg": 315,
+      "precip_pct": 3,
+      "is_dome": false,
+      "wind_multiplier": 0.9073,
+      "temp_multiplier": 0.943
+    },
+    "away_sp": {
+      "name": "Andre Pallante",
+      "hand": "R",
+      "xfip": null,
+      "k_bb_pct": null,
+      "whip": null,
+      "hard_hit": null,
+      "barrel_pct": null,
+      "avg_velo": null,
+      "era": null,
+      "sp_score": null,
+      "recent_era": 5.89,
+      "form_score": -4.9,
+      "days_rest": 5,
+      "home_away_adj": 3.1
+    },
+    "home_sp": {
+      "name": "Bubba Chandler",
+      "hand": "R",
+      "xfip": null,
+      "k_bb_pct": null,
+      "whip": null,
+      "hard_hit": null,
+      "barrel_pct": null,
+      "avg_velo": null,
+      "era": null,
+      "sp_score": null,
+      "recent_era": 6.69,
+      "form_score": -5.4,
+      "days_rest": 6,
+      "home_away_adj": 2.8
+    }
+  },
+  {
+    "game_pk": 823633,
+    "time_et": "#I:10 PM ET",
+    "away_team": "Washington Nationals",
+    "away_team_abv": "WSH",
+    "home_team": "New York Mets",
+    "home_team_abv": "NYM",
+    "venue": "Citi Field",
+    "park_factor": 0.94,
+    "lineup_confirmed": true,
+    "away_lineup_score": 41.5,
+    "home_lineup_score": 28.1,
+    "away_matchup_score": 41.9,
+    "home_matchup_score": 26.6,
+    "away_platoon_adv": 0.4,
+    "home_platoon_adv": -1.5,
+    "away_nrfi_top3": {
+      "season_ops": 0.798,
+      "season_obp": 0.336,
+      "vs_sp_ops": 0.231,
+      "vs_sp_pa": 13,
+      "detail": [
+        {
+          "pid": 695578,
+          "pa": 13,
+          "ops": 0.462,
+          "pos_weight": 0.5
+        },
+        {
+          "pid": 678554,
+          "pa": 0,
+          "ops": 0,
+          "pos_weight": 0.3
+        },
+        {
+          "pid": 691781,
+          "pa": 0,
+          "ops": 0,
+          "pos_weight": 0.2
+        }
+      ]
+    },
+    "home_nrfi_top3": {
+      "season_ops": 0.734,
+      "season_obp": 0.327,
+      "vs_sp_ops": null,
+      "vs_sp_pa": 0,
+      "detail": [
+        {
+          "pid": 666182,
+          "pa": 0,
+          "ops": 0,
+          "pos_weight": 0.5
+        },
+        {
+          "pid": 665742,
+          "pa": 0,
+          "ops": 0,
+          "pos_weight": 0.3
+        },
+        {
+          "pid": 669004,
+          "pa": 0,
+          "ops": 0,
+          "pos_weight": 0.2
+        }
+      ]
+    },
+    "away_bp_ip_3d": 11.7,
+    "home_bp_ip_3d": 13.3,
+    "ump_name": "Bill Miller",
+    "ump_k_boost": 0.009,
+    "ump_run_factor": 0.997,
+    "ump_zone_size": 0.999,
+    "weather": {
+      "temp": 51,
+      "wind_speed": 8.0,
+      "wind_dir": "SE",
+      "wind_dir_deg": 135,
+      "precip_pct": 88,
+      "is_dome": false,
+      "wind_multiplier": 0.952,
+      "temp_multiplier": 0.937
+    },
+    "away_sp": {
+      "name": "Cade Cavalli",
+      "hand": "R",
+      "xfip": null,
+      "k_bb_pct": null,
+      "whip": null,
+      "hard_hit": null,
+      "barrel_pct": null,
+      "avg_velo": null,
+      "era": null,
+      "sp_score": null,
+      "recent_era": 2.59,
+      "form_score": 4.3,
+      "days_rest": 6,
+      "home_away_adj": -3.4
+    },
+    "home_sp": {
+      "name": "David Peterson",
+      "hand": "L",
+      "xfip": null,
+      "k_bb_pct": null,
+      "whip": null,
+      "hard_hit": null,
+      "barrel_pct": null,
+      "avg_velo": null,
+      "era": null,
+      "sp_score": null,
+      "recent_era": 3.3,
+      "form_score": 5.3,
+      "days_rest": 6,
+      "home_away_adj": 2.2
+    }
+  },
+  {
+    "game_pk": 824930,
+    "time_et": "#I:15 PM ET",
+    "away_team": "Detroit Tigers",
+    "away_team_abv": "DET",
+    "home_team": "Atlanta Braves",
+    "home_team_abv": "ATL",
+    "venue": "Truist Park",
+    "park_factor": 1.01,
+    "lineup_confirmed": false,
+    "away_lineup_score": null,
+    "home_lineup_score": null,
+    "away_matchup_score": null,
+    "home_matchup_score": null,
+    "away_platoon_adv": null,
+    "home_platoon_adv": null,
+    "away_nrfi_top3": {},
+    "home_nrfi_top3": {},
+    "away_bp_ip_3d": 15.7,
+    "home_bp_ip_3d": 10.0,
+    "ump_name": "Will Little",
+    "ump_k_boost": 0.089,
+    "ump_run_factor": 0.973,
+    "ump_zone_size": 1.016,
+    "weather": {
+      "temp": 68,
+      "wind_speed": 5.0,
+      "wind_dir": "NW",
+      "wind_dir_deg": 315,
+      "precip_pct": 20,
+      "is_dome": false,
+      "wind_multiplier": 0.9402,
+      "temp_multiplier": 0.988
+    },
+    "away_sp": {
+      "name": "Tarik Skubal",
+      "hand": "L",
+      "xfip": 1.94,
+      "k_bb_pct": 22.53,
+      "whip": 0.99,
+      "hard_hit": 39.2,
+      "barrel_pct": 5.2,
+      "avg_velo": 88.8,
+      "era": 2.72,
+      "sp_score": 66.2,
+      "recent_era": 2.95,
+      "form_score": -0.7,
+      "days_rest": 6,
+      "home_away_adj": 0.9
+    },
+    "home_sp": {
+      "name": "JR Ritchie",
+      "hand": "R",
+      "xfip": null,
+      "k_bb_pct": null,
+      "whip": null,
+      "hard_hit": null,
+      "barrel_pct": null,
+      "avg_velo": null,
+      "era": null,
+      "sp_score": null,
+      "recent_era": 2.57,
+      "form_score": 0.0,
+      "days_rest": 6,
+      "home_away_adj": 0.0
+    }
+  },
+  {
+    "game_pk": 823796,
+    "time_et": "#I:40 PM ET",
+    "away_team": "Arizona Diamondbacks",
+    "away_team_abv": "AZ",
+    "home_team": "Milwaukee Brewers",
+    "home_team_abv": "MIL",
+    "venue": "American Family Field",
+    "park_factor": 1.02,
+    "lineup_confirmed": false,
+    "away_lineup_score": null,
+    "home_lineup_score": null,
+    "away_matchup_score": null,
+    "home_matchup_score": null,
+    "away_platoon_adv": null,
+    "home_platoon_adv": null,
+    "away_nrfi_top3": {},
+    "home_nrfi_top3": {},
+    "away_bp_ip_3d": 13.0,
+    "home_bp_ip_3d": 11.0,
+    "ump_name": "Alfonso M\u00e1rquez",
+    "ump_k_boost": -0.003,
+    "ump_run_factor": 0.993,
+    "ump_zone_size": 1.004,
+    "weather": {
+      "is_dome": true,
+      "wind_multiplier": 1.0
+    },
+    "away_sp": {
+      "name": "Eduardo Rodriguez",
+      "hand": "L",
+      "xfip": 4.96,
+      "k_bb_pct": 5.0,
+      "whip": 1.32,
+      "hard_hit": 37.8,
+      "barrel_pct": 6.7,
+      "avg_velo": 90.0,
+      "era": 2.89,
+      "sp_score": 44.0,
+      "recent_era": 5.3,
+      "form_score": -5.2,
+      "days_rest": 7,
+      "home_away_adj": 0.2
+    },
+    "home_sp": {
+      "name": "Brandon Sproat",
+      "hand": "R",
+      "xfip": null,
+      "k_bb_pct": null,
+      "whip": null,
+      "hard_hit": null,
+      "barrel_pct": null,
+      "avg_velo": null,
+      "era": null,
+      "sp_score": null,
+      "recent_era": 2.96,
+      "form_score": 8,
+      "days_rest": 6,
+      "home_away_adj": 0.7
+    }
+  },
+  {
+    "game_pk": 825015,
+    "time_et": "#I:40 AM ET",
+    "away_team": "Kansas City Royals",
+    "away_team_abv": "KC",
+    "home_team": "Athletics",
+    "home_team_abv": "ATH",
+    "venue": "Sutter Health Park",
+    "park_factor": 1.0,
+    "lineup_confirmed": false,
+    "away_lineup_score": null,
+    "home_lineup_score": null,
+    "away_matchup_score": null,
+    "home_matchup_score": null,
+    "away_platoon_adv": null,
+    "home_platoon_adv": null,
+    "away_nrfi_top3": {},
+    "home_nrfi_top3": {},
+    "away_bp_ip_3d": 11.7,
+    "home_bp_ip_3d": null,
+    "ump_name": "",
+    "ump_k_boost": 0.0,
+    "ump_run_factor": 1.0,
+    "ump_zone_size": 1.0,
+    "weather": null,
+    "away_sp": {
+      "name": "Michael Wacha",
+      "hand": "R",
+      "xfip": 3.59,
+      "k_bb_pct": 14.63,
+      "whip": 0.93,
+      "hard_hit": 45.2,
+      "barrel_pct": 9.5,
+      "avg_velo": 89.6,
+      "era": 2.51,
+      "sp_score": 52.4,
+      "recent_era": 4.38,
+      "form_score": -3.6,
+      "days_rest": 7,
+      "home_away_adj": 2.2
+    },
+    "home_sp": {
+      "name": "Luis Severino",
+      "hand": "R",
+      "xfip": 4.92,
+      "k_bb_pct": 8.03,
+      "whip": 1.56,
+      "hard_hit": 45.1,
+      "barrel_pct": 11.0,
+      "avg_velo": 89.4,
+      "era": 5.17,
+      "sp_score": 43.0,
+      "recent_era": 5.26,
+      "form_score": -0.3,
+      "days_rest": 5,
+      "home_away_adj": -4.0
+    }
+  },
+  {
+    "game_pk": 824850,
+    "time_et": "#I:35 PM ET",
+    "away_team": "Houston Astros",
+    "away_team_abv": "HOU",
+    "home_team": "Baltimore Orioles",
+    "home_team_abv": "BAL",
+    "venue": "Oriole Park at Camden Yards",
+    "park_factor": 1.0,
+    "lineup_confirmed": false,
+    "away_lineup_score": null,
+    "home_lineup_score": null,
+    "away_matchup_score": null,
+    "home_matchup_score": null,
+    "away_platoon_adv": null,
+    "home_platoon_adv": null,
+    "away_nrfi_top3": {},
+    "home_nrfi_top3": {},
+    "away_bp_ip_3d": 11.0,
+    "home_bp_ip_3d": 14.7,
+    "ump_name": "",
+    "ump_k_boost": 0.0,
+    "ump_run_factor": 1.0,
+    "ump_zone_size": 1.0,
+    "weather": {
+      "temp": 56,
+      "wind_speed": 6.0,
+      "wind_dir": "S",
+      "wind_dir_deg": 180,
+      "precip_pct": 53,
+      "is_dome": false,
+      "wind_multiplier": 0.9537,
+      "temp_multiplier": 0.952
+    },
+    "away_sp": {
+      "name": "Peter Lambert",
+      "hand": "R",
+      "xfip": null,
+      "k_bb_pct": null,
+      "whip": null,
+      "hard_hit": null,
+      "barrel_pct": null,
+      "avg_velo": null,
+      "era": null,
+      "sp_score": null,
+      "recent_era": 3.6,
+      "form_score": 1.0,
+      "days_rest": 7,
+      "home_away_adj": 6.5
+    },
+    "home_sp": {
+      "name": "Chris Bassitt",
+      "hand": "R",
+      "xfip": null,
+      "k_bb_pct": null,
+      "whip": null,
+      "hard_hit": null,
+      "barrel_pct": null,
+      "avg_velo": null,
+      "era": null,
+      "sp_score": null,
+      "recent_era": 3.46,
+      "form_score": 10,
+      "days_rest": 7,
+      "home_away_adj": 3.5
     }
   }
 ]
