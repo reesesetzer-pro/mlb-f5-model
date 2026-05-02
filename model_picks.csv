@@ -1,201 +1,213 @@
 Date,Game,Team,Side,Market,ML,Book,Model_Prob,Market_Prob,Edge_Pct,Model_Line,Market_Line,SP_Score,LU_Score,Park_Factor,Ump_K,Result,F5_Score,Taken
-04/18/2026,Kansas City Royals @ New York Yankees,New York Yankees,Home,F5 ML,-150.0,williamhill_us,55.2,60.0,-4.8,,,50.1,50.0,1.0,0.042,WIN,0-7,False
-04/18/2026,Kansas City Royals @ New York Yankees,New York Yankees,Home,F5 Spread,-105.0,williamhill_us,62.2,51.2,11.0,-0.5,0.5,52.4,50.0,1.0,0.042,WIN,0-7,False
-04/18/2026,Cincinnati Reds @ Minnesota Twins,Minnesota Twins,Home,F5 ML,-140.0,fanduel,65.2,58.3,6.9,,,64.5,50.0,0.98,0.0,WIN,2-4,False
-04/18/2026,Cincinnati Reds @ Minnesota Twins,Minnesota Twins,Home,F5 Spread,104.0,fanduel,72.5,49.0,23.4,-0.5,0.5,53.5,50.0,0.98,0.0,WIN,2-4,False
-04/18/2026,Cincinnati Reds @ Minnesota Twins,Under,Under,F5 Total,-105.0,williamhill_us,64.6,51.2,13.4,3.47,4.3,53.5,50.0,0.98,0.0,LOSS,2-4,False
-04/18/2026,New York Mets @ Chicago Cubs,New York Mets,Away,F5 ML,-115.0,williamhill_us,56.4,53.5,2.9,,,64.4,50.0,1.06,0.0,PUSH,1-1,False
-04/18/2026,New York Mets @ Chicago Cubs,New York Mets,Away,F5 Spread,120.0,williamhill_us,62.8,45.5,17.4,-0.5,-0.5,57.6,50.0,1.06,0.0,LOSS,1-1,False
-04/18/2026,New York Mets @ Chicago Cubs,Under,Under,F5 Total,-125.0,betmgm,60.1,55.6,4.6,3.91,4.5,57.6,50.0,1.06,0.0,WIN,1-1,False
-04/18/2026,San Francisco Giants @ Washington Nationals,Washington Nationals,Home,F5 ML,-112.0,fanduel,55.7,52.8,2.9,,,62.8,50.0,0.99,0.0,WIN,3-5,False
-04/18/2026,San Francisco Giants @ Washington Nationals,Washington Nationals,Home,F5 Spread,115.0,williamhill_us,59.8,46.5,13.3,-0.2,0.2,56.8,50.0,0.99,0.0,WIN,3-5,False
-04/18/2026,San Francisco Giants @ Washington Nationals,Under,Under,F5 Total,-118.0,betmgm,59.5,54.1,5.3,4.95,5.5,56.8,50.0,0.99,0.0,LOSS,3-5,False
-04/18/2026,Tampa Bay Rays @ Pittsburgh Pirates,Pittsburgh Pirates,Home,F5 ML,-180.0,betmgm,67.3,64.3,3.0,,,62.4,50.0,0.96,0.0,LOSS,5-4,False
-04/18/2026,Tampa Bay Rays @ Pittsburgh Pirates,Pittsburgh Pirates,Home,F5 Spread,-115.0,betmgm,72.8,53.5,19.3,-0.5,0.5,55.5,50.0,0.96,0.0,LOSS,5-4,False
-04/18/2026,Chicago White Sox @ Athletics,Athletics,Home,F5 ML,-160.0,williamhill_us,56.0,61.5,-5.5,,,45.6,50.0,1.0,0.0,LOSS,5-3,False
-04/18/2026,Chicago White Sox @ Athletics,Athletics,Home,F5 Spread,-120.0,fanduel,62.6,54.5,8.1,-0.5,0.5,48.5,50.0,1.0,0.0,LOSS,5-3,False
-04/18/2026,Chicago White Sox @ Athletics,Under,Under,F5 Total,-115.0,williamhill_us,63.7,53.5,10.2,4.53,5.3,48.5,50.0,1.0,0.0,LOSS,5-3,False
-04/18/2026,Detroit Tigers @ Boston Red Sox,Detroit Tigers,Away,F5 ML,-190.0,williamhill_us,69.1,65.5,3.6,,,57.89999999999999,50.0,1.07,0.0,WIN,4-1,False
-04/18/2026,Detroit Tigers @ Boston Red Sox,Detroit Tigers,Away,F5 Spread,-130.0,williamhill_us,71.7,56.5,15.2,-0.5,-0.5,51.0,50.0,1.07,0.0,WIN,4-1,False
-04/18/2026,Detroit Tigers @ Boston Red Sox,Over,Over,F5 Total,-105.0,williamhill_us,73.7,51.2,22.4,4.79,3.3,51.0,50.0,1.07,0.0,WIN,4-1,False
-04/18/2026,Milwaukee Brewers @ Miami Marlins,Miami Marlins,Home,F5 ML,-118.0,betmgm,63.1,54.1,9.0,,,54.5,50.0,0.97,0.0,LOSS,3-1,False
-04/18/2026,Milwaukee Brewers @ Miami Marlins,Miami Marlins,Home,F5 Spread,120.0,williamhill_us,69.9,45.5,24.4,-0.5,0.5,48.6,50.0,0.97,0.0,LOSS,3-1,False
-04/18/2026,Milwaukee Brewers @ Miami Marlins,Over,Over,F5 Total,100.0,williamhill_us,60.1,50.0,10.1,4.42,3.8,48.6,50.0,0.97,0.0,WIN,3-1,False
-04/18/2026,Baltimore Orioles @ Cleveland Guardians,Cleveland Guardians,Home,F5 Spread,108.0,fanduel,62.4,48.1,14.3,-0.5,0.5,50.3,50.0,0.95,0.0,WIN,1-3,False
-04/18/2026,St. Louis Cardinals @ Houston Astros,Houston Astros,Home,F5 ML,-145.0,williamhill_us,58.5,59.2,-0.7,,,57.1,50.0,1.0,0.0,LOSS,4-1,False
-04/18/2026,St. Louis Cardinals @ Houston Astros,Houston Astros,Home,F5 Spread,-105.0,williamhill_us,65.8,51.2,14.6,-0.5,0.5,54.8,50.0,1.0,0.0,LOSS,4-1,False
-04/18/2026,St. Louis Cardinals @ Houston Astros,Under,Under,F5 Total,-104.0,fanduel,57.3,51.0,6.3,4.41,4.8,54.8,50.0,1.0,0.0,LOSS,4-1,False
-04/18/2026,Texas Rangers @ Seattle Mariners,Seattle Mariners,Home,F5 ML,-135.0,betmgm,55.7,57.4,-1.8,,,52.2,50.0,0.99,0.0,WIN,0-3,False
-04/18/2026,Texas Rangers @ Seattle Mariners,Seattle Mariners,Home,F5 Spread,110.0,fanduel,63.5,47.6,15.8,-0.5,0.5,51.1,50.0,0.99,0.0,WIN,0-3,False
-04/18/2026,Texas Rangers @ Seattle Mariners,Over,Over,F5 Total,-105.0,williamhill_us,60.4,51.2,9.2,4.44,3.8,51.1,50.0,0.99,0.0,LOSS,0-3,False
 04/18/2026,Atlanta Braves @ Philadelphia Phillies,Philadelphia Phillies,Home,F5 ML,-125.0,betmgm,64.3,55.6,8.7,,,61.49999999999999,50.0,0.99,0.0,LOSS,3-1,False
 04/18/2026,Atlanta Braves @ Philadelphia Phillies,Philadelphia Phillies,Home,F5 Spread,118.0,fanduel,72.1,45.9,26.2,-0.5,0.5,49.2,50.0,0.99,0.0,LOSS,3-1,False
 04/18/2026,Atlanta Braves @ Philadelphia Phillies,Over,Over,F5 Total,100.0,williamhill_us,65.4,50.0,15.4,4.41,3.5,49.2,50.0,0.99,0.0,WIN,3-1,False
+04/18/2026,Baltimore Orioles @ Cleveland Guardians,Cleveland Guardians,Home,F5 Spread,108.0,fanduel,62.4,48.1,14.3,-0.5,0.5,50.3,50.0,0.95,0.0,WIN,1-3,False
+04/18/2026,Chicago White Sox @ Athletics,Athletics,Home,F5 ML,-160.0,williamhill_us,56.0,61.5,-5.5,,,45.6,50.0,1.0,0.0,LOSS,5-3,False
+04/18/2026,Chicago White Sox @ Athletics,Athletics,Home,F5 Spread,-120.0,fanduel,62.6,54.5,8.1,-0.5,0.5,48.5,50.0,1.0,0.0,LOSS,5-3,False
+04/18/2026,Chicago White Sox @ Athletics,Under,Under,F5 Total,-115.0,williamhill_us,63.7,53.5,10.2,4.53,5.3,48.5,50.0,1.0,0.0,LOSS,5-3,False
+04/18/2026,Chicago White Sox @ Athletics,Chicago White Sox,Away,F5 ML,-1100.0,fanduel,91.0,91.7,-0.7,,,51.5,50.0,1.0,0.0,WIN,5-3,False
+04/18/2026,Chicago White Sox @ Athletics,Chicago White Sox,Away,F5 Spread,-130.0,fanduel,95.9,56.5,39.3,-2.5,-2.5,48.5,50.0,1.0,0.0,LOSS,5-3,False
+04/18/2026,Cincinnati Reds @ Minnesota Twins,Minnesota Twins,Home,F5 ML,-140.0,fanduel,65.2,58.3,6.9,,,64.5,50.0,0.98,0.0,WIN,2-4,False
+04/18/2026,Cincinnati Reds @ Minnesota Twins,Minnesota Twins,Home,F5 Spread,104.0,fanduel,72.5,49.0,23.4,-0.5,0.5,53.5,50.0,0.98,0.0,WIN,2-4,False
+04/18/2026,Cincinnati Reds @ Minnesota Twins,Under,Under,F5 Total,-105.0,williamhill_us,64.6,51.2,13.4,3.47,4.3,53.5,50.0,0.98,0.0,LOSS,2-4,False
+04/18/2026,Detroit Tigers @ Boston Red Sox,Detroit Tigers,Away,F5 ML,-190.0,williamhill_us,69.1,65.5,3.6,,,57.89999999999999,50.0,1.07,0.0,WIN,4-1,False
+04/18/2026,Detroit Tigers @ Boston Red Sox,Detroit Tigers,Away,F5 Spread,-130.0,williamhill_us,71.7,56.5,15.2,-0.5,-0.5,51.0,50.0,1.07,0.0,WIN,4-1,False
+04/18/2026,Detroit Tigers @ Boston Red Sox,Over,Over,F5 Total,-105.0,williamhill_us,73.7,51.2,22.4,4.79,3.3,51.0,50.0,1.07,0.0,WIN,4-1,False
+04/18/2026,Kansas City Royals @ New York Yankees,New York Yankees,Home,F5 ML,-150.0,williamhill_us,55.2,60.0,-4.8,,,50.1,50.0,1.0,0.042,WIN,0-7,False
+04/18/2026,Kansas City Royals @ New York Yankees,New York Yankees,Home,F5 Spread,-105.0,williamhill_us,62.2,51.2,11.0,-0.5,0.5,52.4,50.0,1.0,0.042,WIN,0-7,False
 04/18/2026,Los Angeles Dodgers @ Colorado Rockies,Los Angeles Dodgers,Away,F5 ML,-230.0,fanduel,62.5,69.7,-7.1,,,50.6,50.0,1.28,0.0,WIN,3-2,False
 04/18/2026,Los Angeles Dodgers @ Colorado Rockies,Los Angeles Dodgers,Away,F5 Spread,104.0,fanduel,73.9,49.0,24.9,-1.2,-1.2,52.7,50.0,1.28,0.0,LOSS,3-2,False
 04/18/2026,Los Angeles Dodgers @ Colorado Rockies,Under,Under,F5 Total,-110.0,fanduel,55.3,52.4,2.9,5.36,5.7,52.7,50.0,1.28,0.0,WIN,3-2,False
-04/18/2026,Toronto Blue Jays @ Arizona Diamondbacks,Arizona Diamondbacks,Home,F5 Spread,105.0,williamhill_us,57.8,48.8,9.0,-0.5,0.5,56.0,50.0,1.0,0.0,WIN,1-2,False
-04/18/2026,Toronto Blue Jays @ Arizona Diamondbacks,Under,Under,F5 Total,100.0,fanduel,57.6,50.0,7.6,4.39,4.8,56.0,50.0,1.0,0.0,WIN,1-2,False
+04/18/2026,Milwaukee Brewers @ Miami Marlins,Miami Marlins,Home,F5 ML,-118.0,betmgm,63.1,54.1,9.0,,,54.5,50.0,0.97,0.0,LOSS,3-1,False
+04/18/2026,Milwaukee Brewers @ Miami Marlins,Miami Marlins,Home,F5 Spread,120.0,williamhill_us,69.9,45.5,24.4,-0.5,0.5,48.6,50.0,0.97,0.0,LOSS,3-1,False
+04/18/2026,Milwaukee Brewers @ Miami Marlins,Over,Over,F5 Total,100.0,williamhill_us,60.1,50.0,10.1,4.42,3.8,48.6,50.0,0.97,0.0,WIN,3-1,False
+04/18/2026,New York Mets @ Chicago Cubs,New York Mets,Away,F5 ML,-115.0,williamhill_us,56.4,53.5,2.9,,,64.4,50.0,1.06,0.0,PUSH,1-1,False
+04/18/2026,New York Mets @ Chicago Cubs,New York Mets,Away,F5 Spread,120.0,williamhill_us,62.8,45.5,17.4,-0.5,-0.5,57.6,50.0,1.06,0.0,LOSS,1-1,False
+04/18/2026,New York Mets @ Chicago Cubs,Under,Under,F5 Total,-125.0,betmgm,60.1,55.6,4.6,3.91,4.5,57.6,50.0,1.06,0.0,WIN,1-1,False
 04/18/2026,San Diego Padres @ Los Angeles Angels,Los Angeles Angels,Home,F5 Spread,106.0,fanduel,57.3,48.5,8.8,-0.5,0.5,52.0,50.0,1.03,0.0,LOSS,0-0,False
 04/18/2026,San Diego Padres @ Los Angeles Angels,Under,Under,F5 Total,-125.0,betmgm,65.2,55.6,9.7,4.6,5.5,52.0,50.0,1.03,0.0,WIN,0-0,False
-04/18/2026,Chicago White Sox @ Athletics,Chicago White Sox,Away,F5 ML,-1100.0,fanduel,91.0,91.7,-0.7,,,51.5,50.0,1.0,0.0,WIN,5-3,False
-04/18/2026,Chicago White Sox @ Athletics,Chicago White Sox,Away,F5 Spread,-130.0,fanduel,95.9,56.5,39.3,-2.5,-2.5,48.5,50.0,1.0,0.0,LOSS,5-3,False
+04/18/2026,San Francisco Giants @ Washington Nationals,Washington Nationals,Home,F5 ML,-112.0,fanduel,55.7,52.8,2.9,,,62.8,50.0,0.99,0.0,WIN,3-5,False
+04/18/2026,San Francisco Giants @ Washington Nationals,Washington Nationals,Home,F5 Spread,115.0,williamhill_us,59.8,46.5,13.3,-0.2,0.2,56.8,50.0,0.99,0.0,WIN,3-5,False
+04/18/2026,San Francisco Giants @ Washington Nationals,Under,Under,F5 Total,-118.0,betmgm,59.5,54.1,5.3,4.95,5.5,56.8,50.0,0.99,0.0,LOSS,3-5,False
+04/18/2026,St. Louis Cardinals @ Houston Astros,Houston Astros,Home,F5 ML,-145.0,williamhill_us,58.5,59.2,-0.7,,,57.1,50.0,1.0,0.0,LOSS,4-1,False
+04/18/2026,St. Louis Cardinals @ Houston Astros,Houston Astros,Home,F5 Spread,-105.0,williamhill_us,65.8,51.2,14.6,-0.5,0.5,54.8,50.0,1.0,0.0,LOSS,4-1,False
+04/18/2026,St. Louis Cardinals @ Houston Astros,Under,Under,F5 Total,-104.0,fanduel,57.3,51.0,6.3,4.41,4.8,54.8,50.0,1.0,0.0,LOSS,4-1,False
+04/18/2026,Tampa Bay Rays @ Pittsburgh Pirates,Pittsburgh Pirates,Home,F5 ML,-180.0,betmgm,67.3,64.3,3.0,,,62.4,50.0,0.96,0.0,LOSS,5-4,False
+04/18/2026,Tampa Bay Rays @ Pittsburgh Pirates,Pittsburgh Pirates,Home,F5 Spread,-115.0,betmgm,72.8,53.5,19.3,-0.5,0.5,55.5,50.0,0.96,0.0,LOSS,5-4,False
+04/18/2026,Texas Rangers @ Seattle Mariners,Seattle Mariners,Home,F5 ML,-135.0,betmgm,55.7,57.4,-1.8,,,52.2,50.0,0.99,0.0,WIN,0-3,False
+04/18/2026,Texas Rangers @ Seattle Mariners,Seattle Mariners,Home,F5 Spread,110.0,fanduel,63.5,47.6,15.8,-0.5,0.5,51.1,50.0,0.99,0.0,WIN,0-3,False
+04/18/2026,Texas Rangers @ Seattle Mariners,Over,Over,F5 Total,-105.0,williamhill_us,60.4,51.2,9.2,4.44,3.8,51.1,50.0,0.99,0.0,LOSS,0-3,False
+04/18/2026,Toronto Blue Jays @ Arizona Diamondbacks,Arizona Diamondbacks,Home,F5 Spread,105.0,williamhill_us,57.8,48.8,9.0,-0.5,0.5,56.0,50.0,1.0,0.0,WIN,1-2,False
+04/18/2026,Toronto Blue Jays @ Arizona Diamondbacks,Under,Under,F5 Total,100.0,fanduel,57.6,50.0,7.6,4.39,4.8,56.0,50.0,1.0,0.0,WIN,1-2,False
+04/19/2026,Atlanta Braves @ Philadelphia Phillies,Atlanta Braves,Atlanta Braves Over 1.5,F5 Team Total,-140.0,DraftKings,63.1,58.3,4.7,2.1,1.5,47.7,34.8,0.99,0.046,WIN,4-2,False
+04/19/2026,Baltimore Orioles @ Cleveland Guardians,Baltimore Orioles/Cleveland Guardians,Over 3.5,F5 Total,-115.0,BetMGM,66.8,53.5,13.3,4.5,3.5,50.0,50.0,1.0,0.0,WIN,4-6,False
+04/19/2026,Baltimore Orioles @ Cleveland Guardians,Baltimore Orioles,Baltimore Orioles Over 1.5,F5 Team Total,-110.0,DraftKings,66.1,52.4,13.8,2.25,1.5,50.0,,1.0,0.0,WIN,4-6,False
+04/19/2026,Baltimore Orioles @ Cleveland Guardians,Cleveland Guardians,Cleveland Guardians Over 1.5,F5 Team Total,-120.0,DraftKings,66.1,54.5,11.6,2.25,1.5,50.0,,1.0,0.0,WIN,4-6,False
+04/19/2026,Chicago White Sox @ Athletics,Chicago White Sox/Athletics,Under 4.8,F5 Total,108.0,FanDuel,64.6,48.1,16.5,3.94,4.8,63.1,28.25,1.0,0.02,LOSS,7-1,False
+04/19/2026,Chicago White Sox @ Athletics,Athletics,Athletics Under 2.5,F5 Team Total,-115.0,TheScore,64.3,53.5,10.8,1.84,2.5,61.7,21.9,1.0,0.02,WIN,7-1,False
+04/19/2026,Cincinnati Reds @ Minnesota Twins,Minnesota Twins,Home -0.5,F5 Spread,110.0,FanDuel,62.9,47.6,15.3,-0.36,-0.5,50.0,41.7,0.98,-0.006,WIN,1-3,False
+04/19/2026,Cincinnati Reds @ Minnesota Twins,Cincinnati Reds/Minnesota Twins,Under 4.5,F5 Total,-125.0,BetMGM,62.6,55.6,7.1,3.76,4.5,50.0,32.0,0.98,-0.006,WIN,1-3,False
+04/19/2026,Detroit Tigers @ Boston Red Sox,Detroit Tigers/Boston Red Sox,Over 3.5,F5 Total,-105.0,Caesars,66.8,51.2,15.6,4.5,3.5,50.0,50.0,1.0,0.0,WIN,5-1,False
+04/19/2026,Detroit Tigers @ Boston Red Sox,Detroit Tigers,Detroit Tigers Over 1.5,F5 Team Total,-105.0,TheScore,66.1,51.2,14.9,2.25,1.5,50.0,,1.0,0.0,WIN,5-1,False
+04/19/2026,Detroit Tigers @ Boston Red Sox,Boston Red Sox,Boston Red Sox Over 1.5,F5 Team Total,-145.0,TheScore,66.1,59.2,7.0,2.25,1.5,50.0,,1.0,0.0,LOSS,5-1,False
+04/19/2026,Detroit Tigers @ Boston Red Sox,Boston Red Sox,Home -0.5,F5 Spread,105.0,Caesars,61.3,48.8,12.5,-0.25,-0.5,50.0,,1.0,0.0,LOSS,5-1,False
+04/19/2026,Kansas City Royals @ New York Yankees,New York Yankees,Home -0.5,F5 Spread,100.0,BetMGM,61.8,50.0,11.8,-0.28,-0.5,54.1,23.1,0.94,0.02,WIN,0-7,False
+04/19/2026,Kansas City Royals @ New York Yankees,Kansas City Royals,Kansas City Royals Over 1.5,F5 Team Total,-115.0,DraftKings,61.2,53.5,7.7,2.01,1.5,50.0,23.4,0.94,0.02,LOSS,0-7,False
 04/19/2026,Los Angeles Dodgers @ Colorado Rockies,Los Angeles Dodgers/Colorado Rockies,Under 6.2,F5 Total,100.0,Caesars,77.0,50.0,27.0,4.5,6.2,50.0,50.0,1.0,0.0,WIN,3-3,False
 04/19/2026,Los Angeles Dodgers @ Colorado Rockies,Los Angeles Dodgers,Los Angeles Dodgers Under 3.5,F5 Team Total,100.0,TheScore,75.6,50.0,25.6,2.25,3.5,50.0,,1.0,0.0,WIN,3-3,False
 04/19/2026,Los Angeles Dodgers @ Colorado Rockies,Los Angeles Dodgers,Away -1.2,F5 Spread,108.0,FanDuel,73.3,48.1,25.2,0.45,-1.1666666666666667,50.0,,1.0,0.0,LOSS,3-3,False
+04/19/2026,Los Angeles Dodgers @ Colorado Rockies,Los Angeles Dodgers,Away,F5 ML,-215.0,FanDuel,67.0,68.3,-1.3,,,50.0,,1.0,0.0,PUSH,3-3,False
+04/19/2026,Milwaukee Brewers @ Miami Marlins,Miami Marlins,Miami Marlins Over 1.5,F5 Team Total,-115.0,DraftKings,66.1,53.5,12.7,2.25,1.5,50.0,,1.0,0.0,WIN,0-3,False
+04/19/2026,Milwaukee Brewers @ Miami Marlins,Milwaukee Brewers,Milwaukee Brewers Over 1.5,F5 Team Total,-135.0,DraftKings,66.1,57.4,8.7,2.25,1.5,50.0,,1.0,0.0,LOSS,0-3,False
+04/19/2026,Milwaukee Brewers @ Miami Marlins,Milwaukee Brewers/Miami Marlins,Over 3.8,F5 Total,100.0,Caesars,62.0,50.0,12.0,4.5,3.8,50.0,50.0,1.0,0.0,LOSS,0-3,False
+04/19/2026,New York Mets @ Chicago Cubs,Chicago Cubs,Home -0.5,F5 Spread,112.0,FanDuel,66.7,47.2,19.5,-0.62,-0.5,58.0,60.4,0.98,-0.027,LOSS,1-0,False
+04/19/2026,New York Mets @ Chicago Cubs,Chicago Cubs,Home,F5 ML,-120.0,FanDuel,63.0,54.5,8.5,,,58.0,60.4,0.98,-0.027,LOSS,1-0,False
+04/19/2026,San Francisco Giants @ Washington Nationals,Washington Nationals,Washington Nationals Over 1.5,F5 Team Total,-130.0,DraftKings,62.2,56.5,5.7,2.06,1.5,50.0,30.4,1.12,0.031,WIN,0-3,False
+04/19/2026,San Francisco Giants @ Washington Nationals,San Francisco Giants,Away -0.5,F5 Spread,-105.0,BetMGM,61.0,51.2,9.7,0.22,-0.5,56.2,25.0,1.12,0.031,LOSS,0-3,False
 04/19/2026,St. Louis Cardinals @ Houston Astros,Houston Astros,Home,F5 ML,-145.0,Caesars,68.7,59.2,9.5,,,50.0,63.6,1.0,-0.061,LOSS,4-1,False
 04/19/2026,St. Louis Cardinals @ Houston Astros,Houston Astros,Home -0.5,F5 Spread,100.0,Caesars,68.5,50.0,18.5,-0.75,-0.5,50.0,63.6,1.0,-0.061,LOSS,4-1,False
-04/19/2026,Los Angeles Dodgers @ Colorado Rockies,Los Angeles Dodgers,Away,F5 ML,-215.0,FanDuel,67.0,68.3,-1.3,,,50.0,,1.0,0.0,PUSH,3-3,False
-04/19/2026,Detroit Tigers @ Boston Red Sox,Detroit Tigers/Boston Red Sox,Over 3.5,F5 Total,-105.0,Caesars,66.8,51.2,15.6,4.5,3.5,50.0,50.0,1.0,0.0,WIN,5-1,False
-04/19/2026,Baltimore Orioles @ Cleveland Guardians,Baltimore Orioles/Cleveland Guardians,Over 3.5,F5 Total,-115.0,BetMGM,66.8,53.5,13.3,4.5,3.5,50.0,50.0,1.0,0.0,WIN,4-6,False
-04/19/2026,New York Mets @ Chicago Cubs,Chicago Cubs,Home -0.5,F5 Spread,112.0,FanDuel,66.7,47.2,19.5,-0.62,-0.5,58.0,60.4,0.98,-0.027,LOSS,1-0,False
-04/19/2026,Detroit Tigers @ Boston Red Sox,Detroit Tigers,Detroit Tigers Over 1.5,F5 Team Total,-105.0,TheScore,66.1,51.2,14.9,2.25,1.5,50.0,,1.0,0.0,WIN,5-1,False
-04/19/2026,Baltimore Orioles @ Cleveland Guardians,Baltimore Orioles,Baltimore Orioles Over 1.5,F5 Team Total,-110.0,DraftKings,66.1,52.4,13.8,2.25,1.5,50.0,,1.0,0.0,WIN,4-6,False
-04/19/2026,Milwaukee Brewers @ Miami Marlins,Miami Marlins,Miami Marlins Over 1.5,F5 Team Total,-115.0,DraftKings,66.1,53.5,12.7,2.25,1.5,50.0,,1.0,0.0,WIN,0-3,False
-04/19/2026,Baltimore Orioles @ Cleveland Guardians,Cleveland Guardians,Cleveland Guardians Over 1.5,F5 Team Total,-120.0,DraftKings,66.1,54.5,11.6,2.25,1.5,50.0,,1.0,0.0,WIN,4-6,False
-04/19/2026,Milwaukee Brewers @ Miami Marlins,Milwaukee Brewers,Milwaukee Brewers Over 1.5,F5 Team Total,-135.0,DraftKings,66.1,57.4,8.7,2.25,1.5,50.0,,1.0,0.0,LOSS,0-3,False
-04/19/2026,Detroit Tigers @ Boston Red Sox,Boston Red Sox,Boston Red Sox Over 1.5,F5 Team Total,-145.0,TheScore,66.1,59.2,7.0,2.25,1.5,50.0,,1.0,0.0,LOSS,5-1,False
-04/19/2026,Chicago White Sox @ Athletics,Chicago White Sox/Athletics,Under 4.8,F5 Total,108.0,FanDuel,64.6,48.1,16.5,3.94,4.8,63.1,28.25,1.0,0.02,LOSS,7-1,False
-04/19/2026,Chicago White Sox @ Athletics,Athletics,Athletics Under 2.5,F5 Team Total,-115.0,TheScore,64.3,53.5,10.8,1.84,2.5,61.7,21.9,1.0,0.02,WIN,7-1,False
+04/19/2026,Tampa Bay Rays @ Pittsburgh Pirates,Tampa Bay Rays/Pittsburgh Pirates,Under 4.2,F5 Total,-118.0,BetMGM,60.5,54.1,6.3,3.59,4.2,50.0,31.35,1.02,0.084,LOSS,2-4,False
 04/19/2026,Texas Rangers @ Seattle Mariners,Texas Rangers,Texas Rangers Over 1.5,F5 Team Total,110.0,DraftKings,63.1,47.6,15.4,2.1,1.5,65.9,34.6,1.0,0.02,LOSS,0-5,False
-04/19/2026,Atlanta Braves @ Philadelphia Phillies,Atlanta Braves,Atlanta Braves Over 1.5,F5 Team Total,-140.0,DraftKings,63.1,58.3,4.7,2.1,1.5,47.7,34.8,0.99,0.046,WIN,4-2,False
-04/19/2026,New York Mets @ Chicago Cubs,Chicago Cubs,Home,F5 ML,-120.0,FanDuel,63.0,54.5,8.5,,,58.0,60.4,0.98,-0.027,LOSS,1-0,False
-04/19/2026,Cincinnati Reds @ Minnesota Twins,Minnesota Twins,Home -0.5,F5 Spread,110.0,FanDuel,62.9,47.6,15.3,-0.36,-0.5,50.0,41.7,0.98,-0.006,WIN,1-3,False
-04/19/2026,Cincinnati Reds @ Minnesota Twins,Cincinnati Reds/Minnesota Twins,Under 4.5,F5 Total,-125.0,BetMGM,62.6,55.6,7.1,3.76,4.5,50.0,32.0,0.98,-0.006,WIN,1-3,False
-04/19/2026,San Francisco Giants @ Washington Nationals,Washington Nationals,Washington Nationals Over 1.5,F5 Team Total,-130.0,DraftKings,62.2,56.5,5.7,2.06,1.5,50.0,30.4,1.12,0.031,WIN,0-3,False
-04/19/2026,Milwaukee Brewers @ Miami Marlins,Milwaukee Brewers/Miami Marlins,Over 3.8,F5 Total,100.0,Caesars,62.0,50.0,12.0,4.5,3.8,50.0,50.0,1.0,0.0,LOSS,0-3,False
-04/19/2026,Kansas City Royals @ New York Yankees,New York Yankees,Home -0.5,F5 Spread,100.0,BetMGM,61.8,50.0,11.8,-0.28,-0.5,54.1,23.1,0.94,0.02,WIN,0-7,False
 04/19/2026,Toronto Blue Jays @ Arizona Diamondbacks,Arizona Diamondbacks,Arizona Diamondbacks Over 1.5,F5 Team Total,-130.0,DraftKings,61.4,56.5,4.8,2.02,1.5,64.2,47.1,1.02,0.014,LOSS,10-1,False
 04/19/2026,Toronto Blue Jays @ Arizona Diamondbacks,Toronto Blue Jays,Toronto Blue Jays Over 1.5,F5 Team Total,-140.0,DraftKings,61.4,58.3,3.0,2.02,1.5,77.4,36.2,1.02,0.014,WIN,10-1,False
-04/19/2026,Detroit Tigers @ Boston Red Sox,Boston Red Sox,Home -0.5,F5 Spread,105.0,Caesars,61.3,48.8,12.5,-0.25,-0.5,50.0,,1.0,0.0,LOSS,5-1,False
-04/19/2026,Kansas City Royals @ New York Yankees,Kansas City Royals,Kansas City Royals Over 1.5,F5 Team Total,-115.0,DraftKings,61.2,53.5,7.7,2.01,1.5,50.0,23.4,0.94,0.02,LOSS,0-7,False
-04/19/2026,San Francisco Giants @ Washington Nationals,San Francisco Giants,Away -0.5,F5 Spread,-105.0,BetMGM,61.0,51.2,9.7,0.22,-0.5,56.2,25.0,1.12,0.031,LOSS,0-3,False
-04/19/2026,Tampa Bay Rays @ Pittsburgh Pirates,Tampa Bay Rays/Pittsburgh Pirates,Under 4.2,F5 Total,-118.0,BetMGM,60.5,54.1,6.3,3.59,4.2,50.0,31.35,1.02,0.084,LOSS,2-4,False
-04/20/2026,St. Louis Cardinals @ Miami Marlins,Miami Marlins,Home,F5 Spread,-102.0,betmgm,75.0,50.5,24.5,-0.5,0.5,46.9,48.6,0.97,-0.003,WIN,1-2,False
 04/20/2026,Atlanta Braves @ Washington Nationals,Atlanta Braves,Away,F5 ML,-135.0,draftkings,71.8,57.4,14.3,,,63.0,49.8,0.99,0.019,LOSS,2-3,False
 04/20/2026,Atlanta Braves @ Washington Nationals,Atlanta Braves,Away,F5 Spread,105.0,betmgm,75.7,48.8,26.9,-0.5,-0.5,50.5,49.8,0.99,0.019,LOSS,2-3,False
-04/21/2026,San Diego Padres @ Colorado Rockies,Under,Under,F5 Total,-120.0,fanduel,74.8,54.5,20.3,4.96,6.5,48.7,35.4,1.28,0.049,WIN,0-0,False
+04/20/2026,St. Louis Cardinals @ Miami Marlins,Miami Marlins,Home,F5 Spread,-102.0,betmgm,75.0,50.5,24.5,-0.5,0.5,46.9,48.6,0.97,-0.003,WIN,1-2,False
 04/21/2026,Los Angeles Dodgers @ San Francisco Giants,Los Angeles Dodgers,Away,F5 ML,-188.0,draftkings,79.0,65.3,13.8,,,56.2,52.7,0.96,0.052,LOSS,1-3,False
-04/25/2026,San Diego Padres @ Arizona Diamondbacks,Under,Under,F5 Total,-102.0,fanduel,96.4,50.5,45.9,4.35,8.5,57.9,50.0,1.0,0.0,WIN,1-4,False
-04/25/2026,San Diego Padres @ Arizona Diamondbacks,San Diego Padres/Arizona Diamondbacks,Under 8.5,F5 Total,-102.0,FanDuel,95.9,50.5,45.4,4.5,8.5,50.0,50.0,1.0,0.0,WIN,1-4,False
-04/25/2026,Pittsburgh Pirates @ Milwaukee Brewers,Pittsburgh Pirates,1st Inn U1.5 — Pittsburgh Pirates @ Milwaukee Brewers,1st Inn U1.5,-120.0,est.,82.4,54.5,27.9,,,72.55000000000001,41.650000000000006,1.02,0.014,PENDING,,False
-04/25/2026,Seattle Mariners @ St. Louis Cardinals,Seattle Mariners,1st Inn U1.5 — Seattle Mariners @ St. Louis Cardinals,1st Inn U1.5,-120.0,est.,81.4,54.5,26.8,,,60.75,44.4,0.95,0.012,PENDING,,False
-04/25/2026,Colorado Rockies @ New York Mets,Colorado Rockies,1st Inn U1.5 — Colorado Rockies @ New York Mets,1st Inn U1.5,-120.0,est.,80.8,54.5,26.3,,,50.0,39.9,1.0,-0.061,WIN,0-0,False
-04/25/2026,New York Yankees @ Houston Astros,New York Yankees,1st Inn U1.5 — New York Yankees @ Houston Astros,1st Inn U1.5,-120.0,est.,80.8,54.5,26.3,,,50.0,39.9,1.0,-0.061,PENDING,,False
-04/25/2026,Chicago Cubs @ Los Angeles Dodgers,Chicago Cubs,1st Inn U1.5 — Chicago Cubs @ Los Angeles Dodgers,1st Inn U1.5,-120.0,est.,77.6,54.5,23.0,,,49.1,42.75,0.99,0.046,PENDING,,False
-04/25/2026,Cleveland Guardians @ Toronto Blue Jays,Cleveland Guardians,1st Inn U1.5 — Cleveland Guardians @ Toronto Blue Jays,1st Inn U1.5,-120.0,est.,77.1,54.5,22.5,,,55.0,30.55,0.97,0.004,PENDING,,False
-04/25/2026,Boston Red Sox @ Baltimore Orioles,Boston Red Sox,1st Inn U1.5 — Boston Red Sox @ Baltimore Orioles,1st Inn U1.5,-120.0,est.,76.4,54.5,21.8,,,50.0,32.0,0.98,-0.006,PENDING,,False
-04/25/2026,Washington Nationals @ Chicago White Sox,Washington Nationals,1st Inn U1.5 — Washington Nationals @ Chicago White Sox,1st Inn U1.5,-120.0,est.,76.3,54.5,21.8,,,48.95,40.25,0.96,0.08,PENDING,,False
-04/25/2026,Minnesota Twins @ Tampa Bay Rays,Minnesota Twins,1st Inn U1.5 — Minnesota Twins @ Tampa Bay Rays,1st Inn U1.5,-120.0,est.,76.0,54.5,21.5,,,50.0,50.0,1.0,0.0,PENDING,,False
-04/25/2026,San Diego Padres @ Arizona Diamondbacks,San Diego Padres,1st Inn U1.5 — San Diego Padres @ Arizona Diamondbacks,1st Inn U1.5,-120.0,est.,76.0,54.5,21.5,,,50.0,50.0,1.0,0.0,PENDING,,False
+04/21/2026,San Diego Padres @ Colorado Rockies,Under,Under,F5 Total,-120.0,fanduel,74.8,54.5,20.3,4.96,6.5,48.7,35.4,1.28,0.049,WIN,0-0,False
 04/25/2026,Athletics @ Texas Rangers,Athletics,1st Inn U1.5 — Athletics @ Texas Rangers,1st Inn U1.5,-120.0,est.,76.0,54.5,21.5,,,50.0,50.0,1.0,0.0,PENDING,,False
-04/25/2026,Miami Marlins @ San Francisco Giants,Miami Marlins,1st Inn U1.5 — Miami Marlins @ San Francisco Giants,1st Inn U1.5,-120.0,est.,75.9,54.5,21.4,,,50.0,50.85,1.01,0.038,PENDING,,False
-04/25/2026,Philadelphia Phillies @ Atlanta Braves,Philadelphia Phillies,1st Inn U1.5 — Philadelphia Phillies @ Atlanta Braves,1st Inn U1.5,-120.0,est.,75.9,54.5,21.4,,,50.0,50.85,1.01,0.038,PENDING,,False
-04/25/2026,San Diego Padres @ Arizona Diamondbacks,Arizona Diamondbacks,Arizona Diamondbacks Under 3.5,F5 Team Total,105.0,DraftKings,75.6,48.8,26.8,2.25,3.5,50.0,,1.0,0.0,LOSS,1-4,False
-04/25/2026,San Diego Padres @ Arizona Diamondbacks,San Diego Padres,San Diego Padres Under 3.5,F5 Team Total,100.0,DraftKings,75.6,50.0,25.6,2.25,3.5,50.0,,1.0,0.0,WIN,1-4,False
+04/25/2026,Athletics @ Texas Rangers,Athletics,Athletics Over 1.5,F5 Team Total,-125.0,DraftKings,66.1,55.6,10.6,2.25,1.5,50.0,,1.0,0.0,WIN,3-2,False
+04/25/2026,Athletics @ Texas Rangers,Texas Rangers,Home -0.5,F5 Spread,100.0,FanDuel,61.3,50.0,11.3,-0.25,-0.5,50.0,,1.0,0.0,LOSS,3-2,False
+04/25/2026,Boston Red Sox @ Baltimore Orioles,Boston Red Sox,1st Inn U1.5 — Boston Red Sox @ Baltimore Orioles,1st Inn U1.5,-120.0,est.,76.4,54.5,21.8,,,50.0,32.0,0.98,-0.006,PENDING,,False
+04/25/2026,Boston Red Sox @ Baltimore Orioles,Baltimore Orioles,Baltimore Orioles Over 1.5,F5 Team Total,-140.0,DraftKings,60.9,58.3,2.6,2.0,1.5,50.0,41.7,0.98,-0.006,LOSS,7-0,False
+04/25/2026,Chicago Cubs @ Los Angeles Dodgers,Chicago Cubs,1st Inn U1.5 — Chicago Cubs @ Los Angeles Dodgers,1st Inn U1.5,-120.0,est.,77.6,54.5,23.0,,,49.1,42.75,0.99,0.046,PENDING,,False
+04/25/2026,Chicago Cubs @ Los Angeles Dodgers,Los Angeles Dodgers,Home -0.5,F5 Spread,100.0,FanDuel,64.8,50.0,14.7,-0.48,-0.5,56.8,50.7,0.99,0.046,WIN,4-8,False
+04/25/2026,Chicago Cubs @ Los Angeles Dodgers,Chicago Cubs/Los Angeles Dodgers,Under 5.2,F5 Total,-102.0,BetMGM,61.3,50.5,10.8,4.54,5.2,49.1,42.75,0.99,0.046,LOSS,4-8,False
+04/25/2026,Chicago Cubs @ Los Angeles Dodgers,Los Angeles Dodgers,Home,F5 ML,-135.0,FanDuel,60.7,57.4,3.2,,,56.8,50.7,0.99,0.046,WIN,4-8,False
+04/25/2026,Cleveland Guardians @ Toronto Blue Jays,Cleveland Guardians,1st Inn U1.5 — Cleveland Guardians @ Toronto Blue Jays,1st Inn U1.5,-120.0,est.,77.1,54.5,22.5,,,55.0,30.55,0.97,0.004,PENDING,,False
+04/25/2026,Cleveland Guardians @ Toronto Blue Jays,Toronto Blue Jays,Toronto Blue Jays Under 2.5,F5 Team Total,-160.0,DraftKings,66.1,61.5,4.6,1.75,2.5,54.5,29.4,0.97,0.004,WIN,1-1,False
+04/25/2026,Cleveland Guardians @ Toronto Blue Jays,Cleveland Guardians/Toronto Blue Jays,Under 4.2,F5 Total,-105.0,BetMGM,62.8,51.2,11.6,3.45,4.2,55.0,30.55,0.97,0.004,WIN,1-1,False
+04/25/2026,Cleveland Guardians @ Toronto Blue Jays,Toronto Blue Jays,Home -0.5,F5 Spread,100.0,FanDuel,62.4,50.0,12.4,-0.32,-0.5,54.5,29.4,0.97,0.004,WIN,1-1,False
+04/25/2026,Cleveland Guardians @ Toronto Blue Jays,Toronto Blue Jays,Home,F5 ML,-145.0,TheScore,60.2,59.2,1.0,,,54.5,29.4,0.97,0.004,PUSH,1-1,False
+04/25/2026,Colorado Rockies @ New York Mets,Colorado Rockies,1st Inn U1.5 — Colorado Rockies @ New York Mets,1st Inn U1.5,-120.0,est.,80.8,54.5,26.3,,,50.0,39.9,1.0,-0.061,WIN,0-0,False
 04/25/2026,Colorado Rockies @ New York Mets,New York Mets,Home,F5 ML,-190.0,BetMGM,74.9,65.5,9.4,,,50.0,63.6,1.0,-0.061,PUSH,0-0,False
-04/25/2026,Los Angeles Angels @ Kansas City Royals,Los Angeles Angels,1st Inn U1.5 — Los Angeles Angels @ Kansas City Royals,1st Inn U1.5,-120.0,est.,73.2,54.5,18.6,,,49.4,28.75,1.0,0.044,PENDING,,False
-04/25/2026,New York Yankees @ Houston Astros,Houston Astros,Houston Astros Over 1.5,F5 Team Total,-145.0,DraftKings,72.9,59.2,13.8,2.6,1.5,50.0,63.6,1.0,-0.061,LOSS,2-1,False
 04/25/2026,Colorado Rockies @ New York Mets,New York Mets,Home -0.5,F5 Spread,-130.0,FanDuel,71.0,56.5,14.5,-0.94,-0.5,50.0,63.6,1.0,-0.061,WIN,0-0,False
+04/25/2026,Detroit Tigers @ Cincinnati Reds,Detroit Tigers,1st Inn U1.5 — Detroit Tigers @ Cincinnati Reds,1st Inn U1.5,-120.0,est.,65.3,54.5,10.8,,,51.25,27.7,1.12,0.031,PENDING,,False
+04/25/2026,Detroit Tigers @ Cincinnati Reds,Detroit Tigers,YRFI — Detroit Tigers @ Cincinnati Reds,NRFI/YRFI,-105.0,est.,62.2,51.2,11.0,,,51.25,27.7,1.12,0.031,WIN,2-6,False
+04/25/2026,Detroit Tigers @ Cincinnati Reds,Detroit Tigers/Cincinnati Reds,Under 5.2,F5 Total,-105.0,Caesars,66.2,51.2,15.0,4.24,5.2,51.25,27.7,1.12,0.031,LOSS,2-6,False
+04/25/2026,Los Angeles Angels @ Kansas City Royals,Los Angeles Angels,1st Inn U1.5 — Los Angeles Angels @ Kansas City Royals,1st Inn U1.5,-120.0,est.,73.2,54.5,18.6,,,49.4,28.75,1.0,0.044,PENDING,,False
+04/25/2026,Los Angeles Angels @ Kansas City Royals,Kansas City Royals,Kansas City Royals Under 2.5,F5 Team Total,-130.0,DraftKings,63.9,56.5,7.4,1.86,2.5,56.2,27.1,1.0,0.044,LOSS,1-4,False
+04/25/2026,Los Angeles Angels @ Kansas City Royals,Los Angeles Angels/Kansas City Royals,Under 4.5,F5 Total,-114.0,FanDuel,62.5,53.3,9.2,3.77,4.5,49.4,28.75,1.0,0.044,LOSS,1-4,False
+04/25/2026,Los Angeles Angels @ Kansas City Royals,Kansas City Royals,Home -0.5,F5 Spread,-110.0,BetMGM,62.1,52.4,9.7,-0.3,-0.5,56.2,27.1,1.0,0.044,WIN,1-4,False
+04/25/2026,Miami Marlins @ San Francisco Giants,Miami Marlins,1st Inn U1.5 — Miami Marlins @ San Francisco Giants,1st Inn U1.5,-120.0,est.,75.9,54.5,21.4,,,50.0,50.85,1.01,0.038,PENDING,,False
+04/25/2026,Miami Marlins @ San Francisco Giants,San Francisco Giants,San Francisco Giants Over 1.5,F5 Team Total,-140.0,DraftKings,66.0,58.3,7.6,2.24,1.5,50.0,53.2,1.01,0.038,LOSS,1-1,False
+04/25/2026,Miami Marlins @ San Francisco Giants,Miami Marlins,Miami Marlins Over 1.5,F5 Team Total,-120.0,DraftKings,64.9,54.5,10.4,2.19,1.5,50.0,48.5,1.01,0.038,LOSS,1-1,False
+04/25/2026,Miami Marlins @ San Francisco Giants,San Francisco Giants,Home -0.5,F5 Spread,110.0,BetMGM,61.0,47.6,13.4,-0.23,-0.5,50.0,53.2,1.01,0.038,WIN,1-1,False
+04/25/2026,Miami Marlins @ San Francisco Giants,Miami Marlins/San Francisco Giants,Over 3.8,F5 Total,-105.0,BetMGM,60.8,51.2,9.6,4.43,3.8,50.0,50.85,1.01,0.038,LOSS,1-1,False
+04/25/2026,Miami Marlins @ San Francisco Giants,San Francisco Giants,Home,F5 ML,-110.0,TheScore,74.6,52.4,22.2,,,50.0,53.2,1.01,0.038,PUSH,1-1,False
+04/25/2026,Minnesota Twins @ Tampa Bay Rays,Minnesota Twins,1st Inn U1.5 — Minnesota Twins @ Tampa Bay Rays,1st Inn U1.5,-120.0,est.,76.0,54.5,21.5,,,50.0,50.0,1.0,0.0,PENDING,,False
+04/25/2026,Minnesota Twins @ Tampa Bay Rays,Minnesota Twins,Minnesota Twins Over 1.5,F5 Team Total,-130.0,DraftKings,66.1,56.5,9.6,2.25,1.5,50.0,,1.0,0.0,LOSS,0-2,False
+04/25/2026,Minnesota Twins @ Tampa Bay Rays,Tampa Bay Rays,Home -0.5,F5 Spread,108.0,FanDuel,60.7,48.1,12.6,-0.2,-0.5,50.0,,1.0,0.0,WIN,0-2,False
+04/25/2026,New York Yankees @ Houston Astros,New York Yankees,1st Inn U1.5 — New York Yankees @ Houston Astros,1st Inn U1.5,-120.0,est.,80.8,54.5,26.3,,,50.0,39.9,1.0,-0.061,PENDING,,False
+04/25/2026,New York Yankees @ Houston Astros,Houston Astros,Houston Astros Over 1.5,F5 Team Total,-145.0,DraftKings,72.9,59.2,13.8,2.6,1.5,50.0,63.6,1.0,-0.061,LOSS,2-1,False
+04/25/2026,New York Yankees @ Houston Astros,New York Yankees,New York Yankees Under 2.5,F5 Team Total,-115.0,DraftKings,63.9,53.5,10.4,1.86,2.5,50.0,16.2,1.0,-0.061,WIN,2-1,False
+04/25/2026,Philadelphia Phillies @ Atlanta Braves,Philadelphia Phillies,1st Inn U1.5 — Philadelphia Phillies @ Atlanta Braves,1st Inn U1.5,-120.0,est.,75.9,54.5,21.4,,,50.0,50.85,1.01,0.038,PENDING,,False
 04/25/2026,Philadelphia Phillies @ Atlanta Braves,Atlanta Braves,Home,F5 ML,-118.0,FanDuel,67.4,54.1,13.2,,,50.0,53.2,1.01,0.038,LOSS,3-2,False
 04/25/2026,Philadelphia Phillies @ Atlanta Braves,Atlanta Braves,Home -0.5,F5 Spread,116.0,FanDuel,66.3,46.3,20.0,-0.59,-0.5,50.0,53.2,1.01,0.038,LOSS,3-2,False
-04/25/2026,Athletics @ Texas Rangers,Athletics,Athletics Over 1.5,F5 Team Total,-125.0,DraftKings,66.1,55.6,10.6,2.25,1.5,50.0,,1.0,0.0,WIN,3-2,False
-04/25/2026,Minnesota Twins @ Tampa Bay Rays,Minnesota Twins,Minnesota Twins Over 1.5,F5 Team Total,-130.0,DraftKings,66.1,56.5,9.6,2.25,1.5,50.0,,1.0,0.0,LOSS,0-2,False
-04/25/2026,Cleveland Guardians @ Toronto Blue Jays,Toronto Blue Jays,Toronto Blue Jays Under 2.5,F5 Team Total,-160.0,DraftKings,66.1,61.5,4.6,1.75,2.5,54.5,29.4,0.97,0.004,WIN,1-1,False
-04/25/2026,Miami Marlins @ San Francisco Giants,San Francisco Giants,San Francisco Giants Over 1.5,F5 Team Total,-140.0,DraftKings,66.0,58.3,7.6,2.24,1.5,50.0,53.2,1.01,0.038,LOSS,1-1,False
-04/25/2026,Detroit Tigers @ Cincinnati Reds,Detroit Tigers,1st Inn U1.5 — Detroit Tigers @ Cincinnati Reds,1st Inn U1.5,-120.0,est.,65.3,54.5,10.8,,,51.25,27.7,1.12,0.031,PENDING,,False
-04/25/2026,Miami Marlins @ San Francisco Giants,Miami Marlins,Miami Marlins Over 1.5,F5 Team Total,-120.0,DraftKings,64.9,54.5,10.4,2.19,1.5,50.0,48.5,1.01,0.038,LOSS,1-1,False
-04/25/2026,Chicago Cubs @ Los Angeles Dodgers,Los Angeles Dodgers,Home -0.5,F5 Spread,100.0,FanDuel,64.8,50.0,14.7,-0.48,-0.5,56.8,50.7,0.99,0.046,WIN,4-8,False
-04/25/2026,New York Yankees @ Houston Astros,New York Yankees,New York Yankees Under 2.5,F5 Team Total,-115.0,DraftKings,63.9,53.5,10.4,1.86,2.5,50.0,16.2,1.0,-0.061,WIN,2-1,False
-04/25/2026,Los Angeles Angels @ Kansas City Royals,Kansas City Royals,Kansas City Royals Under 2.5,F5 Team Total,-130.0,DraftKings,63.9,56.5,7.4,1.86,2.5,56.2,27.1,1.0,0.044,LOSS,1-4,False
-04/25/2026,Seattle Mariners @ St. Louis Cardinals,Seattle Mariners,Away -0.5,F5 Spread,-110.0,BetMGM,63.5,52.4,11.2,0.4,-0.5,65.1,39.0,0.95,0.012,LOSS,6-7,False
-04/25/2026,Washington Nationals @ Chicago White Sox,Chicago White Sox,Chicago White Sox Under 2.5,F5 Team Total,-135.0,DraftKings,63.5,57.4,6.0,1.88,2.5,54.9,36.1,0.96,0.08,WIN,2-0,False
-04/25/2026,Cleveland Guardians @ Toronto Blue Jays,Cleveland Guardians/Toronto Blue Jays,Under 4.2,F5 Total,-105.0,BetMGM,62.8,51.2,11.6,3.45,4.2,55.0,30.55,0.97,0.004,WIN,1-1,False
-04/25/2026,Seattle Mariners @ St. Louis Cardinals,Seattle Mariners,Away,F5 ML,-155.0,BetMGM,62.7,60.8,1.9,,,65.1,39.0,0.95,0.012,LOSS,6-7,False
-04/25/2026,Los Angeles Angels @ Kansas City Royals,Los Angeles Angels/Kansas City Royals,Under 4.5,F5 Total,-114.0,FanDuel,62.5,53.3,9.2,3.77,4.5,49.4,28.75,1.0,0.044,LOSS,1-4,False
-04/25/2026,Cleveland Guardians @ Toronto Blue Jays,Toronto Blue Jays,Home -0.5,F5 Spread,100.0,FanDuel,62.4,50.0,12.4,-0.32,-0.5,54.5,29.4,0.97,0.004,WIN,1-1,False
-04/25/2026,Seattle Mariners @ St. Louis Cardinals,Seattle Mariners,Seattle Mariners Under 2.5,F5 Team Total,-145.0,DraftKings,62.2,59.2,3.0,1.94,2.5,65.1,39.0,0.95,0.012,LOSS,6-7,False
-04/25/2026,Detroit Tigers @ Cincinnati Reds,Detroit Tigers,YRFI — Detroit Tigers @ Cincinnati Reds,NRFI/YRFI,-105.0,est.,62.2,51.2,11.0,,,51.25,27.7,1.12,0.031,WIN,2-6,False
-04/25/2026,Los Angeles Angels @ Kansas City Royals,Kansas City Royals,Home -0.5,F5 Spread,-110.0,BetMGM,62.1,52.4,9.7,-0.3,-0.5,56.2,27.1,1.0,0.044,WIN,1-4,False
-04/25/2026,Pittsburgh Pirates @ Milwaukee Brewers,Pittsburgh Pirates,Pittsburgh Pirates Over 1.5,F5 Team Total,-125.0,DraftKings,61.4,55.6,5.8,2.02,1.5,77.4,36.2,1.02,0.014,WIN,2-2,False
-04/25/2026,Athletics @ Texas Rangers,Texas Rangers,Home -0.5,F5 Spread,100.0,FanDuel,61.3,50.0,11.3,-0.25,-0.5,50.0,,1.0,0.0,LOSS,3-2,False
-04/25/2026,Chicago Cubs @ Los Angeles Dodgers,Chicago Cubs/Los Angeles Dodgers,Under 5.2,F5 Total,-102.0,BetMGM,61.3,50.5,10.8,4.54,5.2,49.1,42.75,0.99,0.046,LOSS,4-8,False
-04/25/2026,Pittsburgh Pirates @ Milwaukee Brewers,Pittsburgh Pirates,NRFI — Pittsburgh Pirates @ Milwaukee Brewers,NRFI/YRFI,-115.0,est.,61.2,53.5,7.7,,,72.55000000000001,41.650000000000006,1.02,0.014,WIN,2-2,False
-04/25/2026,Washington Nationals @ Chicago White Sox,Washington Nationals,Washington Nationals Over 1.5,F5 Team Total,-140.0,DraftKings,61.2,58.3,2.8,2.01,1.5,50.0,44.4,0.96,0.08,WIN,2-0,False
-04/25/2026,Miami Marlins @ San Francisco Giants,San Francisco Giants,Home -0.5,F5 Spread,110.0,BetMGM,61.0,47.6,13.4,-0.23,-0.5,50.0,53.2,1.01,0.038,WIN,1-1,False
-04/25/2026,Boston Red Sox @ Baltimore Orioles,Baltimore Orioles,Baltimore Orioles Over 1.5,F5 Team Total,-140.0,DraftKings,60.9,58.3,2.6,2.0,1.5,50.0,41.7,0.98,-0.006,LOSS,7-0,False
-04/25/2026,Miami Marlins @ San Francisco Giants,Miami Marlins/San Francisco Giants,Over 3.8,F5 Total,-105.0,BetMGM,60.8,51.2,9.6,4.43,3.8,50.0,50.85,1.01,0.038,LOSS,1-1,False
-04/25/2026,Chicago Cubs @ Los Angeles Dodgers,Los Angeles Dodgers,Home,F5 ML,-135.0,FanDuel,60.7,57.4,3.2,,,56.8,50.7,0.99,0.046,WIN,4-8,False
-04/25/2026,Minnesota Twins @ Tampa Bay Rays,Tampa Bay Rays,Home -0.5,F5 Spread,108.0,FanDuel,60.7,48.1,12.6,-0.2,-0.5,50.0,,1.0,0.0,WIN,0-2,False
-04/25/2026,Pittsburgh Pirates @ Milwaukee Brewers,Milwaukee Brewers,Milwaukee Brewers Under 2.5,F5 Team Total,-160.0,DraftKings,60.5,61.5,-1.0,2.02,2.5,64.2,47.1,1.02,0.014,WIN,2-2,False
-04/25/2026,Washington Nationals @ Chicago White Sox,Washington Nationals/Chicago White Sox,Under 4.5,F5 Total,-108.0,FanDuel,60.5,51.9,8.5,3.89,4.5,48.95,40.25,0.96,0.08,WIN,2-0,False
-04/25/2026,Miami Marlins @ San Francisco Giants,San Francisco Giants,Home,F5 ML,-110.0,TheScore,74.6,52.4,22.2,,,50.0,53.2,1.01,0.038,PUSH,1-1,False
-04/25/2026,Detroit Tigers @ Cincinnati Reds,Detroit Tigers/Cincinnati Reds,Under 5.2,F5 Total,-105.0,Caesars,66.2,51.2,15.0,4.24,5.2,51.25,27.7,1.12,0.031,LOSS,2-6,False
-04/25/2026,Pittsburgh Pirates @ Milwaukee Brewers,Milwaukee Brewers,Home -0.5,F5 Spread,-102.0,BetMGM,60.7,50.5,10.2,-0.21,-0.5,64.2,47.1,1.02,0.014,WIN,2-2,False
-04/25/2026,Washington Nationals @ Chicago White Sox,Chicago White Sox,Home -0.5,F5 Spread,-105.0,BetMGM,60.1,51.2,8.9,-0.17,-0.5,54.9,36.1,0.96,0.08,LOSS,2-0,False
-04/25/2026,San Diego Padres @ Arizona Diamondbacks,Arizona Diamondbacks,Home -0.5,F5 Spread,-105.0,Caesars,60.6,51.2,9.4,-0.2,-0.5,50.0,,1.0,0.0,WIN,1-4,False
 04/25/2026,Philadelphia Phillies @ Atlanta Braves,Philadelphia Phillies,Philadelphia Phillies Over 1.5,F5 Team Total,-150.0,TheScore,64.9,60.0,4.9,2.19,1.5,50.0,48.5,1.01,0.038,WIN,3-2,False
-04/25/2026,Cleveland Guardians @ Toronto Blue Jays,Toronto Blue Jays,Home,F5 ML,-145.0,TheScore,60.2,59.2,1.0,,,54.5,29.4,0.97,0.004,PUSH,1-1,False
+04/25/2026,Pittsburgh Pirates @ Milwaukee Brewers,Pittsburgh Pirates,1st Inn U1.5 — Pittsburgh Pirates @ Milwaukee Brewers,1st Inn U1.5,-120.0,est.,82.4,54.5,27.9,,,72.55000000000001,41.650000000000006,1.02,0.014,PENDING,,False
+04/25/2026,Pittsburgh Pirates @ Milwaukee Brewers,Pittsburgh Pirates,Pittsburgh Pirates Over 1.5,F5 Team Total,-125.0,DraftKings,61.4,55.6,5.8,2.02,1.5,77.4,36.2,1.02,0.014,WIN,2-2,False
+04/25/2026,Pittsburgh Pirates @ Milwaukee Brewers,Pittsburgh Pirates,NRFI — Pittsburgh Pirates @ Milwaukee Brewers,NRFI/YRFI,-115.0,est.,61.2,53.5,7.7,,,72.55000000000001,41.650000000000006,1.02,0.014,WIN,2-2,False
+04/25/2026,Pittsburgh Pirates @ Milwaukee Brewers,Milwaukee Brewers,Milwaukee Brewers Under 2.5,F5 Team Total,-160.0,DraftKings,60.5,61.5,-1.0,2.02,2.5,64.2,47.1,1.02,0.014,WIN,2-2,False
+04/25/2026,Pittsburgh Pirates @ Milwaukee Brewers,Milwaukee Brewers,Home -0.5,F5 Spread,-102.0,BetMGM,60.7,50.5,10.2,-0.21,-0.5,64.2,47.1,1.02,0.014,WIN,2-2,False
+04/25/2026,San Diego Padres @ Arizona Diamondbacks,Under,Under,F5 Total,-102.0,fanduel,96.4,50.5,45.9,4.35,8.5,57.9,50.0,1.0,0.0,WIN,1-4,False
+04/25/2026,San Diego Padres @ Arizona Diamondbacks,San Diego Padres/Arizona Diamondbacks,Under 8.5,F5 Total,-102.0,FanDuel,95.9,50.5,45.4,4.5,8.5,50.0,50.0,1.0,0.0,WIN,1-4,False
+04/25/2026,San Diego Padres @ Arizona Diamondbacks,San Diego Padres,1st Inn U1.5 — San Diego Padres @ Arizona Diamondbacks,1st Inn U1.5,-120.0,est.,76.0,54.5,21.5,,,50.0,50.0,1.0,0.0,PENDING,,False
+04/25/2026,San Diego Padres @ Arizona Diamondbacks,Arizona Diamondbacks,Arizona Diamondbacks Under 3.5,F5 Team Total,105.0,DraftKings,75.6,48.8,26.8,2.25,3.5,50.0,,1.0,0.0,LOSS,1-4,False
+04/25/2026,San Diego Padres @ Arizona Diamondbacks,San Diego Padres,San Diego Padres Under 3.5,F5 Team Total,100.0,DraftKings,75.6,50.0,25.6,2.25,3.5,50.0,,1.0,0.0,WIN,1-4,False
+04/25/2026,San Diego Padres @ Arizona Diamondbacks,Arizona Diamondbacks,Home -0.5,F5 Spread,-105.0,Caesars,60.6,51.2,9.4,-0.2,-0.5,50.0,,1.0,0.0,WIN,1-4,False
+04/25/2026,Seattle Mariners @ St. Louis Cardinals,Seattle Mariners,1st Inn U1.5 — Seattle Mariners @ St. Louis Cardinals,1st Inn U1.5,-120.0,est.,81.4,54.5,26.8,,,60.75,44.4,0.95,0.012,PENDING,,False
+04/25/2026,Seattle Mariners @ St. Louis Cardinals,Seattle Mariners,Away -0.5,F5 Spread,-110.0,BetMGM,63.5,52.4,11.2,0.4,-0.5,65.1,39.0,0.95,0.012,LOSS,6-7,False
+04/25/2026,Seattle Mariners @ St. Louis Cardinals,Seattle Mariners,Away,F5 ML,-155.0,BetMGM,62.7,60.8,1.9,,,65.1,39.0,0.95,0.012,LOSS,6-7,False
+04/25/2026,Seattle Mariners @ St. Louis Cardinals,Seattle Mariners,Seattle Mariners Under 2.5,F5 Team Total,-145.0,DraftKings,62.2,59.2,3.0,1.94,2.5,65.1,39.0,0.95,0.012,LOSS,6-7,False
+04/25/2026,Washington Nationals @ Chicago White Sox,Washington Nationals,1st Inn U1.5 — Washington Nationals @ Chicago White Sox,1st Inn U1.5,-120.0,est.,76.3,54.5,21.8,,,48.95,40.25,0.96,0.08,PENDING,,False
+04/25/2026,Washington Nationals @ Chicago White Sox,Chicago White Sox,Chicago White Sox Under 2.5,F5 Team Total,-135.0,DraftKings,63.5,57.4,6.0,1.88,2.5,54.9,36.1,0.96,0.08,WIN,2-0,False
+04/25/2026,Washington Nationals @ Chicago White Sox,Washington Nationals,Washington Nationals Over 1.5,F5 Team Total,-140.0,DraftKings,61.2,58.3,2.8,2.01,1.5,50.0,44.4,0.96,0.08,WIN,2-0,False
+04/25/2026,Washington Nationals @ Chicago White Sox,Washington Nationals/Chicago White Sox,Under 4.5,F5 Total,-108.0,FanDuel,60.5,51.9,8.5,3.89,4.5,48.95,40.25,0.96,0.08,WIN,2-0,False
+04/25/2026,Washington Nationals @ Chicago White Sox,Chicago White Sox,Home -0.5,F5 Spread,-105.0,BetMGM,60.1,51.2,8.9,-0.17,-0.5,54.9,36.1,0.96,0.08,LOSS,2-0,False
 04/26/2026,Philadelphia Phillies @ Atlanta Braves,NRFI,NRFI,NRFI/YRFI,-115.0,est.,63.8,53.5,10.3,,,58.4,35.0,1.01,0.003,LOSS,0-6,False
 04/26/2026,San Diego Padres @ Arizona Diamondbacks,Under,Under,F5 Total,-125.0,betmgm,96.1,55.6,40.5,4.45,8.5,52.6,50.0,1.0,0.0,WIN,6-1,False
 04/27/2026,Miami Marlins @ Los Angeles Dodgers,Los Angeles Dodgers,Home,F5 Spread,-110.0,fanduel,81.4,52.4,29.0,-1.2,1.2,60.2,50.0,0.98,0.0,LOSS,4-2,False
 04/28/2026,Miami Marlins @ Los Angeles Dodgers,Los Angeles Dodgers,Home,F5 Spread,118.0,betmgm,82.6,45.9,36.7,-1.2,1.2,45.2,50.0,0.98,0.0,LOSS,2-0,False
+04/29/2026,Arizona Diamondbacks @ Milwaukee Brewers,Milwaukee Brewers,Home,F5 ML,-118.0,FanDuel,68.2,54.1,14.1,,,64.5,44.5,1.0,0.034,LOSS,4-2,False
+04/29/2026,Arizona Diamondbacks @ Milwaukee Brewers,Milwaukee Brewers,Home -0.5,F5 Spread,118.0,FanDuel,68.1,45.9,22.2,-0.72,-0.5,64.5,44.5,1.0,0.034,LOSS,4-2,False
 04/29/2026,Boston Red Sox @ Toronto Blue Jays,Toronto Blue Jays,Home,F5 ML,-120.0,draftkings,95.0,54.5,40.5,,,47.9,39.1,1.01,0.04,WIN,1-7,False
 04/29/2026,Boston Red Sox @ Toronto Blue Jays,Toronto Blue Jays,Home,F5 Spread,110.0,betmgm,86.6,47.6,39.0,-0.5,0.5,45.6,39.1,1.01,0.04,WIN,1-7,False
+04/29/2026,Colorado Rockies @ Cincinnati Reds,Colorado Rockies/Cincinnati Reds,Under 5.5,F5 Total,-110.0,FanDuel,67.4,52.4,15.1,4.46,5.5,50.0,39.9,1.0,-0.061,WIN,5-0,False
+04/29/2026,Colorado Rockies @ Cincinnati Reds,Cincinnati Reds,Home -0.5,F5 Spread,105.0,BetMGM,67.2,48.8,18.4,-0.66,-0.5,50.0,63.6,1.0,-0.061,LOSS,5-0,False
+04/29/2026,Colorado Rockies @ Cincinnati Reds,Cincinnati Reds,Home,F5 ML,-125.0,BetMGM,65.5,55.6,10.0,,,50.0,63.6,1.0,-0.061,LOSS,5-0,False
+04/29/2026,Colorado Rockies @ Cincinnati Reds,Colorado Rockies,Colorado Rockies Under 2.5,F5 Team Total,-125.0,DraftKings,63.9,55.6,8.3,1.86,2.5,50.0,16.2,1.0,-0.061,LOSS,5-0,False
+04/29/2026,Detroit Tigers @ Atlanta Braves,Atlanta Braves,Atlanta Braves Over 1.5,F5 Team Total,-110.0,DraftKings,66.0,52.4,13.6,2.24,1.5,50.0,53.2,1.01,0.038,WIN,3-2,False
+04/29/2026,Detroit Tigers @ Atlanta Braves,Detroit Tigers,Away -0.5,F5 Spread,-120.0,BetMGM,60.7,54.5,6.2,0.21,-0.5,50.0,48.5,1.01,0.038,WIN,3-2,False
+04/29/2026,Kansas City Royals @ Athletics,Kansas City Royals/Athletics,Under 5.5,F5 Total,-110.0,FanDuel,73.3,52.4,20.9,4.07,5.5,51.8,23.25,0.94,0.02,WIN,1-4,False
+04/29/2026,Kansas City Royals @ Athletics,Kansas City Royals,NRFI — Kansas City Royals @ Athletics,NRFI/YRFI,-115.0,est.,61.2,53.5,7.8,,,51.8,23.25,0.94,0.02,LOSS,1-4,False
+04/29/2026,Kansas City Royals @ Athletics,Kansas City Royals,Kansas City Royals Under 2.5,F5 Team Total,-130.0,DraftKings,60.7,56.5,4.2,2.01,2.5,50.0,23.4,0.94,0.02,WIN,1-4,False
 04/29/2026,Miami Marlins @ Los Angeles Dodgers,Los Angeles Dodgers,Home,F5 ML,-215.0,draftkings,84.6,68.3,16.3,,,62.59999999999999,56.2,0.98,0.077,LOSS,2-1,False
 04/29/2026,Miami Marlins @ Los Angeles Dodgers,Los Angeles Dodgers,Home,F5 Spread,105.0,betmgm,88.9,48.8,40.1,-1.0,1.0,49.1,56.2,0.98,0.077,LOSS,2-1,False
 04/29/2026,New York Yankees @ Texas Rangers,Over,Over,F5 Total,122.0,fanduel,92.7,45.0,47.6,4.84,1.5,45.4,39.4,1.08,0.052,WIN,0-2,False
 04/29/2026,San Francisco Giants @ Philadelphia Phillies,NRFI,NRFI,NRFI/YRFI,-115.0,est.,63.6,53.5,10.2,,,55.8,30.9,0.99,0.005,WIN,0-0,False
-04/29/2026,Kansas City Royals @ Athletics,Kansas City Royals/Athletics,Under 5.5,F5 Total,-110.0,FanDuel,73.3,52.4,20.9,4.07,5.5,51.8,23.25,0.94,0.02,WIN,1-4,False
-04/29/2026,Arizona Diamondbacks @ Milwaukee Brewers,Milwaukee Brewers,Home,F5 ML,-118.0,FanDuel,68.2,54.1,14.1,,,64.5,44.5,1.0,0.034,LOSS,4-2,False
-04/29/2026,Arizona Diamondbacks @ Milwaukee Brewers,Milwaukee Brewers,Home -0.5,F5 Spread,118.0,FanDuel,68.1,45.9,22.2,-0.72,-0.5,64.5,44.5,1.0,0.034,LOSS,4-2,False
-04/29/2026,Colorado Rockies @ Cincinnati Reds,Colorado Rockies/Cincinnati Reds,Under 5.5,F5 Total,-110.0,FanDuel,67.4,52.4,15.1,4.46,5.5,50.0,39.9,1.0,-0.061,WIN,5-0,False
-04/29/2026,Colorado Rockies @ Cincinnati Reds,Cincinnati Reds,Home -0.5,F5 Spread,105.0,BetMGM,67.2,48.8,18.4,-0.66,-0.5,50.0,63.6,1.0,-0.061,LOSS,5-0,False
-04/29/2026,Detroit Tigers @ Atlanta Braves,Atlanta Braves,Atlanta Braves Over 1.5,F5 Team Total,-110.0,DraftKings,66.0,52.4,13.6,2.24,1.5,50.0,53.2,1.01,0.038,WIN,3-2,False
-04/29/2026,Colorado Rockies @ Cincinnati Reds,Cincinnati Reds,Home,F5 ML,-125.0,BetMGM,65.5,55.6,10.0,,,50.0,63.6,1.0,-0.061,LOSS,5-0,False
 04/29/2026,San Francisco Giants @ Philadelphia Phillies,San Francisco Giants,San Francisco Giants Over 1.5,F5 Team Total,115.0,TheScore,64.7,46.5,18.2,2.18,1.5,56.2,25.0,1.12,0.031,LOSS,0-0,False
-04/29/2026,Colorado Rockies @ Cincinnati Reds,Colorado Rockies,Colorado Rockies Under 2.5,F5 Team Total,-125.0,DraftKings,63.9,55.6,8.3,1.86,2.5,50.0,16.2,1.0,-0.061,LOSS,5-0,False
-04/29/2026,St. Louis Cardinals @ Pittsburgh Pirates,Pittsburgh Pirates,Pittsburgh Pirates Under 2.5,F5 Team Total,-145.0,DraftKings,63.5,59.2,4.3,1.88,2.5,54.9,36.1,0.96,0.08,WIN,3-1,False
 04/29/2026,San Francisco Giants @ Philadelphia Phillies,San Francisco Giants/Philadelphia Phillies,Over 3.5,F5 Total,-120.0,FanDuel,62.6,54.5,8.1,4.24,3.5,51.25,27.7,1.12,0.031,LOSS,0-0,False
 04/29/2026,San Francisco Giants @ Philadelphia Phillies,Philadelphia Phillies,Philadelphia Phillies Over 1.5,F5 Team Total,-140.0,TheScore,62.2,58.3,3.9,2.06,1.5,50.0,30.4,1.12,0.031,LOSS,0-0,False
 04/29/2026,San Francisco Giants @ Philadelphia Phillies,San Francisco Giants,YRFI — San Francisco Giants @ Philadelphia Phillies,NRFI/YRFI,-105.0,est.,62.2,51.2,11.0,,,51.25,27.7,1.12,0.031,LOSS,0-0,False
 04/29/2026,San Francisco Giants @ Philadelphia Phillies,Philadelphia Phillies,Home -0.5,F5 Spread,-106.0,FanDuel,61.3,51.5,9.9,-0.25,-0.5,50.0,30.4,1.12,0.031,WIN,0-0,False
-04/29/2026,Kansas City Royals @ Athletics,Kansas City Royals,NRFI — Kansas City Royals @ Athletics,NRFI/YRFI,-115.0,est.,61.2,53.5,7.8,,,51.8,23.25,0.94,0.02,LOSS,1-4,False
-04/29/2026,Washington Nationals @ New York Mets,Washington Nationals,Washington Nationals Over 1.5,F5 Team Total,100.0,DraftKings,61.2,50.0,11.2,2.01,1.5,50.0,44.4,0.96,0.08,WIN,9-2,False
+04/29/2026,St. Louis Cardinals @ Pittsburgh Pirates,Pittsburgh Pirates,Pittsburgh Pirates Under 2.5,F5 Team Total,-145.0,DraftKings,63.5,59.2,4.3,1.88,2.5,54.9,36.1,0.96,0.08,WIN,3-1,False
 04/29/2026,St. Louis Cardinals @ Pittsburgh Pirates,St. Louis Cardinals,St. Louis Cardinals Over 1.5,F5 Team Total,-150.0,TheScore,61.2,60.0,1.2,2.01,1.5,50.0,44.4,0.96,0.08,WIN,3-1,False
-04/29/2026,Detroit Tigers @ Atlanta Braves,Detroit Tigers,Away -0.5,F5 Spread,-120.0,BetMGM,60.7,54.5,6.2,0.21,-0.5,50.0,48.5,1.01,0.038,WIN,3-2,False
-04/29/2026,Kansas City Royals @ Athletics,Kansas City Royals,Kansas City Royals Under 2.5,F5 Team Total,-130.0,DraftKings,60.7,56.5,4.2,2.01,2.5,50.0,23.4,0.94,0.02,WIN,1-4,False
 04/29/2026,St. Louis Cardinals @ Pittsburgh Pirates,St. Louis Cardinals/Pittsburgh Pirates,Under 4.5,F5 Total,-108.0,FanDuel,60.5,51.9,8.5,3.89,4.5,48.95,40.25,0.96,0.08,WIN,3-1,False
+04/29/2026,Washington Nationals @ New York Mets,Washington Nationals,Washington Nationals Over 1.5,F5 Team Total,100.0,DraftKings,61.2,50.0,11.2,2.01,1.5,50.0,44.4,0.96,0.08,WIN,9-2,False
 04/30/2026,St. Louis Cardinals @ Pittsburgh Pirates,Pittsburgh Pirates,Home,F5 Spread,122.0,fanduel,80.9,45.0,35.9,-1.0,1.0,54.3,50.0,0.96,0.0,LOSS,5-3,False
 05/01/2026,Arizona Diamondbacks @ Chicago Cubs,Over,Over,F5 Total,-122.0,fanduel,79.7,55.0,24.7,5.41,3.5,46.2,49.2,1.06,0.003,WIN,1-6,False
-05/02/2026,Cleveland Guardians @ Athletics,Cleveland Guardians/Athletics,Under 5.8,F5 Total,100.0,FanDuel,70.1,50.0,20.1,4.59,5.8,44.85,50.0,1.0,0.0,PENDING,,False
-05/02/2026,Kansas City Royals @ Seattle Mariners,Kansas City Royals,Kansas City Royals Over 1.5,F5 Team Total,-120.0,TheScore,69.3,54.5,14.8,2.41,1.5,52.4,,1.0,0.0,PENDING,,False
-05/02/2026,Arizona Diamondbacks @ Chicago Cubs,Chicago Cubs,Home,F5 ML,-160.0,BetMGM,69.2,61.5,7.7,,,50.0,,1.02,-0.003,PENDING,,False
-05/02/2026,Atlanta Braves @ Colorado Rockies,Atlanta Braves,Away -0.8,F5 Spread,105.0,BetMGM,67.9,48.8,19.2,0.38,-0.8333333333333334,50.0,,1.0,0.0,PENDING,,False
-05/02/2026,Arizona Diamondbacks @ Chicago Cubs,Chicago Cubs,Home -0.5,F5 Spread,-110.0,FanDuel,67.4,52.4,15.0,-0.67,-0.5,50.0,,1.02,-0.003,PENDING,,False
-05/02/2026,San Francisco Giants @ Tampa Bay Rays,San Francisco Giants,NRFI — San Francisco Giants @ Tampa Bay Rays,NRFI/YRFI,-115.0,est.,66.4,53.5,12.9,,,55.8,27.299999999999997,0.99,0.005,PENDING,,False
-05/02/2026,New York Mets @ Los Angeles Angels,Los Angeles Angels,Los Angeles Angels Over 1.5,F5 Team Total,-120.0,DraftKings,66.1,54.5,11.6,2.25,1.5,50.0,,1.0,0.0,PENDING,,False
-05/02/2026,Atlanta Braves @ Colorado Rockies,Colorado Rockies,Colorado Rockies Over 1.5,F5 Team Total,-125.0,DraftKings,66.1,55.6,10.6,2.25,1.5,50.0,,1.0,0.0,PENDING,,False
-05/02/2026,Baltimore Orioles @ New York Yankees,Baltimore Orioles,Baltimore Orioles Over 1.5,F5 Team Total,-130.0,DraftKings,66.1,56.5,9.6,2.25,1.5,50.0,,1.0,0.0,PENDING,,False
+05/02/2026,Arizona Diamondbacks @ Chicago Cubs,Chicago Cubs,Home -0.5,F5 Spread,-110.0,BetMGM,67.6,52.4,15.2,-0.69,-0.5,64.5,44.5,1.0,0.034,PENDING,,False
+05/02/2026,Arizona Diamondbacks @ Chicago Cubs,Chicago Cubs,Home,F5 ML,-160.0,BetMGM,67.0,61.5,5.4,,,64.5,44.5,1.0,0.034,PENDING,,False
+05/02/2026,Atlanta Braves @ Colorado Rockies,Atlanta Braves,Away -0.8,F5 Spread,105.0,BetMGM,67.8,48.8,19.0,0.37,-0.8333333333333334,50.0,,1.0,0.0,PENDING,,False
+05/02/2026,Atlanta Braves @ Colorado Rockies,Colorado Rockies,Colorado Rockies Over 1.5,F5 Team Total,-135.0,DraftKings,66.1,57.4,8.7,2.25,1.5,50.0,,1.0,0.0,PENDING,,False
+05/02/2026,Atlanta Braves @ Colorado Rockies,Atlanta Braves,Away,F5 ML,-200.0,Caesars,64.3,66.7,-2.4,,,50.0,,1.0,0.0,PENDING,,False
+05/02/2026,Baltimore Orioles @ New York Yankees,New York Yankees,New York Yankees Under 2.5,F5 Team Total,-125.0,DraftKings,63.9,55.6,8.3,1.86,2.5,56.2,27.1,1.0,0.044,PENDING,,False
+05/02/2026,Baltimore Orioles @ New York Yankees,Baltimore Orioles/New York Yankees,Under 4.5,F5 Total,-105.0,Caesars,62.5,51.2,11.2,3.77,4.5,49.4,28.75,1.0,0.044,PENDING,,False
+05/02/2026,Baltimore Orioles @ New York Yankees,New York Yankees,Home -0.5,F5 Spread,-110.0,FanDuel,62.2,52.4,9.8,-0.31,-0.5,56.2,27.1,1.0,0.044,PENDING,,False
+05/02/2026,Chicago White Sox @ San Diego Padres,San Diego Padres,San Diego Padres Under 2.5,F5 Team Total,-120.0,TheScore,63.5,54.5,8.9,1.88,2.5,48.3,49.8,0.95,0.012,PENDING,,False
+05/02/2026,Chicago White Sox @ San Diego Padres,Chicago White Sox/San Diego Padres,Under 4.5,F5 Total,-118.0,BetMGM,61.6,54.1,7.5,3.82,4.5,60.75,44.4,0.95,0.012,PENDING,,False
+05/02/2026,Chicago White Sox @ San Diego Padres,San Diego Padres,Home -0.5,F5 Spread,-120.0,FanDuel,60.7,54.5,6.2,-0.21,-0.5,48.3,49.8,0.95,0.012,PENDING,,False
+05/02/2026,Cincinnati Reds @ Pittsburgh Pirates,Pittsburgh Pirates,Pittsburgh Pirates Under 2.5,F5 Team Total,-140.0,DraftKings,63.5,58.3,5.1,1.88,2.5,54.9,36.1,0.96,0.08,PENDING,,False
+05/02/2026,Cincinnati Reds @ Pittsburgh Pirates,Cincinnati Reds,Cincinnati Reds Over 1.5,F5 Team Total,-130.0,TheScore,61.2,56.5,4.6,2.01,1.5,50.0,44.4,0.96,0.08,PENDING,,False
+05/02/2026,Cincinnati Reds @ Pittsburgh Pirates,Cincinnati Reds/Pittsburgh Pirates,Under 4.5,F5 Total,-105.0,Caesars,60.5,51.2,9.2,3.89,4.5,48.95,40.25,0.96,0.08,PENDING,,False
+05/02/2026,Cleveland Guardians @ Athletics,Cleveland Guardians/Athletics,Under 5.7,F5 Total,100.0,FanDuel,83.6,50.0,33.6,3.45,5.7,55.0,30.549999999999997,0.97,0.004,PENDING,,False
+05/02/2026,Cleveland Guardians @ Athletics,Cleveland Guardians,Cleveland Guardians Under 2.5,F5 Team Total,-125.0,DraftKings,67.2,55.6,11.6,1.7,2.5,50.0,31.7,0.97,0.004,PENDING,,False
+05/02/2026,Cleveland Guardians @ Athletics,Athletics,Athletics Under 2.5,F5 Team Total,114.0,DraftKings,66.1,46.7,19.4,1.75,2.5,54.5,29.4,0.97,0.004,PENDING,,False
+05/02/2026,Cleveland Guardians @ Athletics,Athletics,Home -0.5,F5 Spread,-106.0,FanDuel,62.4,51.5,10.9,-0.32,-0.5,54.5,29.4,0.97,0.004,PENDING,,False
+05/02/2026,Houston Astros @ Boston Red Sox,Boston Red Sox,Home -0.5,F5 Spread,108.0,FanDuel,60.3,48.1,12.2,-0.18,-0.5,50.0,,1.0,0.0,PENDING,,False
+05/02/2026,Kansas City Royals @ Seattle Mariners,Seattle Mariners,Seattle Mariners Over 1.5,F5 Team Total,-160.0,TheScore,62.2,61.5,0.7,2.06,1.5,54.1,23.1,0.94,0.02,PENDING,,False
+05/02/2026,Kansas City Royals @ Seattle Mariners,Kansas City Royals,NRFI — Kansas City Royals @ Seattle Mariners,NRFI/YRFI,-115.0,est.,61.2,53.5,7.8,,,51.8,23.25,0.94,0.02,PENDING,,False
+05/02/2026,Kansas City Royals @ Seattle Mariners,Kansas City Royals,Kansas City Royals Over 1.5,F5 Team Total,-120.0,TheScore,61.2,54.5,6.6,2.01,1.5,50.0,23.4,0.94,0.02,PENDING,,False
+05/02/2026,Kansas City Royals @ Seattle Mariners,Seattle Mariners,Home -0.5,F5 Spread,110.0,BetMGM,60.9,47.6,13.3,-0.22,-0.5,54.1,23.1,0.94,0.02,PENDING,,False
+05/02/2026,Los Angeles Dodgers @ St. Louis Cardinals,Los Angeles Dodgers/St. Louis Cardinals,Under 4.8,F5 Total,-102.0,FanDuel,72.1,50.5,21.6,3.45,4.8,55.0,30.549999999999997,0.97,0.004,PENDING,,False
+05/02/2026,Los Angeles Dodgers @ St. Louis Cardinals,Los Angeles Dodgers,Los Angeles Dodgers Under 2.5,F5 Team Total,-135.0,DraftKings,67.2,57.4,9.7,1.7,2.5,50.0,31.7,0.97,0.004,PENDING,,False
+05/02/2026,Los Angeles Dodgers @ St. Louis Cardinals,St. Louis Cardinals,Home,F5 ML,105.0,Caesars,61.9,48.8,13.1,,,54.5,29.4,0.97,0.004,PENDING,,False
 05/02/2026,Milwaukee Brewers @ Washington Nationals,Washington Nationals,Washington Nationals Over 1.5,F5 Team Total,-130.0,DraftKings,66.1,56.5,9.6,2.25,1.5,50.0,,1.0,0.0,PENDING,,False
 05/02/2026,Milwaukee Brewers @ Washington Nationals,Milwaukee Brewers,Milwaukee Brewers Over 1.5,F5 Team Total,-140.0,DraftKings,66.1,58.3,7.8,2.25,1.5,50.0,,1.0,0.0,PENDING,,False
-05/02/2026,Texas Rangers @ Detroit Tigers,Texas Rangers,Texas Rangers Over 1.5,F5 Team Total,-140.0,DraftKings,66.1,58.3,7.8,2.25,1.5,50.0,,1.0,0.0,PENDING,,False
-05/02/2026,Philadelphia Phillies @ Miami Marlins,Philadelphia Phillies,Philadelphia Phillies Over 1.5,F5 Team Total,-150.0,TheScore,66.1,60.0,6.2,2.25,1.5,50.0,,1.0,0.0,PENDING,,False
-05/02/2026,Houston Astros @ Boston Red Sox,Houston Astros/Boston Red Sox,Under 4.8,F5 Total,104.0,FanDuel,65.1,49.0,16.0,3.91,4.8,60.5,50.0,1.0,0.0,PENDING,,False
-05/02/2026,Atlanta Braves @ Colorado Rockies,Atlanta Braves,Away,F5 ML,-200.0,Caesars,64.6,66.7,-2.1,,,50.0,,1.0,0.0,PENDING,,False
-05/02/2026,Cincinnati Reds @ Pittsburgh Pirates,Pittsburgh Pirates,Pittsburgh Pirates Under 2.5,F5 Team Total,-145.0,TheScore,64.1,59.2,4.9,1.85,2.5,50.0,39.1,0.96,-0.039,PENDING,,False
-05/02/2026,Chicago White Sox @ San Diego Padres,San Diego Padres,Home -0.5,F5 Spread,-122.0,FanDuel,64.0,55.0,9.1,-0.43,-0.5,50.0,41.1,0.95,0.059,PENDING,,False
-05/02/2026,Cincinnati Reds @ Pittsburgh Pirates,Cincinnati Reds/Pittsburgh Pirates,Under 4.5,F5 Total,-105.0,Caesars,63.4,51.2,12.2,3.71,4.5,47.8,40.25,0.96,-0.039,PENDING,,False
-05/02/2026,Arizona Diamondbacks @ Chicago Cubs,Arizona Diamondbacks,Arizona Diamondbacks Over 1.5,F5 Team Total,114.0,DraftKings,63.3,46.7,16.5,2.11,1.5,44.0,,1.02,-0.003,PENDING,,False
-05/02/2026,Arizona Diamondbacks @ Chicago Cubs,Arizona Diamondbacks/Chicago Cubs,Over 3.8,F5 Total,100.0,Caesars,63.3,50.0,13.3,4.58,3.8,48.85,50.0,1.02,-0.003,PENDING,,False
-05/02/2026,Houston Astros @ Boston Red Sox,Houston Astros,Houston Astros Under 2.5,F5 Team Total,-140.0,TheScore,62.9,58.3,4.5,1.91,2.5,50.0,,1.0,0.0,PENDING,,False
-05/02/2026,Chicago White Sox @ San Diego Padres,San Diego Padres,Home,F5 ML,-182.0,FanDuel,62.8,64.5,-1.7,,,50.0,41.1,0.95,0.059,PENDING,,False
-05/02/2026,Baltimore Orioles @ New York Yankees,New York Yankees,Home -0.5,F5 Spread,-110.0,FanDuel,62.2,52.4,9.8,-0.31,-0.5,50.0,,1.0,0.0,PENDING,,False
 05/02/2026,Milwaukee Brewers @ Washington Nationals,Milwaukee Brewers/Washington Nationals,Over 3.8,F5 Total,-115.0,Caesars,62.0,53.5,8.5,4.5,3.8,50.0,50.0,1.0,0.0,PENDING,,False
-05/02/2026,Toronto Blue Jays @ Minnesota Twins,Toronto Blue Jays/Minnesota Twins,Under 4.2,F5 Total,-102.0,BetMGM,61.8,50.5,11.3,3.51,4.2,47.4,42.849999999999994,0.98,-0.009,PENDING,,False
-05/02/2026,Toronto Blue Jays @ Minnesota Twins,Toronto Blue Jays,Away -0.5,F5 Spread,105.0,BetMGM,61.7,48.8,12.9,0.27,-0.5,53.6,47.9,0.98,-0.009,PENDING,,False
-05/02/2026,Houston Astros @ Boston Red Sox,Boston Red Sox,Home -0.5,F5 Spread,106.0,FanDuel,61.6,48.5,13.0,-0.26,-0.5,50.0,,1.0,0.0,PENDING,,False
-05/02/2026,Chicago White Sox @ San Diego Padres,Chicago White Sox,Chicago White Sox Over 1.5,F5 Team Total,-110.0,DraftKings,61.4,52.4,9.0,2.02,1.5,50.0,50.8,0.95,0.059,PENDING,,False
-05/02/2026,Houston Astros @ Boston Red Sox,Boston Red Sox,Boston Red Sox Under 2.5,F5 Team Total,-125.0,TheScore,60.9,55.6,5.4,2.0,2.5,50.0,,1.0,0.0,PENDING,,False
-05/02/2026,Toronto Blue Jays @ Minnesota Twins,Toronto Blue Jays,Away,F5 ML,-135.0,BetMGM,60.0,57.4,2.6,,,53.6,47.9,0.98,-0.009,PENDING,,False
-05/02/2026,Philadelphia Phillies @ Miami Marlins,Miami Marlins,Home -0.5,F5 Spread,106.0,FanDuel,60.0,48.5,11.5,-0.16,-0.5,50.0,,1.0,0.0,PENDING,,False
+05/02/2026,New York Mets @ Los Angeles Angels,Los Angeles Angels,Los Angeles Angels Over 1.5,F5 Team Total,-125.0,DraftKings,69.7,55.6,14.2,2.43,1.5,58.0,60.4,0.98,-0.027,PENDING,,False
+05/02/2026,New York Mets @ Los Angeles Angels,Los Angeles Angels,Home,F5 ML,112.0,FanDuel,61.0,47.2,13.8,,,58.0,60.4,0.98,-0.027,PENDING,,False
+05/02/2026,Philadelphia Phillies @ Miami Marlins,Philadelphia Phillies,Philadelphia Phillies Over 1.5,F5 Team Total,-150.0,TheScore,66.1,60.0,6.2,2.25,1.5,50.0,,1.0,0.0,PENDING,,False
+05/02/2026,Philadelphia Phillies @ Miami Marlins,Miami Marlins,Home -0.5,F5 Spread,115.0,BetMGM,62.3,46.5,15.8,-0.31,-0.5,50.0,,1.0,0.0,PENDING,,False
+05/02/2026,San Francisco Giants @ Tampa Bay Rays,San Francisco Giants,San Francisco Giants Over 1.5,F5 Team Total,-140.0,DraftKings,64.7,58.3,6.4,2.18,1.5,56.2,25.0,1.12,0.031,PENDING,,False
+05/02/2026,San Francisco Giants @ Tampa Bay Rays,Tampa Bay Rays,Tampa Bay Rays Over 1.5,F5 Team Total,-135.0,DraftKings,62.2,57.4,4.8,2.06,1.5,50.0,30.4,1.12,0.031,PENDING,,False
+05/02/2026,San Francisco Giants @ Tampa Bay Rays,San Francisco Giants,YRFI — San Francisco Giants @ Tampa Bay Rays,NRFI/YRFI,-105.0,est.,62.2,51.2,11.0,,,51.25,27.7,1.12,0.031,PENDING,,False
+05/02/2026,Texas Rangers @ Detroit Tigers,Texas Rangers,Away,F5 ML,102.0,FanDuel,65.5,49.5,16.0,,,65.9,34.6,1.0,0.02,PENDING,,False
+05/02/2026,Texas Rangers @ Detroit Tigers,Detroit Tigers,Detroit Tigers Under 2.5,F5 Team Total,-145.0,TheScore,64.3,59.2,5.1,1.84,2.5,61.7,21.9,1.0,0.02,PENDING,,False
+05/02/2026,Texas Rangers @ Detroit Tigers,Texas Rangers,Texas Rangers Over 1.5,F5 Team Total,-140.0,DraftKings,63.1,58.3,4.7,2.1,1.5,65.9,34.6,1.0,0.02,PENDING,,False
+05/02/2026,Toronto Blue Jays @ Minnesota Twins,Minnesota Twins,Minnesota Twins Over 1.5,F5 Team Total,-120.0,DraftKings,61.4,54.5,6.8,2.02,1.5,64.2,47.1,1.02,0.014,PENDING,,False
+05/02/2026,Toronto Blue Jays @ Minnesota Twins,Toronto Blue Jays,Toronto Blue Jays Over 1.5,F5 Team Total,-145.0,DraftKings,61.4,59.2,2.2,2.02,1.5,77.4,36.2,1.02,0.014,PENDING,,False
+05/02/2026,Toronto Blue Jays @ Minnesota Twins,Toronto Blue Jays,NRFI — Toronto Blue Jays @ Minnesota Twins,NRFI/YRFI,-115.0,est.,61.2,53.5,7.7,,,72.55000000000001,41.650000000000006,1.02,0.014,PENDING,,False
+05/02/2026,Cleveland Guardians @ Athletics,Under,Under,F5 Total,-118.0,betmgm,77.1,54.1,23.0,4.29,6.0,51.6,50.0,1.0,0.042,PENDING,,False
