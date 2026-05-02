@@ -1533,45 +1533,51 @@ elif page == "🎯 Bet Signals":
                             })
 
             # ── F5 Total signals ──────────────────────────────────────────────
+            # Evaluate each side at each book's actual line (5.0 / 5.5 / 6.0)
+            # rather than against an averaged "consensus" — averaging produces
+            # phantom lines like 5.8 that aren't bookable anywhere.
             total_books_all = [b for b in BOOK_LABELS if b in odds_data["total"]]
             total_books_rec = [b for b in REC_BOOKS  if b in odds_data["total"]]
             total_books     = total_books_all  # used for line selection only
             if total_books_rec:
-                all_lines = [odds_data["total"][b]["over_line"]
-                             for b in total_books_rec if odds_data["total"][b].get("over_line") is not None]
-                if all_lines:
-                    consensus_total = round(sum(all_lines)/len(all_lines), 1)
-                    model_t = calc_model_total(eff_asp, eff_hsp, eff_away_lu, eff_home_lu, pf, ump_k,
-                                           away_sp.get("era"), home_sp.get("era"),
-                                           ump_run_fac, wx_wind_mult, wx_temp_mult)
-                    over_p  = over_prob(model_t, consensus_total)
-                    under_p = 1 - over_p
+                model_t = calc_model_total(eff_asp, eff_hsp, eff_away_lu, eff_home_lu, pf, ump_k,
+                                       away_sp.get("era"), home_sp.get("era"),
+                                       ump_run_fac, wx_wind_mult, wx_temp_mult)
 
-                    best_over_bk  = max(total_books_rec, key=lambda b: odds_data["total"][b].get("over_price",-200) or -200)
-                    best_under_bk = max(total_books_rec, key=lambda b: odds_data["total"][b].get("under_price",-200) or -200)
-                    over_ml  = odds_data["total"][best_over_bk].get("over_price")  or -110
-                    under_ml = odds_data["total"][best_under_bk].get("under_price") or -110
-                    mkt_over_p  = american_to_prob(over_ml)  or 0.524
-                    mkt_under_p = american_to_prob(under_ml) or 0.524
+                # Build per-book candidates for each side, pick the one with
+                # the highest edge — that's both the best price AND the
+                # most-favorable line at that book.
+                for side, price_key in [("Over", "over_price"), ("Under", "under_price")]:
+                    candidates = []
+                    for b in total_books_rec:
+                        d = odds_data["total"][b]
+                        line  = d.get("over_line")
+                        price = d.get(price_key)
+                        if line is None or price is None:
+                            continue
+                        p_over  = over_prob(model_t, line)
+                        model_p = p_over if side == "Over" else 1 - p_over
+                        mkt_p   = american_to_prob(price) or 0.524
+                        edge    = model_p - mkt_p
+                        candidates.append((b, price, float(line), model_p, mkt_p, edge))
+                    if not candidates:
+                        continue
+                    candidates.sort(key=lambda x: (x[5], x[3]), reverse=True)
+                    best_bk, best_price, best_line, model_p, mkt_p, edge = candidates[0]
 
-                    for side, model_p, mkt_p, ml, bk, team in [
-                        (f"Over {consensus_total}",  over_p,  mkt_over_p,  over_ml,  best_over_bk,  f"{away}/{home}"),
-                        (f"Under {consensus_total}", under_p, mkt_under_p, under_ml, best_under_bk, f"{away}/{home}"),
-                    ]:
-                        edge = model_p - mkt_p
-                        if model_p >= 0.52:
-                            k = kelly_rounded(max(edge,0), ml, bankroll, kelly_frac, max_pct)
-                            signals.append({
-                                "game":game_tag,"time":time_et,"team":team,
-                                "abv":abv_away,"away_abv":abv_away,"home_abv":abv_home,
-                                "side":side,"market":"F5 Total",
-                                "edge":edge,"ml":ml,"book":BOOK_LABELS.get(bk,bk),
-                                "model_p":model_p,"mkt_p":mkt_p,"kelly":k,
-                                "sp_score":(eff_asp+eff_hsp)/2,"lu_score":((away_lu or 50)+(home_lu or 50))/2,
-                                "form_score":0,"days_rest":None,"weather":wx,
-                                "park_factor":pf,"ump_k":ump_k,"ump_zone":ump_zone,
-                                "model_line":model_t,"mkt_line":consensus_total,
-                            })
+                    if model_p >= 0.52:
+                        k = kelly_rounded(max(edge, 0), best_price, bankroll, kelly_frac, max_pct)
+                        signals.append({
+                            "game":game_tag,"time":time_et,"team":f"{away}/{home}",
+                            "abv":abv_away,"away_abv":abv_away,"home_abv":abv_home,
+                            "side":f"{side} {best_line}","market":"F5 Total",
+                            "edge":edge,"ml":best_price,"book":BOOK_LABELS.get(best_bk,best_bk),
+                            "model_p":model_p,"mkt_p":mkt_p,"kelly":k,
+                            "sp_score":(eff_asp+eff_hsp)/2,"lu_score":((away_lu or 50)+(home_lu or 50))/2,
+                            "form_score":0,"days_rest":None,"weather":wx,
+                            "park_factor":pf,"ump_k":ump_k,"ump_zone":ump_zone,
+                            "model_line":model_t,"mkt_line":best_line,
+                        })
 
             # ── F5 Team Total signals ─────────────────────────────────────────
             tt_books = [b for b in BOOK_LABELS if b in odds_data["team_total"]]
@@ -1581,6 +1587,8 @@ elif page == "🎯 Bet Signals":
             m_away_tt, m_home_tt = calc_model_team_totals(model_t, eff_away_lu, eff_home_lu, eff_asp, eff_hsp)
 
             if tt_books:
+                # Per-book evaluation — same fix pattern as F5 Total. Avoids
+                # phantom averaged team-total lines like 2.2 / 2.7 etc.
                 for tm, abv, m_tt, sp_s, lu_s in [
                     (away, abv_away, m_away_tt, asp, away_lu),
                     (home, abv_home, m_home_tt, hsp, home_lu),
@@ -1589,31 +1597,35 @@ elif page == "🎯 Bet Signals":
                     mkt_lines = [(b, odds_data["team_total"][b][tt_side])
                                  for b in tt_books if tt_side in odds_data["team_total"][b]]
                     if not mkt_lines: continue
-                    best_over_bk  = max(mkt_lines, key=lambda x: x[1].get("over_price",-200)  or -200)[0]
-                    best_under_bk = max(mkt_lines, key=lambda x: x[1].get("under_price",-200) or -200)[0]
-                    all_tt_lines  = [x[1].get("over_line") for x in mkt_lines if x[1].get("over_line") is not None]
-                    if not all_tt_lines: continue
-                    mkt_tt = sum(all_tt_lines)/len(all_tt_lines)
-                    over_ml  = odds_data["team_total"][best_over_bk][tt_side].get("over_price")  or -110
-                    under_ml = odds_data["team_total"][best_under_bk][tt_side].get("under_price") or -110
-                    ov_p = over_prob(m_tt, mkt_tt, sigma=1.8)
-                    un_p = 1 - ov_p
-                    for side, model_p, mkt_p, ml, bk in [
-                        (f"{tm} Over {mkt_tt}",  ov_p, american_to_prob(over_ml)  or 0.524, over_ml,  best_over_bk),
-                        (f"{tm} Under {mkt_tt}", un_p, american_to_prob(under_ml) or 0.524, under_ml, best_under_bk),
-                    ]:
-                        edge = model_p - mkt_p
+
+                    for side, price_key in [("Over", "over_price"), ("Under", "under_price")]:
+                        candidates = []
+                        for b, d in mkt_lines:
+                            line  = d.get("over_line")
+                            price = d.get(price_key)
+                            if line is None or price is None:
+                                continue
+                            ov_p    = over_prob(m_tt, line, sigma=1.8)
+                            model_p = ov_p if side == "Over" else 1 - ov_p
+                            mkt_p   = american_to_prob(price) or 0.524
+                            edge    = model_p - mkt_p
+                            candidates.append((b, price, float(line), model_p, mkt_p, edge))
+                        if not candidates:
+                            continue
+                        candidates.sort(key=lambda x: (x[5], x[3]), reverse=True)
+                        best_bk, best_price, best_line, model_p, mkt_p, edge = candidates[0]
+
                         if model_p >= 0.52:
-                            k = kelly_rounded(max(edge,0), ml, bankroll, kelly_frac, max_pct)
+                            k = kelly_rounded(max(edge, 0), best_price, bankroll, kelly_frac, max_pct)
                             signals.append({
                                 "game":game_tag,"time":time_et,"team":tm,"abv":abv,
                                 "away_abv":abv_away,"home_abv":abv_home,
-                                "side":side,"market":"F5 Team Total",
-                                "edge":edge,"ml":ml,"book":BOOK_LABELS.get(bk,bk),
+                                "side":f"{tm} {side} {best_line}","market":"F5 Team Total",
+                                "edge":edge,"ml":best_price,"book":BOOK_LABELS.get(best_bk,best_bk),
                                 "model_p":model_p,"mkt_p":mkt_p,"kelly":k,
                                 "sp_score":sp_s,"lu_score":lu_s,
                                 "park_factor":pf,"ump_k":ump_k,"ump_zone":ump_zone,
-                                "model_line":m_tt,"mkt_line":mkt_tt,
+                                "model_line":m_tt,"mkt_line":best_line,
                             })
             else:
                 # No market data — show model estimate only if strongly leaning
