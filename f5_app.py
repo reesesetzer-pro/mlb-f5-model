@@ -36,6 +36,24 @@ BOOK_LABELS = {
     "hardrockbet":    "Hard Rock",
 }
 REC_BOOKS = {"draftkings","fanduel","betmgm","williamhill_us","espnbet","fanatics","hardrockbet"}
+
+# ── Market gating ────────────────────────────────────────────────────────────
+# After the 2026-05-03 audit (lifetime $20-unit P&L by market) — only F5 Total
+# was profitable (+8.8% ROI). Everything else was losing money:
+#   F5 ML        -24.4%
+#   F5 Spread    -18.0%   (also had a grading sign bug + line-averaging bug)
+#   F5 Team Total -7.7%
+#   NRFI/YRFI    -36.8%
+# Cut all non-Total markets pending rebuild. Re-enable a market by adding it
+# to ENABLED_MARKETS once the rebuild has been validated against shadow picks.
+ENABLED_MARKETS = {
+    "F5 Total",
+    # "F5 ML",           # disabled 2026-05-03 — pending rebuild
+    # "F5 Spread",       # disabled 2026-05-03 — pending rebuild
+    # "F5 Team Total",   # disabled 2026-05-03 — pending rebuild
+    # "NRFI/YRFI",       # disabled 2026-05-03 — pending rebuild
+    # "1st Inn U1.5",    # disabled 2026-05-03 — pending rebuild
+}
 _APP_DIR          = os.path.dirname(os.path.abspath(__file__))
 TRACKER_FILE      = os.path.join(_APP_DIR, "bet_tracker.csv")
 SP_FILE           = os.path.join(_APP_DIR, "sp_data.csv")
@@ -825,11 +843,14 @@ def _norm_cdf(x):
 
 def cover_prob(model_diff, spread_line, sigma=2.6):
     """
-    P(away covers spread_line) using normal distribution.
+    P(away covers `spread_line`) using normal distribution.
+    `spread_line` is the away team's signed runline as posted by the book
+    (negative when away is favored, e.g. -1.5 means away must win by >1.5).
     model_diff = expected away run advantage (positive = away wins).
     sigma calibrated to F5 run distribution (~2.6 std dev).
     """
-    return round(_norm_cdf((model_diff - spread_line) / sigma), 4)
+    # Away covers iff diff > -spread_line (e.g. spread_line=-1.5 → must win by >1.5)
+    return round(_norm_cdf((model_diff + spread_line) / sigma), 4)
 
 def over_prob(model_total, line, sigma=2.3):
     """P(total goes over line). sigma calibrated to F5 total distribution."""
@@ -1467,6 +1488,8 @@ elif page == "🎯 Bet Signals":
                 ("Home", model_home-mkt_home, best_home_ml, best_home_bk, model_home, mkt_home,
                  hsp, home_lu, eff_home_lu, home_matchup, home_platoon_adv, home, abv_home),
             ]:
+                if "F5 ML" not in ENABLED_MARKETS:
+                    continue
                 if model_p >= 0.52:
                     k = kelly_rounded(max(edge,0), ml, bankroll, kelly_frac, max_pct)
                     signals.append({
@@ -1491,46 +1514,54 @@ elif page == "🎯 Bet Signals":
                     })
 
             # ── F5 Spread signals ─────────────────────────────────────────────
+            # Per-book evaluation — same fix pattern as F5 Total. Avoids the
+            # mismatch where averaging book lines produced a phantom spread
+            # (e.g. -0.8 from books split between -0.5 and -1.5) that was then
+            # priced against a single book's actual price for a different line.
             spread_books = [b for b in BOOK_LABELS if b in odds_data["spread"]]
-            if spread_books:
-                # Use consensus spread line
-                all_away_lines = [odds_data["spread"][b]["away"]["line"]
-                                  for b in spread_books if "away" in odds_data["spread"][b] and odds_data["spread"][b]["away"].get("line") is not None]
-                if all_away_lines:
-                    consensus_spread = sum(all_away_lines)/len(all_away_lines)
-                    model_diff = calc_model_run_diff(model_away, asp, hsp, eff_away_lu, eff_home_lu, pf)
-                    # Away covers (favorite or dog)
-                    model_cover_away = cover_prob(model_diff, consensus_spread)
-                    # Best spread odds per side
-                    best_spread_bk_away = max(spread_books, key=lambda b: odds_data["spread"][b].get("away",{}).get("price",-200) or -200)
-                    best_spread_bk_home = max(spread_books, key=lambda b: odds_data["spread"][b].get("home",{}).get("price",-200) or -200)
-                    away_spread_ml = odds_data["spread"][best_spread_bk_away].get("away",{}).get("price") or -110
-                    home_spread_ml = odds_data["spread"][best_spread_bk_home].get("home",{}).get("price") or -110
-                    mkt_cover_away = american_to_prob(away_spread_ml) or 0.524
-                    mkt_cover_home = american_to_prob(home_spread_ml) or 0.524
+            if spread_books and "F5 Spread" in ENABLED_MARKETS:
+                model_diff = calc_model_run_diff(model_away, asp, hsp, eff_away_lu, eff_home_lu, pf)
 
-                    for side, model_p, mkt_p, ml, bk, team, abv, sp_s, lu_s, cover_line in [
-                        (f"Away {'+' if consensus_spread>0 else ''}{consensus_spread:.1f}",
-                         model_cover_away, mkt_cover_away, away_spread_ml, best_spread_bk_away,
-                         away, abv_away, asp, away_lu, consensus_spread),
-                        (f"Home {'+' if -consensus_spread>0 else ''}{-consensus_spread:.1f}",
-                         1-model_cover_away, mkt_cover_home, home_spread_ml, best_spread_bk_home,
-                         home, abv_home, hsp, home_lu, -consensus_spread),
-                    ]:
-                        edge = model_p - mkt_p
-                        if model_p >= 0.52:
-                            k = kelly_rounded(max(edge,0), ml, bankroll, kelly_frac, max_pct)
-                            signals.append({
-                                "game":game_tag,"time":time_et,"team":team,"abv":abv,
-                                "away_abv":abv_away,"home_abv":abv_home,
-                                "side":side,"market":"F5 Spread",
-                                "edge":edge,"ml":ml,"book":BOOK_LABELS.get(bk,bk),
-                                "model_p":model_p,"mkt_p":mkt_p,"kelly":k,
-                                "sp_score":sp_s,"lu_score":lu_s,
-                                "form_score":0,"days_rest":None,"weather":wx,
-                                "park_factor":pf,"ump_k":ump_k,"ump_zone":ump_zone,
-                                "model_line":round(model_diff,2),"mkt_line":cover_line,
-                            })
+                for side_label, team, abv, sp_s, lu_s, side_key in [
+                    ("Away", away, abv_away, asp, away_lu, "away"),
+                    ("Home", home, abv_home, hsp, home_lu, "home"),
+                ]:
+                    candidates = []
+                    for b in spread_books:
+                        d = odds_data["spread"][b].get(side_key, {})
+                        line  = d.get("line")
+                        price = d.get("price")
+                        if line is None or price is None:
+                            continue
+                        line_f = float(line)
+                        # cover_prob expects the away runline. For the home side,
+                        # P(home covers L_h) = 1 - P(away covers -L_h).
+                        if side_key == "away":
+                            model_p = cover_prob(model_diff, line_f)
+                        else:
+                            model_p = 1 - cover_prob(model_diff, -line_f)
+                        mkt_p   = american_to_prob(price) or 0.524
+                        edge    = model_p - mkt_p
+                        candidates.append((b, int(price), line_f, model_p, mkt_p, edge))
+                    if not candidates:
+                        continue
+                    candidates.sort(key=lambda x: (x[5], x[3]), reverse=True)
+                    best_bk, best_price, best_line, model_p, mkt_p, edge = candidates[0]
+
+                    if model_p >= 0.52:
+                        k = kelly_rounded(max(edge, 0), best_price, bankroll, kelly_frac, max_pct)
+                        line_str = f"{'+' if best_line>0 else ''}{best_line:g}"
+                        signals.append({
+                            "game":game_tag,"time":time_et,"team":team,"abv":abv,
+                            "away_abv":abv_away,"home_abv":abv_home,
+                            "side":f"{side_label} {line_str}","market":"F5 Spread",
+                            "edge":edge,"ml":best_price,"book":BOOK_LABELS.get(best_bk,best_bk),
+                            "model_p":model_p,"mkt_p":mkt_p,"kelly":k,
+                            "sp_score":sp_s,"lu_score":lu_s,
+                            "form_score":0,"days_rest":None,"weather":wx,
+                            "park_factor":pf,"ump_k":ump_k,"ump_zone":ump_zone,
+                            "model_line":round(model_diff,2),"mkt_line":best_line,
+                        })
 
             # ── F5 Total signals ──────────────────────────────────────────────
             # Evaluate each side at each book's actual line (5.0 / 5.5 / 6.0)
@@ -1586,7 +1617,9 @@ elif page == "🎯 Bet Signals":
                                        ump_run_fac, wx_wind_mult, wx_temp_mult)
             m_away_tt, m_home_tt = calc_model_team_totals(model_t, eff_away_lu, eff_home_lu, eff_asp, eff_hsp)
 
-            if tt_books:
+            if "F5 Team Total" not in ENABLED_MARKETS:
+                pass        # gated off — pending rebuild
+            elif tt_books:
                 # Per-book evaluation — same fix pattern as F5 Total. Avoids
                 # phantom averaged team-total lines like 2.2 / 2.7 etc.
                 for tm, abv, m_tt, sp_s, lu_s in [
@@ -1684,6 +1717,8 @@ elif page == "🎯 Bet Signals":
                 ("NRFI", "NRFI/YRFI",    model_nrfi, "nrfi_price", away, abv_away),
                 ("YRFI", "NRFI/YRFI",    model_yrfi, "yrfi_price", away, abv_away),
             ]:
+                if market not in ENABLED_MARKETS:
+                    continue
                 prices = [fi_data[b][price_key] for b in fi_books_rec if fi_data[b].get(price_key)]
                 if prices:
                     best_price = max(prices)
@@ -2321,6 +2356,11 @@ elif page == "📚 Best Bets":
         # Collect all book-specific signals (one entry per book per side per market)
         for _mkt_key, _mkt_label in [("ml","F5 ML"), ("spread","F5 Spread"),
                                       ("total","F5 Total"), ("fi_total","NRFI/YRFI")]:
+            # Skip disabled markets entirely so Best Bets only surfaces what's
+            # been validated — currently only F5 Total. (fi_total has multiple
+            # sub-markets gated below.)
+            if _mkt_label != "NRFI/YRFI" and _mkt_label not in ENABLED_MARKETS:
+                continue
             _mkt_data = _odds.get(_mkt_key, {})
             for _bk in REC_BOOKS:
                 if _bk not in _mkt_data: continue
@@ -2376,6 +2416,8 @@ elif page == "📚 Best Bets":
                         ("yrfi_price","YRFI","NRFI/YRFI"),
                         ("u15_price","1st Inn U1.5","1st Inn U1.5"),
                     ]:
+                        if _smkt not in ENABLED_MARKETS:
+                            continue
                         _price = _bdata.get(_pk)
                         if not _price: continue
                         _bb_signals.append({
@@ -3144,6 +3186,190 @@ elif page == "📊 Model Performance":
     # Auto-grade pending picks from prior dates
     model_picks_df = auto_grade_picks(model_picks_df)
 
+    def _profit_per_bet(american_odds, result, unit):
+        """Return $ P&L for one bet given American odds + result + unit size."""
+        try:
+            ml = float(american_odds)
+        except (TypeError, ValueError):
+            return 0.0
+        if result == "WIN":
+            return unit * (ml / 100) if ml > 0 else unit * (100 / abs(ml))
+        if result == "LOSS":
+            return -float(unit)
+        return 0.0  # PUSH or PENDING
+
+    def _render_pnl_tab(df, unit=20):
+        """$X-unit-bettor P&L breakdown — assumes flat unit per pick.
+
+        The numbers here treat every signal the model logged as if you'd bet
+        a full unit on it. Bets actually 'Taken' are shown separately so the
+        user can see what their real exposure produced.
+        """
+        st.markdown(f"### 💰 ${unit}/unit performance")
+        st.caption(f"Treats every logged signal as a flat ${unit} bet. "
+                   "American odds determine win payout; losses cost ${unit}; "
+                   "pushes settle to $0.")
+
+        settled = df[df["Result"].isin(["WIN", "LOSS", "PUSH"])].copy()
+        if settled.empty:
+            st.info("No settled picks yet to compute P&L.")
+            return
+
+        settled["profit"] = settled.apply(
+            lambda r: _profit_per_bet(r.get("ML"), r["Result"], unit), axis=1
+        )
+        wins   = (settled["Result"] == "WIN").sum()
+        losses = (settled["Result"] == "LOSS").sum()
+        pushes = (settled["Result"] == "PUSH").sum()
+        risked = (wins + losses) * unit
+        profit = settled["profit"].sum()
+        roi    = (profit / risked * 100) if risked else 0.0
+
+        c1, c2, c3, c4, c5 = st.columns(5)
+        c1.metric("Bets",      f"{len(settled)}")
+        c2.metric("Record",    f"{int(wins)}-{int(losses)}-{int(pushes)}")
+        c3.metric("Risked",    f"${risked:,.0f}")
+        c4.metric("Net P&L",   f"${profit:+,.2f}",
+                  delta=f"{roi:+.2f}% ROI", delta_color=("normal" if profit >= 0 else "inverse"))
+        c5.metric("Win rate",  f"{100*wins/(wins+losses):.1f}%" if (wins+losses) else "—")
+
+        # ── Daily P&L ─────────────────────────────────────────────────────
+        st.divider()
+        st.subheader("📅 Daily P&L")
+        daily = (settled.groupby("Date")
+                 .agg(bets=("profit", "count"),
+                      wins=("Result", lambda s: (s == "WIN").sum()),
+                      losses=("Result", lambda s: (s == "LOSS").sum()),
+                      pushes=("Result", lambda s: (s == "PUSH").sum()),
+                      profit=("profit", "sum"))
+                 .reset_index())
+        daily["risked"]      = (daily["wins"] + daily["losses"]) * unit
+        daily["roi"]         = daily.apply(
+            lambda r: (r["profit"] / r["risked"] * 100) if r["risked"] else 0.0, axis=1
+        )
+        # Sort by date desc
+        try:
+            daily["_dt"] = pd.to_datetime(daily["Date"], errors="coerce")
+            daily = daily.sort_values("_dt", ascending=False).drop(columns="_dt")
+        except Exception:
+            daily = daily.sort_values("Date", ascending=False)
+        daily_show = daily.copy()
+        daily_show["Record"]  = daily_show.apply(
+            lambda r: f"{int(r['wins'])}-{int(r['losses'])}-{int(r['pushes'])}", axis=1
+        )
+        daily_show["Risked"]  = daily_show["risked"].map(lambda x: f"${x:,.0f}")
+        daily_show["Net P&L"] = daily_show["profit"].map(lambda x: f"${x:+,.2f}")
+        daily_show["ROI"]     = daily_show["roi"].map(lambda x: f"{x:+.1f}%")
+        st.dataframe(daily_show[["Date", "bets", "Record", "Risked", "Net P&L", "ROI"]]
+                     .rename(columns={"bets": "Bets"}),
+                     hide_index=True, use_container_width=True)
+
+        # ── Cumulative P&L chart ──────────────────────────────────────────
+        try:
+            chart = daily.copy()
+            chart["_dt"] = pd.to_datetime(chart["Date"], errors="coerce")
+            chart = chart.dropna(subset=["_dt"]).sort_values("_dt")
+            chart["cum_pnl"] = chart["profit"].cumsum()
+            chart_df = chart[["_dt", "cum_pnl"]].rename(columns={"_dt": "Date", "cum_pnl": "Cumulative P&L ($)"})
+            st.line_chart(chart_df.set_index("Date"))
+        except Exception:
+            pass
+
+        # ── By market ─────────────────────────────────────────────────────
+        st.divider()
+        st.subheader("📊 P&L by market")
+        by_mkt = (settled.groupby("Market")
+                  .agg(bets=("profit", "count"),
+                       wins=("Result", lambda s: (s == "WIN").sum()),
+                       losses=("Result", lambda s: (s == "LOSS").sum()),
+                       pushes=("Result", lambda s: (s == "PUSH").sum()),
+                       profit=("profit", "sum"))
+                  .reset_index())
+        by_mkt["risked"]  = (by_mkt["wins"] + by_mkt["losses"]) * unit
+        by_mkt["roi"]     = by_mkt.apply(
+            lambda r: (r["profit"] / r["risked"] * 100) if r["risked"] else 0.0, axis=1
+        )
+        by_mkt["Record"]  = by_mkt.apply(
+            lambda r: f"{int(r['wins'])}-{int(r['losses'])}-{int(r['pushes'])}", axis=1
+        )
+        by_mkt["Risked"]  = by_mkt["risked"].map(lambda x: f"${x:,.0f}")
+        by_mkt["Net P&L"] = by_mkt["profit"].map(lambda x: f"${x:+,.2f}")
+        by_mkt["ROI"]     = by_mkt["roi"].map(lambda x: f"{x:+.1f}%")
+        st.dataframe(
+            by_mkt.sort_values("profit", ascending=False)[["Market", "bets", "Record", "Risked", "Net P&L", "ROI"]]
+                  .rename(columns={"bets": "Bets"}),
+            hide_index=True, use_container_width=True,
+        )
+
+        # ── By edge bucket ────────────────────────────────────────────────
+        st.divider()
+        st.subheader("🎯 P&L by edge bucket")
+        st.caption("Higher model-vs-market edge should produce better ROI if the model is calibrated.")
+        s2 = settled.copy()
+        s2["edge_num"] = pd.to_numeric(s2["Edge_Pct"], errors="coerce")
+        s2 = s2.dropna(subset=["edge_num"])
+        if not s2.empty:
+            bins   = [-100, 0, 5, 10, 15, 20, 100]
+            labels = ["≤0%", "0–5%", "5–10%", "10–15%", "15–20%", "20%+"]
+            s2["bucket"] = pd.cut(s2["edge_num"], bins=bins, labels=labels, include_lowest=True)
+            buc = (s2.groupby("bucket", observed=True)
+                   .agg(bets=("profit", "count"),
+                        wins=("Result", lambda s: (s == "WIN").sum()),
+                        losses=("Result", lambda s: (s == "LOSS").sum()),
+                        profit=("profit", "sum"))
+                   .reset_index())
+            buc["risked"]  = (buc["wins"] + buc["losses"]) * unit
+            buc["roi"]     = buc.apply(
+                lambda r: (r["profit"] / r["risked"] * 100) if r["risked"] else 0.0, axis=1
+            )
+            buc["Record"]  = buc.apply(lambda r: f"{int(r['wins'])}-{int(r['losses'])}", axis=1)
+            buc["Risked"]  = buc["risked"].map(lambda x: f"${x:,.0f}")
+            buc["Net P&L"] = buc["profit"].map(lambda x: f"${x:+,.2f}")
+            buc["ROI"]     = buc["roi"].map(lambda x: f"{x:+.1f}%")
+            st.dataframe(
+                buc[["bucket", "bets", "Record", "Risked", "Net P&L", "ROI"]]
+                   .rename(columns={"bucket": "Edge", "bets": "Bets"}),
+                hide_index=True, use_container_width=True,
+            )
+
+        # ── Bets actually taken ───────────────────────────────────────────
+        taken = settled[settled["Taken"].astype(str).isin(["True", "true", "1", "Yes", "yes"])]
+        st.divider()
+        st.subheader("✅ Bets you actually placed")
+        if taken.empty:
+            st.info("No bets marked as 'Taken' yet. Toggle them in the Settle Pending Picks list above.")
+        else:
+            tw = (taken["Result"] == "WIN").sum()
+            tl = (taken["Result"] == "LOSS").sum()
+            tp = (taken["Result"] == "PUSH").sum()
+            t_risked = (tw + tl) * unit
+            t_profit = taken["profit"].sum()
+            t_roi    = (t_profit / t_risked * 100) if t_risked else 0.0
+            cc1, cc2, cc3, cc4 = st.columns(4)
+            cc1.metric("Bets placed", f"{len(taken)}")
+            cc2.metric("Record",      f"{int(tw)}-{int(tl)}-{int(tp)}")
+            cc3.metric("Risked",      f"${t_risked:,.0f}")
+            cc4.metric("Net P&L",     f"${t_profit:+,.2f}",
+                       delta=f"{t_roi:+.2f}% ROI",
+                       delta_color=("normal" if t_profit >= 0 else "inverse"))
+
+        # ── Worst & best days ────────────────────────────────────────────
+        if len(daily) >= 3:
+            st.divider()
+            cb1, cb2 = st.columns(2)
+            with cb1:
+                st.subheader("🟢 Best days")
+                best = daily.sort_values("profit", ascending=False).head(5).copy()
+                best["P&L"] = best["profit"].map(lambda x: f"${x:+,.2f}")
+                st.dataframe(best[["Date", "bets", "P&L"]].rename(columns={"bets": "Bets"}),
+                             hide_index=True, use_container_width=True)
+            with cb2:
+                st.subheader("🔴 Worst days")
+                worst = daily.sort_values("profit", ascending=True).head(5).copy()
+                worst["P&L"] = worst["profit"].map(lambda x: f"${x:+,.2f}")
+                st.dataframe(worst[["Date", "bets", "P&L"]].rename(columns={"bets": "Bets"}),
+                             hide_index=True, use_container_width=True)
+
     def _render_perf_tab(df, threshold_label):
         """Render stats, calibration, market breakdown, and history for a filtered picks df."""
         settled = df[df["Result"].isin(["WIN","LOSS"])].copy()
@@ -3276,8 +3502,13 @@ elif page == "📊 Model Performance":
                             save_model_picks(model_picks_df)
                             st.success("Updated!"); st.rerun()
 
-        # ── Confidence tabs ────────────────────────────────────────────────────
-        tab_all, tab_60, tab_70 = st.tabs(["📊 All Signals", "🎯 60%+ Confident", "🔥 70%+ Confident"])
+        # ── Confidence + P&L tabs ────────────────────────────────────────────
+        tab_pnl, tab_all, tab_60, tab_70 = st.tabs([
+            "💰 $20 Unit P&L", "📊 All Signals", "🎯 60%+ Confident", "🔥 70%+ Confident"
+        ])
+
+        with tab_pnl:
+            _render_pnl_tab(model_picks_df, unit=20)
 
         with tab_all:
             _render_perf_tab(model_picks_df, "All")
