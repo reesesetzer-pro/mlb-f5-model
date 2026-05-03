@@ -223,3 +223,4 @@ Date,Game,Team,Side,Market,ML,Book,Model_Prob,Market_Prob,Edge_Pct,Model_Line,Ma
 05/02/2026,Chicago White Sox @ San Diego Padres,Chicago White Sox,Chicago White Sox Over 1.5,F5 Team Total,-110.0,DraftKings,61.4,52.4,9.0,2.02,1.5,50.0,50.8,0.95,0.059,PENDING,,False
 05/02/2026,Houston Astros @ Boston Red Sox,Boston Red Sox,Boston Red Sox Under 2.5,F5 Team Total,-125.0,TheScore,60.9,55.6,5.4,2.0,2.5,50.0,,1.0,0.0,PENDING,,False
 05/02/2026,Toronto Blue Jays @ Minnesota Twins,Toronto Blue Jays,Away,F5 ML,-135.0,BetMGM,60.2,57.4,2.7,,,53.6,47.9,0.98,-0.009,PENDING,,False
+05/03/2026,Arizona Diamondbacks @ Chicago Cubs,Under,Under,F5 Total,-120.0,fanduel,85.6,54.5,31.0,4.06,6.5,62.9,50.0,1.06,0.02,PENDING,,False
