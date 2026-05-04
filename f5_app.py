@@ -1121,7 +1121,7 @@ with st.sidebar:
     """, unsafe_allow_html=True)
     # ── Navigation (top) ──
     page = st.radio("", [
-        "📋 Today's Slate","🎯 Bet Signals","📚 Best Bets","⚾ NRFI","🌅 Morning Report","✏️ SP Input","📈 Bet Tracker","🏟️ Park Factors","📊 Model Performance"])
+        "🎯 MUST TAKE","📋 Today's Slate","🎯 Bet Signals","📚 Best Bets","⚾ NRFI","🌅 Morning Report","✏️ SP Input","📈 Bet Tracker","🏟️ Park Factors","📊 Model Performance"])
     st.divider()
     st.caption(f"🕐 {_to_et(datetime.utcnow()).strftime('%I:%M %p')} ET · Season 2026")
     # Show last data sync status
@@ -1168,9 +1168,122 @@ cache_by_away = {g["away_team"]: g for g in cache}
 cache_by_home = {g["home_team"]: g for g in cache}
 
 # ══════════════════════════════════════════════════════════════════════════════
+# PAGE: MUST TAKE — high-conviction-only daily slate
+# ══════════════════════════════════════════════════════════════════════════════
+if page == "🎯 MUST TAKE":
+    st.markdown(f"""
+    <div style="background:linear-gradient(135deg,#0c1e42 0%,#1a0f1a 100%);
+                border-radius:16px;padding:24px 28px;margin-bottom:20px;
+                border:1px solid rgba(255,107,53,0.4);
+                box-shadow:0 8px 32px rgba(0,0,0,0.4)">
+      <div style="font-size:1.6rem;font-weight:800;letter-spacing:-0.02em">
+        🎯 Must Take — F5 Total only
+      </div>
+      <div style="font-size:0.85rem;color:#b8b8d4;margin-top:6px">
+        Picks that pass every filter we trust. After today's audit:
+        <strong>F5 Total only</strong> (the only profitable F5 market historically),
+        <strong>model_prob ≥ 70%</strong> (primary quality gate — the bucket
+        where realized hit rate matches predicted), <strong>edge ≥ 4%</strong>
+        (just needs to be +EV, not a wall), and at most one pick per game.
+        Empty list = no action tonight.
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    today_str = date.today().strftime("%m/%d/%Y")
+    today_picks = model_picks_df[
+        (model_picks_df["Date"] == today_str)
+        & (model_picks_df["Market"] == "F5 Total")
+    ].copy()
+
+    if today_picks.empty:
+        st.info("⏳ No F5 Total signals logged for today yet. Run the daily sync, or check back closer to first pitch.")
+    else:
+        # Apply Must-Take filter
+        today_picks["model_prob_num"] = pd.to_numeric(today_picks["Model_Prob"], errors="coerce")
+        today_picks["edge_num"]       = pd.to_numeric(today_picks["Edge_Pct"], errors="coerce")
+        must = today_picks[
+            (today_picks["model_prob_num"] >= 70.0)
+            & (today_picks["edge_num"]      >= 4.0)
+        ].copy()
+
+        # Dedupe — one pick per game (keep highest model_prob)
+        must = must.sort_values("model_prob_num", ascending=False).drop_duplicates(subset=["Game"], keep="first")
+
+        if must.empty:
+            st.warning(
+                "⚠️ Today's F5 Total signals exist but none meet the Must-Take "
+                "filter (≥70% prob AND ≥4% edge). **Sit it out** — don't force "
+                "action when the model isn't producing high-conviction plays. "
+                "See the Bet Signals tab for softer opportunities at your own risk."
+            )
+        else:
+            # Headline
+            st.markdown(f"""
+            <div style="background:#0d1f0d;border-left:4px solid #00FF88;
+                        border-radius:8px;padding:16px 20px;margin-bottom:16px">
+              <div style="font-size:0.75rem;color:#00FF88;font-weight:700;
+                          letter-spacing:0.06em;text-transform:uppercase">
+                🔨 {len(must)} MUST-TAKE PLAY{'S' if len(must)!=1 else ''} TODAY
+              </div>
+              <div style="font-size:0.85rem;color:#b8b8d4;margin-top:4px">
+                Filters cleared: F5 Total · prob ≥70% · edge ≥7% · 1 per game
+              </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            for _, r in must.iterrows():
+                ml = float(r.get("ML") or 0)
+                ml_str = f"+{int(ml)}" if ml > 0 else f"{int(ml)}"
+                st.markdown(f"""
+                <div style="background:#0a1e2e;border:1px solid #2e3a52;
+                            border-left:4px solid #00FF88;border-radius:10px;
+                            padding:16px 20px;margin-bottom:10px">
+                  <div style="display:flex;justify-content:space-between;align-items:center;
+                              flex-wrap:wrap;gap:14px">
+                    <div style="flex:1;min-width:280px">
+                      <div style="font-size:1.05rem;font-weight:800;color:#e8edf5">
+                        {r['Game']}
+                      </div>
+                      <div style="font-size:0.85rem;color:#b8b8d4;margin-top:4px">
+                        {r['Side']} <span style="color:#5a8ab4">·</span>
+                        {r['Market']} <span style="color:#5a8ab4">·</span>
+                        <strong>{ml_str}</strong> @ {r.get('Book','')}
+                      </div>
+                    </div>
+                    <div style="display:flex;gap:24px;flex-wrap:wrap">
+                      <div style="text-align:center">
+                        <div style="font-size:0.65rem;color:#5a8ab4;text-transform:uppercase;
+                                    letter-spacing:0.08em">WIN %</div>
+                        <div style="font-size:1.2rem;font-weight:800;color:#00D4FF;
+                                    font-family:'Space Mono',monospace">
+                          {r['model_prob_num']:.1f}%
+                        </div>
+                      </div>
+                      <div style="text-align:center">
+                        <div style="font-size:0.65rem;color:#5a8ab4;text-transform:uppercase;
+                                    letter-spacing:0.08em">EDGE</div>
+                        <div style="font-size:1.2rem;font-weight:800;color:#00FF88;
+                                    font-family:'Space Mono',monospace">
+                          +{r['edge_num']:.1f}%
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                """, unsafe_allow_html=True)
+
+            st.caption(
+                "💡 Flat $20-unit recommended. Don't size up just because the model is "
+                "confident — the 70%+ bucket has only 9 settled picks in history. "
+                "It's been right but the sample is still small."
+            )
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 # PAGE: TODAY'S SLATE
 # ══════════════════════════════════════════════════════════════════════════════
-if page == "📋 Today's Slate":
+elif page == "📋 Today's Slate":
     st.markdown(f"""
     <div style="background:linear-gradient(135deg,#0c1e42 0%,#0f2a1a 100%);
                 border-radius:16px;padding:24px 28px;margin-bottom:20px;
@@ -1596,7 +1709,14 @@ elif page == "🎯 Bet Signals":
                     candidates.sort(key=lambda x: (x[5], x[3]), reverse=True)
                     best_bk, best_price, best_line, model_p, mkt_p, edge = candidates[0]
 
-                    if model_p >= 0.52:
+                    # Raised threshold 0.52 → 0.70 (2026-05-04 audit). F5 Total
+                    # bucket calibration showed the 60-70% prob range hitting
+                    # only 50% in real life across 22 settled picks (15pp
+                    # overshoot). The 70%+ buckets did hit at predicted rates
+                    # (n=9 across 70-80 + 90-100 buckets, all winners). Cut the
+                    # 60-70% bucket entirely and only fire when the model is
+                    # in the bucket history shows it can deliver.
+                    if model_p >= 0.70:
                         k = kelly_rounded(max(edge, 0), best_price, bankroll, kelly_frac, max_pct)
                         signals.append({
                             "game":game_tag,"time":time_et,"team":f"{away}/{home}",
