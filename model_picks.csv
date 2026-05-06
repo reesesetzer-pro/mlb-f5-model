@@ -227,3 +227,5 @@ Date,Game,Team,Side,Market,ML,Book,Model_Prob,Market_Prob,Edge_Pct,Model_Line,Ma
 05/04/2026,New York Mets @ Colorado Rockies,Over,Over,F5 Total,-109.0,williamhill_us,96.0,52.2,43.8,5.52,1.5,47.8,32.8,1.28,0.011,LOSS,0-0,False
 05/04/2026,Boston Red Sox @ Detroit Tigers,Over,Over,F5 Total,-137.0,williamhill_us,81.8,57.8,24.0,4.59,2.5,50.6,50.0,0.94,-0.026,LOSS,0-0,False
 05/04/2026,Cincinnati Reds @ Chicago Cubs,Under,Under,F5 Total,-118.0,betmgm,83.3,54.1,29.1,4.28,6.5,47.8,50.0,1.06,0.0,WIN,3-3,False
+05/06/2026,Athletics @ Philadelphia Phillies,Over,Over,F5 Total,-125.0,fanduel,75.8,55.6,20.2,5.11,3.5,54.3,50.0,0.99,0.0,PENDING,,False
+05/06/2026,Baltimore Orioles @ Miami Marlins,Under,Under,F5 Total,-104.0,fanduel,96.2,51.0,45.2,4.41,8.5,52.3,50.0,0.97,0.0,PENDING,,False
