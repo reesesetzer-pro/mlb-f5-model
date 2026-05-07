@@ -231,3 +231,4 @@ Date,Game,Team,Side,Market,ML,Book,Model_Prob,Market_Prob,Edge_Pct,Model_Line,Ma
 05/06/2026,Baltimore Orioles @ Miami Marlins,Under,Under,F5 Total,-104.0,fanduel,96.2,51.0,45.2,4.41,8.5,52.3,50.0,0.97,0.0,WIN,5-3,False
 05/07/2026,New York Mets @ Colorado Rockies,New York Mets/Colorado Rockies,Under 6.0,F5 Total,-118.0,BetMGM,75.4,54.1,21.3,4.42,6.0,53.8,38.85,1.28,0.018,WIN,2-1,False
 05/07/2026,Cleveland Guardians @ Kansas City Royals,Cleveland Guardians/Kansas City Royals,Under 5.5,F5 Total,-114.0,FanDuel,71.9,53.3,18.6,4.17,5.5,47.1,51.65,1.04,0.07,WIN,4-1,False
+05/07/2026,Athletics @ Philadelphia Phillies,Under,Under,F5 Total,-105.0,betmgm,93.0,51.2,41.8,4.11,7.5,52.9,45.7,0.99,-0.003,PENDING,,False
