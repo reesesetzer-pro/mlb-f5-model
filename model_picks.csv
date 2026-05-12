@@ -234,5 +234,6 @@ Date,Game,Team,Side,Market,ML,Book,Model_Prob,Market_Prob,Edge_Pct,Model_Line,Ma
 05/07/2026,Athletics @ Philadelphia Phillies,Under,Under,F5 Total,-105.0,betmgm,93.0,51.2,41.8,4.11,7.5,52.9,45.7,0.99,-0.003,LOSS,10-1,False
 05/09/2026,Seattle Mariners @ Chicago White Sox,Under,Under,F5 Total,-138.0,fanduel,78.7,58.0,20.7,3.67,5.5,60.3,50.0,1.02,0.0,LOSS,1-5,False
 05/09/2026,Athletics @ Baltimore Orioles,Athletics/Baltimore Orioles,Under 5.5,F5 Total,-125.0,FanDuel,71.3,55.6,15.7,4.21,5.5,51.5,48.0,1.0,0.077,WIN,5-0,False
-05/10/2026,Colorado Rockies @ Philadelphia Phillies,Under,Under,F5 Total,104.0,williamhill_us,92.6,49.0,43.5,4.18,7.5,58.7,43.5,0.99,0.069,PENDING,,False
-05/10/2026,Houston Astros @ Cincinnati Reds,Over,Over,F5 Total,-130.0,betmgm,88.1,56.5,31.6,5.21,2.5,43.0,58.2,1.12,0.059,PENDING,,False
+05/10/2026,Colorado Rockies @ Philadelphia Phillies,Under,Under,F5 Total,104.0,williamhill_us,92.6,49.0,43.5,4.18,7.5,58.7,43.5,0.99,0.069,WIN,0-5,False
+05/10/2026,Houston Astros @ Cincinnati Reds,Over,Over,F5 Total,-130.0,betmgm,88.1,56.5,31.6,5.21,2.5,43.0,58.2,1.12,0.059,WIN,0-4,False
+05/10/2026,Atlanta Braves @ Los Angeles Dodgers,Atlanta Braves/Los Angeles Dodgers,Under 5.5,F5 Total,-130.0,Caesars,73.9,56.5,17.3,4.03,5.5,54.5,53.1,0.98,0.04,WIN,4-0,False
