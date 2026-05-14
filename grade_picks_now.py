@@ -84,11 +84,23 @@ def grade_pending_picks():
                 home_name = g["teams"]["home"]["team"]["name"]
                 key = f"{away_name} @ {home_name}"
 
-                if status != "Final":
-                    print(f"  [SKIP] {key} — status: {status}")
+                # Grade F5/1st-inning picks the moment the 5th finishes — we don't
+                # need to wait for game-final since these markets settle at end of
+                # the 5th regardless of what happens after. Required: 5+ innings
+                # recorded AND innings 1-5 each have home & away runs populated
+                # (so we know the half-inning is complete, not just batted).
+                innings = g.get("linescore", {}).get("innings", [])
+                def _half_complete(side, n):
+                    if len(innings) < n: return False
+                    return (innings[n-1].get(side) or {}).get("runs") is not None
+                cur_inn = g.get("linescore", {}).get("currentInning", 0) or 0
+                # Once we're in inning 6+ (top of 6 onward), all of innings 1-5
+                # have been completed for both halves.
+                f5_complete = (status == "Final") or (cur_inn >= 6 and len(innings) >= 5)
+                if not f5_complete:
+                    print(f"  [SKIP] {key} — status: {status}, inn: {cur_inn} (F5 not yet locked)")
                     continue
 
-                innings = g.get("linescore", {}).get("innings", [])
                 f5a = sum((i.get("away") or {}).get("runs", 0) or 0 for i in innings[:5])
                 f5h = sum((i.get("home") or {}).get("runs", 0) or 0 for i in innings[:5])
                 fi_a = (innings[0].get("away") or {}).get("runs", 0) or 0 if innings else 0

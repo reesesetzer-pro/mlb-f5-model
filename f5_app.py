@@ -1206,18 +1206,53 @@ if page == "🎯 MUST TAKE":
             (today_picks["model_prob_num"] >= 70.0)
             & (today_picks["edge_num"]      >= 4.0)
         ].copy()
-
         # Dedupe — one pick per game (keep highest model_prob)
         must = must.sort_values("model_prob_num", ascending=False).drop_duplicates(subset=["Game"], keep="first")
 
+        # Track whether we hit the strict filter; if not, fall back through tiers
+        # so the page is never empty when picks DO exist.
+        fallback_tier = None
+        if must.empty:
+            # Tier 2: 65-70% prob bucket — still profitable per lifetime data
+            # (5-2, +36% ROI). Looser edge gate.
+            tier2 = today_picks[
+                (today_picks["model_prob_num"] >= 65.0)
+                & (today_picks["edge_num"]      >= 1.0)
+            ].copy()
+            tier2 = tier2.sort_values("model_prob_num", ascending=False).drop_duplicates(subset=["Game"], keep="first")
+            if not tier2.empty:
+                must = tier2
+                fallback_tier = "SOFT — 65-70% bucket (lifetime +36% ROI on 5-2 record)"
+            else:
+                # Tier 3: best available — surface the top pick by prob even if
+                # below 65%. Always have *something* to look at so the page
+                # isn't empty when the slate is soft.
+                tier3 = today_picks.sort_values("model_prob_num", ascending=False)
+                tier3 = tier3.drop_duplicates(subset=["Game"], keep="first").head(3)
+                if not tier3.empty:
+                    must = tier3
+                    fallback_tier = ("BEST AVAILABLE — no high-conviction plays tonight. "
+                                     "These are the strongest signals on the board, but "
+                                     "size down or skip if you don't have strong reasons.")
+
         if must.empty:
             st.warning(
-                "⚠️ Today's F5 Total signals exist but none meet the Must-Take "
-                "filter (≥70% prob AND ≥4% edge). **Sit it out** — don't force "
-                "action when the model isn't producing high-conviction plays. "
-                "See the Bet Signals tab for softer opportunities at your own risk."
+                "⚠️ Today's F5 Total signals exist but no picks crossed any filter. "
+                "**Sit it out** — the model isn't producing actionable plays."
             )
         else:
+            if fallback_tier:
+                st.markdown(f"""
+                <div style="background:#3a2a1a;border-left:4px solid #ff9800;
+                            border-radius:8px;padding:12px 16px;margin-bottom:12px">
+                    <div style="color:#ff9800;font-weight:700;font-size:0.85rem;
+                                letter-spacing:0.05em;">⚠ FALLBACK TIER</div>
+                    <div style="color:#ddd;font-size:0.85rem;margin-top:4px">
+                        No picks cleared the strict Must-Take filter (≥70% prob + ≥4% edge).
+                        Showing: <strong>{fallback_tier}</strong>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
             # Headline
             st.markdown(f"""
             <div style="background:#0d1f0d;border-left:4px solid #00FF88;
