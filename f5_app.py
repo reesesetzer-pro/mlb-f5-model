@@ -1314,6 +1314,95 @@ if page == "🎯 MUST TAKE":
                 "It's been right but the sample is still small."
             )
 
+        # ── ALL F5 PLAYS TODAY ───────────────────────────────────────────────
+        # Show every logged F5 Total pick for the day, not just the ones that
+        # cleared the strict gate. Useful for seeing the full picture and the
+        # picks that fell juuust below threshold.
+        st.markdown("---")
+        st.markdown("""
+        <div style="margin-top:18px;font-size:0.85rem;font-weight:700;
+                    letter-spacing:0.08em;color:#90a4ae;text-transform:uppercase;">
+            📋 ALL F5 PLAYS TODAY
+        </div>
+        <div style="font-size:0.78rem;color:#777;margin:4px 0 12px 0">
+            Every F5 Total pick the model logged for today, sorted by win
+            probability. The picks above were the high-conviction filter
+            output — below is the full board so you can see what fell just
+            short or which picks you might still consider with smaller stakes.
+        </div>
+        """, unsafe_allow_html=True)
+
+        all_picks = today_picks.copy()
+        all_picks["model_prob_num"] = pd.to_numeric(all_picks["Model_Prob"], errors="coerce")
+        all_picks["edge_num"]       = pd.to_numeric(all_picks["Edge_Pct"], errors="coerce")
+        all_picks = all_picks.sort_values("model_prob_num", ascending=False)
+
+        if all_picks.empty:
+            st.info("No F5 Total picks logged today.")
+        else:
+            for _, r in all_picks.iterrows():
+                ml = float(r.get("ML") or 0)
+                ml_str = f"+{int(ml)}" if ml > 0 else f"{int(ml)}"
+                prob = r["model_prob_num"]
+                edge = r["edge_num"]
+
+                # Color by bucket from our lifetime analysis
+                if prob >= 90:
+                    accent, tag = "#00FF88", "🥇 ≥90% (lifetime +50% ROI)"
+                elif prob >= 75:
+                    accent, tag = "#FFD700", "⚠ 75-90% (lifetime trap zone)"
+                elif prob >= 70:
+                    accent, tag = "#00FF88", "🥇 70-75% (lifetime +88% ROI)"
+                elif prob >= 65:
+                    accent, tag = "#a5d6a7", "🥈 65-70% (lifetime +36% ROI)"
+                else:
+                    accent, tag = "#666", "below threshold"
+
+                # Include W/L status if graded
+                result = r.get("Result", "PENDING")
+                if result == "WIN":
+                    result_badge = "<span style='color:#00FF88;font-weight:700'>✅ WIN</span>"
+                elif result == "LOSS":
+                    result_badge = "<span style='color:#ff5252;font-weight:700'>❌ LOSS</span>"
+                elif result == "PUSH":
+                    result_badge = "<span style='color:#888;font-weight:700'>↔ PUSH</span>"
+                else:
+                    result_badge = "<span style='color:#90a4ae'>⏳ PENDING</span>"
+
+                st.markdown(f"""
+                <div style="background:#0a1e2e;border-left:4px solid {accent};
+                            padding:10px 14px;margin:6px 0;border-radius:6px;
+                            display:flex;justify-content:space-between;align-items:center;
+                            flex-wrap:wrap;gap:10px;">
+                    <div style="flex:1;min-width:280px;">
+                        <div style="font-size:0.95rem;color:#e8edf5;font-weight:600;">
+                            {r['Game']}
+                        </div>
+                        <div style="font-size:0.78rem;color:#b8b8d4;margin-top:3px;">
+                            {r['Side']} · <strong>{ml_str}</strong> @ {r.get('Book','')} ·
+                            <span style="color:{accent};">{tag}</span>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:18px;align-items:center;">
+                        <div style="text-align:center;">
+                            <div style="font-size:0.62rem;color:#5a8ab4;text-transform:uppercase;letter-spacing:0.08em">WIN %</div>
+                            <div style="font-size:1.1rem;font-weight:700;color:#00D4FF;font-family:'Space Mono',monospace;">
+                                {prob:.1f}%
+                            </div>
+                        </div>
+                        <div style="text-align:center;">
+                            <div style="font-size:0.62rem;color:#5a8ab4;text-transform:uppercase;letter-spacing:0.08em">EDGE</div>
+                            <div style="font-size:1.1rem;font-weight:700;color:#00FF88;font-family:'Space Mono',monospace;">
+                                +{edge:.1f}%
+                            </div>
+                        </div>
+                        <div style="font-size:0.85rem;">
+                            {result_badge}
+                        </div>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+
 
 # ══════════════════════════════════════════════════════════════════════════════
 # PAGE: TODAY'S SLATE

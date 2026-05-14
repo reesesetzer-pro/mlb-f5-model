@@ -237,6 +237,6 @@ Date,Game,Team,Side,Market,ML,Book,Model_Prob,Market_Prob,Edge_Pct,Model_Line,Ma
 05/10/2026,Colorado Rockies @ Philadelphia Phillies,Under,Under,F5 Total,104.0,williamhill_us,92.6,49.0,43.5,4.18,7.5,58.7,43.5,0.99,0.069,WIN,0-5,False
 05/10/2026,Houston Astros @ Cincinnati Reds,Over,Over,F5 Total,-130.0,betmgm,88.1,56.5,31.6,5.21,2.5,43.0,58.2,1.12,0.059,WIN,0-4,False
 05/10/2026,Atlanta Braves @ Los Angeles Dodgers,Atlanta Braves/Los Angeles Dodgers,Under 5.5,F5 Total,-130.0,Caesars,73.9,56.5,17.3,4.03,5.5,54.5,53.1,0.98,0.04,WIN,4-0,False
-05/13/2026,Arizona Diamondbacks @ Texas Rangers,Over,Over,F5 Total,133.0,williamhill_us,90.2,42.9,47.2,4.47,1.5,55.0,41.0,1.08,0.071,PENDING,,False
-05/13/2026,Washington Nationals @ Cincinnati Reds,Over,Over,F5 Total,-146.0,fanduel,74.3,59.3,14.9,5.0,3.5,42.9,37.0,1.12,-0.012,PENDING,,False
+05/13/2026,Arizona Diamondbacks @ Texas Rangers,Over,Over,F5 Total,133.0,williamhill_us,90.2,42.9,47.2,4.47,1.5,55.0,41.0,1.08,0.071,WIN,0-3,False
+05/13/2026,Washington Nationals @ Cincinnati Reds,Over,Over,F5 Total,-146.0,fanduel,74.3,59.3,14.9,5.0,3.5,42.9,37.0,1.12,-0.012,WIN,6-6,False
 05/13/2026,St. Louis Cardinals @ Athletics,Over,Over,F5 Total,102.0,fanduel,82.6,49.5,33.1,4.66,2.5,38.9,50.9,1.0,0.011,PENDING,,False
