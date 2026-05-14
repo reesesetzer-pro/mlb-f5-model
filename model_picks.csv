@@ -239,14 +239,25 @@ Date,Game,Team,Side,Market,ML,Book,Model_Prob,Market_Prob,Edge_Pct,Model_Line,Ma
 05/10/2026,Atlanta Braves @ Los Angeles Dodgers,Atlanta Braves/Los Angeles Dodgers,Under 5.5,F5 Total,-130.0,Caesars,73.9,56.5,17.3,4.03,5.5,54.5,53.1,0.98,0.04,WIN,4-0,False
 05/13/2026,Arizona Diamondbacks @ Texas Rangers,Over,Over,F5 Total,133.0,williamhill_us,90.2,42.9,47.2,4.47,1.5,55.0,41.0,1.08,0.071,WIN,0-3,False
 05/13/2026,Washington Nationals @ Cincinnati Reds,Over,Over,F5 Total,-146.0,fanduel,74.3,59.3,14.9,5.0,3.5,42.9,37.0,1.12,-0.012,WIN,6-6,False
-05/13/2026,St. Louis Cardinals @ Athletics,Over,Over,F5 Total,102.0,fanduel,82.6,49.5,33.1,4.66,2.5,38.9,50.9,1.0,0.011,PENDING,,False
-05/13/2026,Colorado Rockies @ Pittsburgh Pirates,Over,Over,F5 Total,-154.0,fanduel,53.8,60.6,-6.8,3.72,3.5,47.7,43.7,0.96,0.018,PENDING,,False
-05/13/2026,Colorado Rockies @ Pittsburgh Pirates,Under,Under,F5 Total,100.0,betmgm,54.8,50.0,4.8,3.72,4.0,47.7,43.7,0.96,0.018,PENDING,,False
-05/13/2026,Philadelphia Phillies @ Boston Red Sox,Over,Over,F5 Total,-138.0,fanduel,58.6,58.0,0.6,4.0,3.5,42.1,39.5,1.07,0.026,PENDING,,False
-05/13/2026,Philadelphia Phillies @ Boston Red Sox,Under,Under,F5 Total,-130.0,betmgm,50.0,56.5,-6.5,4.0,4.0,42.1,39.5,1.07,0.026,PENDING,,False
-05/13/2026,Detroit Tigers @ New York Mets,Under,Under,F5 Total,-105.0,betmgm,62.9,51.2,11.7,3.24,4.0,41.6,29.6,0.94,0.053,PENDING,,False
-05/13/2026,Kansas City Royals @ Chicago White Sox,Under,Under,F5 Total,-125.0,betmgm,54.7,55.6,-0.9,4.23,4.5,41.8,46.2,1.02,-0.035,PENDING,,False
-05/13/2026,San Diego Padres @ Milwaukee Brewers,Under,Under,F5 Total,-125.0,betmgm,57.4,55.6,1.9,4.07,4.5,60.6,33.8,1.02,0.042,PENDING,,False
-05/13/2026,Seattle Mariners @ Houston Astros,Over,Over,F5 Total,-128.0,fanduel,50.0,56.1,-6.1,4.5,4.5,47.4,49.0,1.0,0.002,PENDING,,False
-05/13/2026,Seattle Mariners @ Houston Astros,Under,Under,F5 Total,-118.0,betmgm,58.6,54.1,4.5,4.5,5.0,47.4,49.0,1.0,0.002,PENDING,,False
-05/13/2026,San Francisco Giants @ Los Angeles Dodgers,Over,Over,F5 Total,-140.0,betmgm,86.2,58.3,27.9,4.01,1.5,49.3,37.1,0.98,0.034,PENDING,,False
+05/13/2026,St. Louis Cardinals @ Athletics,Over,Over,F5 Total,102.0,fanduel,82.6,49.5,33.1,4.66,2.5,38.9,50.9,1.0,0.011,WIN,1-4,False
+05/13/2026,Colorado Rockies @ Pittsburgh Pirates,Over,Over,F5 Total,-154.0,fanduel,53.8,60.6,-6.8,3.72,3.5,47.7,43.7,0.96,0.018,WIN,6-3,False
+05/13/2026,Colorado Rockies @ Pittsburgh Pirates,Under,Under,F5 Total,100.0,betmgm,54.8,50.0,4.8,3.72,4.0,47.7,43.7,0.96,0.018,LOSS,6-3,False
+05/13/2026,Philadelphia Phillies @ Boston Red Sox,Over,Over,F5 Total,-138.0,fanduel,58.6,58.0,0.6,4.0,3.5,42.1,39.5,1.07,0.026,LOSS,1-1,False
+05/13/2026,Philadelphia Phillies @ Boston Red Sox,Under,Under,F5 Total,-130.0,betmgm,50.0,56.5,-6.5,4.0,4.0,42.1,39.5,1.07,0.026,WIN,1-1,False
+05/13/2026,Detroit Tigers @ New York Mets,Under,Under,F5 Total,-105.0,betmgm,62.9,51.2,11.7,3.24,4.0,41.6,29.6,0.94,0.053,WIN,2-1,False
+05/13/2026,Kansas City Royals @ Chicago White Sox,Under,Under,F5 Total,-125.0,betmgm,54.7,55.6,-0.9,4.23,4.5,41.8,46.2,1.02,-0.035,LOSS,3-5,False
+05/13/2026,San Diego Padres @ Milwaukee Brewers,Under,Under,F5 Total,-125.0,betmgm,57.4,55.6,1.9,4.07,4.5,60.6,33.8,1.02,0.042,WIN,0-1,False
+05/13/2026,Seattle Mariners @ Houston Astros,Over,Over,F5 Total,-128.0,fanduel,50.0,56.1,-6.1,4.5,4.5,47.4,49.0,1.0,0.002,LOSS,1-0,False
+05/13/2026,Seattle Mariners @ Houston Astros,Under,Under,F5 Total,-118.0,betmgm,58.6,54.1,4.5,4.5,5.0,47.4,49.0,1.0,0.002,WIN,1-0,False
+05/13/2026,San Francisco Giants @ Los Angeles Dodgers,Over,Over,F5 Total,-140.0,betmgm,86.2,58.3,27.9,4.01,1.5,49.3,37.1,0.98,0.034,WIN,0-4,False
+05/14/2026,Detroit Tigers @ New York Mets,Under,Under,F5 Total,108.0,williamhill_us,58.3,48.1,10.2,4.02,4.5,52.5,55.7,0.94,0.0,PENDING,,False
+05/14/2026,Miami Marlins @ Minnesota Twins,Over,Over,F5 Total,-102.0,betmgm,73.3,50.5,22.8,4.93,3.5,50.0,35.6,0.98,0.0,PENDING,,False
+05/14/2026,San Diego Padres @ Milwaukee Brewers,Under,Under,F5 Total,-140.0,betmgm,81.8,58.3,23.5,4.41,6.5,49.6,35.3,1.02,0.0,PENDING,,False
+05/14/2026,Seattle Mariners @ Houston Astros,Over,Over,F5 Total,-128.0,fanduel,50.0,56.1,-6.1,4.5,4.5,48.8,48.0,1.0,0.0,PENDING,,False
+05/14/2026,Seattle Mariners @ Houston Astros,Under,Under,F5 Total,-125.0,betmgm,58.6,55.6,3.0,4.5,5.0,48.8,48.0,1.0,0.0,PENDING,,False
+05/14/2026,St. Louis Cardinals @ Athletics,Under,Under,F5 Total,-114.0,fanduel,66.8,53.3,13.5,4.5,5.5,52.8,54.0,1.0,0.0,PENDING,,False
+05/14/2026,Philadelphia Phillies @ Boston Red Sox,Over,Over,F5 Total,-115.0,betmgm,66.7,53.5,13.2,4.49,3.5,61.5,50.0,1.07,0.0,PENDING,,False
+05/14/2026,Chicago Cubs @ Atlanta Braves,Over,Over,F5 Total,-146.0,fanduel,59.8,59.3,0.4,4.07,3.5,58.0,50.0,1.01,0.0,PENDING,,False
+05/14/2026,Kansas City Royals @ Chicago White Sox,Over,Over,F5 Total,-125.0,betmgm,53.8,55.6,-1.8,4.22,4.0,55.0,50.0,1.02,0.0,PENDING,,False
+05/14/2026,Kansas City Royals @ Chicago White Sox,Under,Under,F5 Total,-135.0,fanduel,54.8,57.4,-2.6,4.22,4.5,55.0,50.0,1.02,0.0,PENDING,,False
+05/14/2026,San Francisco Giants @ Los Angeles Dodgers,Under,Under,F5 Total,-125.0,betmgm,56.9,55.6,1.3,4.1,4.5,57.8,50.0,0.98,0.0,PENDING,,False
