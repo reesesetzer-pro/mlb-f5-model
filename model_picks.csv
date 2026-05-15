@@ -277,3 +277,6 @@ Date,Game,Team,Side,Market,ML,Book,Model_Prob,Market_Prob,Edge_Pct,Model_Line,Ma
 05/15/2026,Los Angeles Dodgers @ Los Angeles Angels,Under,Under,F5 Total,-125.0,betmgm,61.8,55.6,6.2,4.31,5.0,46.8,50.0,1.03,0.0,PENDING,,False
 05/15/2026,San Diego Padres @ Seattle Mariners,Under,Under,F5 Total,-118.0,betmgm,51.7,54.1,-2.4,4.4,4.5,52.5,50.0,0.99,0.0,PENDING,,False
 05/15/2026,San Francisco Giants @ Athletics,Under,Under,F5 Total,-105.0,williamhill_us,66.7,51.2,15.4,4.51,5.5,49.4,50.0,1.0,0.0,PENDING,,False
+05/15/2026,Cincinnati Reds @ Cleveland Guardians,Over,Over,F5 Total,-130.0,betmgm,52.9,56.5,-3.6,4.17,4.0,56.8,42.2,0.95,0.018,PENDING,,False
+05/15/2026,Texas Rangers @ Houston Astros,Over,Over,F5 Total,-113.0,fanduel,51.2,53.1,-1.8,4.57,4.5,50.6,47.1,1.0,-0.026,PENDING,,False
+05/15/2026,San Diego Padres @ Seattle Mariners,Over,Over,F5 Total,-125.0,williamhill_us,54.5,55.6,-1.1,4.26,4.0,52.5,39.8,0.99,0.009,PENDING,,False
