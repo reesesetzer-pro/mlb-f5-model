@@ -1335,6 +1335,9 @@ if page == "🎯 MUST TAKE":
         all_picks = today_picks.copy()
         all_picks["model_prob_num"] = pd.to_numeric(all_picks["Model_Prob"], errors="coerce")
         all_picks["edge_num"]       = pd.to_numeric(all_picks["Edge_Pct"], errors="coerce")
+        # 60% confidence floor — hide marginal noise. data_sync still logs at
+        # 50%+ so the CSV has the full history; this filter is display-only.
+        all_picks = all_picks[all_picks["model_prob_num"] >= 60.0]
         all_picks = all_picks.sort_values("model_prob_num", ascending=False)
 
         if all_picks.empty:
