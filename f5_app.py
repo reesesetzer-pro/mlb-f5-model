@@ -1212,11 +1212,56 @@ if page == "🎯 MUST TAKE":
         # surfaced in the audit — 60-65% is -13% ROI on n=42).
         today_picks["model_prob_num"] = pd.to_numeric(today_picks["Model_Prob"], errors="coerce")
         today_picks["edge_num"]       = pd.to_numeric(today_picks["Edge_Pct"], errors="coerce")
+
+        # ── Build live calibration map: raw bucket → observed actual hit rate.
+        # The model is systematically overconfident (80-85% bucket hits at 40%
+        # actual). Map each pick to its bucket's ACTUAL historical hit rate,
+        # then filter on that calibrated number instead of trusting the raw.
+        @st.cache_data(ttl=300, show_spinner=False)
+        def _f5_calibration_map():
+            try:
+                s = model_picks_df[
+                    (model_picks_df["Market"] == "F5 Total")
+                    & (model_picks_df["Result"].isin(["WIN", "LOSS"]))
+                ].copy()
+                if s.empty: return {}
+                s["prob"] = pd.to_numeric(s["Model_Prob"], errors="coerce")
+                bands = [(0,55),(55,60),(60,65),(65,70),(70,75),
+                         (75,80),(80,85),(85,90),(90,101)]
+                m = {}
+                for lo, hi in bands:
+                    b = s[(s["prob"] >= lo) & (s["prob"] < hi)]
+                    if len(b) < 3: continue   # too thin to trust
+                    actual = (b["Result"]=="WIN").mean() * 100
+                    m[(lo, hi)] = (round(actual, 1), len(b))
+                return m
+            except Exception:
+                return {}
+
+        _cal_map = _f5_calibration_map()
+
+        def _calibrate(raw_prob: float):
+            for (lo, hi), (actual, n) in _cal_map.items():
+                if lo <= raw_prob < hi:
+                    return actual, n
+            return float(raw_prob), 0
+
+        today_picks[["calibrated_prob", "cal_n"]] = today_picks.apply(
+            lambda r: pd.Series(_calibrate(float(r["model_prob_num"]))), axis=1
+        )
+
+        # MUST TAKE filter: raw must be in proven bands (65-75% or ≥90%) AND
+        # the calibrated number must clear 58% so we're never betting a pick
+        # whose bucket hits below break-even (vig-implied breakeven is ~52.4%).
         in_sweet = (
             ((today_picks["model_prob_num"] >= 65.0) & (today_picks["model_prob_num"] < 75.0))
             | (today_picks["model_prob_num"] >= 90.0)
         )
-        must = today_picks[in_sweet & (today_picks["edge_num"] >= 1.0)].copy()
+        must = today_picks[
+            in_sweet
+            & (today_picks["edge_num"] >= 1.0)
+            & (today_picks["calibrated_prob"] >= 58.0)
+        ].copy()
         must = must.sort_values("model_prob_num", ascending=False).drop_duplicates(subset=["Game"], keep="first")
 
         # If absolutely nothing in the proven bands, fall back to top-3 of the
@@ -1285,10 +1330,21 @@ if page == "🎯 MUST TAKE":
                     <div style="display:flex;gap:24px;flex-wrap:wrap">
                       <div style="text-align:center">
                         <div style="font-size:0.65rem;color:#5a8ab4;text-transform:uppercase;
-                                    letter-spacing:0.08em">WIN %</div>
+                                    letter-spacing:0.08em">RAW MODEL</div>
                         <div style="font-size:1.2rem;font-weight:800;color:#00D4FF;
                                     font-family:'Space Mono',monospace">
                           {r['model_prob_num']:.1f}%
+                        </div>
+                      </div>
+                      <div style="text-align:center">
+                        <div style="font-size:0.65rem;color:#FFD66B;text-transform:uppercase;
+                                    letter-spacing:0.08em">CALIBRATED</div>
+                        <div style="font-size:1.2rem;font-weight:800;color:#FFD66B;
+                                    font-family:'Space Mono',monospace">
+                          {r.get('calibrated_prob', r['model_prob_num']):.1f}%
+                        </div>
+                        <div style="font-size:0.6rem;color:#666;">
+                          n={int(r.get('cal_n', 0))}
                         </div>
                       </div>
                       <div style="text-align:center">
@@ -1305,9 +1361,11 @@ if page == "🎯 MUST TAKE":
                 """, unsafe_allow_html=True)
 
             st.caption(
-                "💡 Flat $20-unit recommended. Don't size up just because the model is "
-                "confident — the 70%+ bucket has only 9 settled picks in history. "
-                "It's been right but the sample is still small."
+                "💡 **RAW MODEL** = what the model predicts before calibration. "
+                "**CALIBRATED** = what picks in that prob bucket have actually hit at "
+                "(live, recomputed from settled picks every 5 min). When raw and "
+                "calibrated diverge significantly, trust the calibrated number — "
+                "it reflects reality. Picks only surface when CALIBRATED ≥ 58%."
             )
 
         # ── ALL F5 PLAYS TODAY ───────────────────────────────────────────────
