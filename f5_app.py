@@ -1180,12 +1180,12 @@ if page == "🎯 MUST TAKE":
         🎯 Must Take — F5 Total only
       </div>
       <div style="font-size:0.85rem;color:#b8b8d4;margin-top:6px">
-        Picks that pass every filter we trust. After today's audit:
-        <strong>F5 Total only</strong> (the only profitable F5 market historically),
-        <strong>model_prob ≥ 70%</strong> (primary quality gate — the bucket
-        where realized hit rate matches predicted), <strong>edge ≥ 4%</strong>
-        (just needs to be +EV, not a wall), and at most one pick per game.
-        Empty list = no action tonight.
+        <strong>F5 Total only</strong> (the only profitable F5 market). After
+        the 2026-05-21 lifetime audit (n=323), only TWO probability bands have
+        proven +ROI: <strong>65-75%</strong> (combined +30% ROI on 33 picks)
+        and <strong>≥90%</strong> (+59% ROI on 9 alt-line locks). Everything
+        between 75-90% is the trap zone (mostly breakeven or losing); below
+        65% bleeds at -13% ROI. At most one pick per game. Empty list = sit out.
       </div>
     </div>
     """, unsafe_allow_html=True)
@@ -1199,41 +1199,37 @@ if page == "🎯 MUST TAKE":
     if today_picks.empty:
         st.info("⏳ No F5 Total signals logged for today yet. Run the daily sync, or check back closer to first pitch.")
     else:
-        # Apply Must-Take filter
+        # Apply tightened Must-Take filter based on live ROI by bucket
+        # (323 settled picks audited 2026-05-21):
+        #   65-70%  +16.3% ROI ✓
+        #   70-75%  +58.8% ROI ✓✓  (sweet spot)
+        #   75-80%   -2.0% ROI ≈
+        #   80-85%  -22.7% ROI ❌
+        #   85-90%  +16.1% ROI ≈   (tiny n=3)
+        #   ≥90%    +59.0% ROI ✓✓
+        # Strategy: only show the PROVEN profitable bands — 65-75% AND ≥90%.
+        # Skip 75-90% (mostly losing/breakeven). Skip <65% (the bleeding zone
+        # surfaced in the audit — 60-65% is -13% ROI on n=42).
         today_picks["model_prob_num"] = pd.to_numeric(today_picks["Model_Prob"], errors="coerce")
         today_picks["edge_num"]       = pd.to_numeric(today_picks["Edge_Pct"], errors="coerce")
-        must = today_picks[
-            (today_picks["model_prob_num"] >= 70.0)
-            & (today_picks["edge_num"]      >= 4.0)
-        ].copy()
-        # Dedupe — one pick per game (keep highest model_prob)
+        in_sweet = (
+            ((today_picks["model_prob_num"] >= 65.0) & (today_picks["model_prob_num"] < 75.0))
+            | (today_picks["model_prob_num"] >= 90.0)
+        )
+        must = today_picks[in_sweet & (today_picks["edge_num"] >= 1.0)].copy()
         must = must.sort_values("model_prob_num", ascending=False).drop_duplicates(subset=["Game"], keep="first")
 
-        # Track whether we hit the strict filter; if not, fall back through tiers
-        # so the page is never empty when picks DO exist.
+        # If absolutely nothing in the proven bands, fall back to top-3 of the
+        # day (any prob) as track-only with a strong warning. Page never empty.
         fallback_tier = None
         if must.empty:
-            # Tier 2: 65-70% prob bucket — still profitable per lifetime data
-            # (5-2, +36% ROI). Looser edge gate.
-            tier2 = today_picks[
-                (today_picks["model_prob_num"] >= 65.0)
-                & (today_picks["edge_num"]      >= 1.0)
-            ].copy()
-            tier2 = tier2.sort_values("model_prob_num", ascending=False).drop_duplicates(subset=["Game"], keep="first")
-            if not tier2.empty:
-                must = tier2
-                fallback_tier = "SOFT — 65-70% bucket (live ROI shown per row below)"
-            else:
-                # Tier 3: best available — surface the top pick by prob even if
-                # below 65%. Always have *something* to look at so the page
-                # isn't empty when the slate is soft.
-                tier3 = today_picks.sort_values("model_prob_num", ascending=False)
-                tier3 = tier3.drop_duplicates(subset=["Game"], keep="first").head(3)
-                if not tier3.empty:
-                    must = tier3
-                    fallback_tier = ("BEST AVAILABLE — no high-conviction plays tonight. "
-                                     "These are the strongest signals on the board, but "
-                                     "size down or skip if you don't have strong reasons.")
+            tier3 = today_picks.sort_values("model_prob_num", ascending=False)
+            tier3 = tier3.drop_duplicates(subset=["Game"], keep="first").head(3)
+            if not tier3.empty:
+                must = tier3
+                fallback_tier = ("BEST AVAILABLE — no plays in the proven 65-75% or ≥90% "
+                                 "buckets tonight. These are the strongest signals available "
+                                 "but the model has no historical edge here. Size down or skip.")
 
         if must.empty:
             st.warning(
@@ -1335,9 +1331,10 @@ if page == "🎯 MUST TAKE":
         all_picks = today_picks.copy()
         all_picks["model_prob_num"] = pd.to_numeric(all_picks["Model_Prob"], errors="coerce")
         all_picks["edge_num"]       = pd.to_numeric(all_picks["Edge_Pct"], errors="coerce")
-        # 60% confidence floor — hide marginal noise. data_sync still logs at
-        # 50%+ so the CSV has the full history; this filter is display-only.
-        all_picks = all_picks[all_picks["model_prob_num"] >= 60.0]
+        # 65% confidence floor — raised 2026-05-21 after audit showed the
+        # 60-65% bucket is -13.1% ROI on n=42 (was the bleeding zone). Below
+        # 65% is hidden from view; data_sync still logs at 50%+ for audit.
+        all_picks = all_picks[all_picks["model_prob_num"] >= 65.0]
         all_picks = all_picks.sort_values("model_prob_num", ascending=False)
 
         if all_picks.empty:
