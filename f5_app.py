@@ -1222,7 +1222,7 @@ if page == "🎯 MUST TAKE":
             tier2 = tier2.sort_values("model_prob_num", ascending=False).drop_duplicates(subset=["Game"], keep="first")
             if not tier2.empty:
                 must = tier2
-                fallback_tier = "SOFT — 65-70% bucket (lifetime +36% ROI on 5-2 record)"
+                fallback_tier = "SOFT — 65-70% bucket (live ROI shown per row below)"
             else:
                 # Tier 3: best available — surface the top pick by prob even if
                 # below 65%. Always have *something* to look at so the page
@@ -1343,23 +1343,72 @@ if page == "🎯 MUST TAKE":
         if all_picks.empty:
             st.info("No F5 Total picks logged today.")
         else:
+            # ── Compute LIVE ROI per F5 Total probability bucket from settled
+            # picks. Replaces hardcoded "+87% ROI" labels that drift over time.
+            # Cached 5 min so we don't churn the CSV scan on every render.
+            @st.cache_data(ttl=300, show_spinner=False)
+            def _f5_live_bucket_roi() -> dict:
+                try:
+                    settled = model_picks_df[
+                        (model_picks_df["Market"] == "F5 Total")
+                        & (model_picks_df["Result"].isin(["WIN", "LOSS"]))
+                    ].copy()
+                    if settled.empty:
+                        return {}
+                    settled["prob"] = pd.to_numeric(settled["Model_Prob"], errors="coerce")
+                    settled["ml_num"] = pd.to_numeric(settled["ML"], errors="coerce")
+                    def _pnl(ml, res):
+                        try: ml = float(ml)
+                        except: return 0
+                        if res == "WIN":  return (ml/100.0) if ml > 0 else (100.0/abs(ml))
+                        if res == "LOSS": return -1.0
+                        return 0.0
+                    settled["pnl"] = settled.apply(lambda r: _pnl(r.get("ML",-110), r["Result"]), axis=1)
+                    buckets = {}  # label → (n, roi)
+                    bands = [("<65%", 0, 65), ("65-70%", 65, 70), ("70-75%", 70, 75),
+                             ("75-80%", 75, 80), ("80-85%", 80, 85), ("85-90%", 85, 90),
+                             ("≥90%", 90, 101)]
+                    for lbl, lo, hi in bands:
+                        b = settled[(settled["prob"] >= lo) & (settled["prob"] < hi)]
+                        decided = b[b["Result"].isin(["WIN","LOSS"])]
+                        n = len(decided)
+                        if n == 0: continue
+                        roi = decided["pnl"].sum() / n
+                        buckets[lbl] = (n, roi)
+                    return buckets
+                except Exception:
+                    return {}
+
+            _f5_buckets = _f5_live_bucket_roi()
+
+            def _bucket_for_prob(p: float) -> str:
+                if p >= 90: return "≥90%"
+                if p >= 85: return "85-90%"
+                if p >= 80: return "80-85%"
+                if p >= 75: return "75-80%"
+                if p >= 70: return "70-75%"
+                if p >= 65: return "65-70%"
+                return "<65%"
+
             for _, r in all_picks.iterrows():
                 ml = float(r.get("ML") or 0)
                 ml_str = f"+{int(ml)}" if ml > 0 else f"{int(ml)}"
                 prob = r["model_prob_num"]
                 edge = r["edge_num"]
 
-                # Color by bucket from our lifetime analysis
-                if prob >= 90:
-                    accent, tag = "#00FF88", "🥇 ≥90% (lifetime +50% ROI)"
-                elif prob >= 75:
-                    accent, tag = "#FFD700", "⚠ 75-90% (lifetime trap zone)"
-                elif prob >= 70:
-                    accent, tag = "#00FF88", "🥇 70-75% (lifetime +88% ROI)"
-                elif prob >= 65:
-                    accent, tag = "#a5d6a7", "🥈 65-70% (lifetime +36% ROI)"
+                # Live-ROI driven label. Color by current ROI sign + magnitude.
+                bkt = _bucket_for_prob(prob)
+                n_roi = _f5_buckets.get(bkt)
+                if n_roi:
+                    n_b, roi = n_roi
+                    roi_pct = roi * 100
+                    if roi_pct >= 50:   accent, emoji = "#00FF88", "🥇"
+                    elif roi_pct >= 20: accent, emoji = "#FFD700", "🥈"
+                    elif roi_pct >= 0:  accent, emoji = "#a5d6a7", "⚪"
+                    else:               accent, emoji = "#ff5252", "🔴"
+                    tag = f"{emoji} {bkt} (live ROI {roi_pct:+.0f}% on n={n_b})"
                 else:
-                    accent, tag = "#666", "below threshold"
+                    accent, tag = "#666", f"{bkt} (no settled history yet)"
 
                 # Include W/L status if graded
                 result = r.get("Result", "PENDING")
