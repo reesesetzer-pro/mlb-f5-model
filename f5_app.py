@@ -1252,7 +1252,10 @@ if page == "🎯 MUST TAKE":
 
         # MUST TAKE filter: raw must be in proven bands (65-75% or ≥90%) AND
         # the calibrated number must clear 58% so we're never betting a pick
-        # whose bucket hits below break-even (vig-implied breakeven is ~52.4%).
+        # whose bucket hits below break-even (vig-implied breakeven is ~52.4%)
+        # AND the calibration bucket must have ≥20 settled picks so we trust
+        # its hit rate (user-mandated sample-size floor across every model).
+        MIN_BUCKET_N = 20
         in_sweet = (
             ((today_picks["model_prob_num"] >= 65.0) & (today_picks["model_prob_num"] < 75.0))
             | (today_picks["model_prob_num"] >= 90.0)
@@ -1261,39 +1264,23 @@ if page == "🎯 MUST TAKE":
             in_sweet
             & (today_picks["edge_num"] >= 1.0)
             & (today_picks["calibrated_prob"] >= 58.0)
+            & (today_picks["cal_n"] >= MIN_BUCKET_N)
         ].copy()
         must = must.sort_values("model_prob_num", ascending=False).drop_duplicates(subset=["Game"], keep="first")
 
-        # If absolutely nothing in the proven bands, fall back to top-3 of the
-        # day (any prob) as track-only with a strong warning. Page never empty.
-        fallback_tier = None
-        if must.empty:
-            tier3 = today_picks.sort_values("model_prob_num", ascending=False)
-            tier3 = tier3.drop_duplicates(subset=["Game"], keep="first").head(3)
-            if not tier3.empty:
-                must = tier3
-                fallback_tier = ("BEST AVAILABLE — no plays in the proven 65-75% or ≥90% "
-                                 "buckets tonight. These are the strongest signals available "
-                                 "but the model has no historical edge here. Size down or skip.")
+        # No fallback: per user directive, only show picks where the calibration
+        # bucket has a proven sample (n≥20). Showing "best available" when no
+        # bucket is proven would contradict the request — page is honestly empty
+        # if no bucket has both ≥20 samples AND ≥58% calibrated hit rate.
 
         if must.empty:
             st.warning(
-                "⚠️ Today's F5 Total signals exist but no picks crossed any filter. "
-                "**Sit it out** — the model isn't producing actionable plays."
+                "⚠️ No picks tonight cleared the sample-size + calibration gate. "
+                "**Sit it out** — none of today's signals fall in a bucket that "
+                f"has both ≥{MIN_BUCKET_N} settled picks and a calibrated hit "
+                "rate above the breakeven floor."
             )
         else:
-            if fallback_tier:
-                st.markdown(f"""
-                <div style="background:#3a2a1a;border-left:4px solid #ff9800;
-                            border-radius:8px;padding:12px 16px;margin-bottom:12px">
-                    <div style="color:#ff9800;font-weight:700;font-size:0.85rem;
-                                letter-spacing:0.05em;">⚠ FALLBACK TIER</div>
-                    <div style="color:#ddd;font-size:0.85rem;margin-top:4px">
-                        No picks cleared the strict Must-Take filter (≥70% prob + ≥4% edge).
-                        Showing: <strong>{fallback_tier}</strong>
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
             # Headline
             st.markdown(f"""
             <div style="background:#0d1f0d;border-left:4px solid #00FF88;
