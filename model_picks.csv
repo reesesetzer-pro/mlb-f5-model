@@ -363,3 +363,6 @@ Date,Game,Team,Side,Market,ML,Book,Model_Prob,Market_Prob,Edge_Pct,Model_Line,Ma
 05/23/2026,Texas Rangers @ Los Angeles Angels,Over,Over,F5 Total,-125.0,betmgm,55.2,55.6,-0.4,4.3,4.0,58.2,50.0,1.03,0.0,PENDING,,False,2026-05-23T14:37:19Z
 05/23/2026,Texas Rangers @ Los Angeles Angels,Under,Under,F5 Total,-146.0,fanduel,53.5,59.3,-5.9,4.3,4.5,58.2,50.0,1.03,0.0,PENDING,,False,2026-05-23T14:37:19Z
 05/23/2026,Colorado Rockies @ Arizona Diamondbacks,Under,Under,F5 Total,-132.0,fanduel,67.0,56.9,10.1,4.49,5.5,50.3,50.0,1.0,0.0,PENDING,,False,2026-05-23T14:37:19Z
+05/23/2026,Houston Astros @ Chicago Cubs,Houston Astros/Chicago Cubs,Over 4.0,F5 Total,100.0,Caesars,74.4,50.0,24.4,5.51,4.0,46.25,50.0,1.06,0.0,PENDING,,False,
+05/23/2026,Cleveland Guardians @ Philadelphia Phillies,Under,Under,F5 Total,100.0,williamhill_us,50.5,50.0,0.5,3.47,3.5,51.4,45.0,0.99,0.026,PENDING,,False,2026-05-23T16:34:07Z
+05/23/2026,Athletics @ San Diego Padres,Over,Over,F5 Total,-130.0,betmgm,50.7,56.5,-5.8,4.04,4.0,56.0,50.0,0.95,0.0,PENDING,,False,2026-05-23T16:34:07Z
