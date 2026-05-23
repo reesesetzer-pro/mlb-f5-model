@@ -3710,18 +3710,27 @@ elif page == "📊 Model Performance":
 
     def _render_perf_tab(df, threshold_label):
         """Render stats, calibration, market breakdown, and history for a filtered picks df."""
-        settled = df[df["Result"].isin(["WIN","LOSS"])].copy()
+        # Decided (W/L) drives win rate; pushes count as "settled" but don't
+        # affect win rate. Pending = whatever's left. Counted this way, the
+        # math is honest: Settled + Pending == Total.
+        decided = df[df["Result"].isin(["WIN","LOSS"])].copy()
+        pushes  = df[df["Result"]=="PUSH"]
         pending = df[df["Result"]=="PENDING"]
-        wins    = len(settled[settled["Result"]=="WIN"])
-        losses  = len(settled[settled["Result"]=="LOSS"])
+        wins    = len(decided[decided["Result"]=="WIN"])
+        losses  = len(decided[decided["Result"]=="LOSS"])
         n       = wins + losses
+        n_push  = len(pushes)
+        settled_total = n + n_push
 
         c1,c2,c3,c4,c5 = st.columns(5)
         c1.metric("Total Signals", len(df))
-        c2.metric("Settled", n)
+        c2.metric("Settled", settled_total,
+                  help=f"W+L: {n} · Pushes: {n_push}" if n_push else None)
         c3.metric("Pending", len(pending))
-        c4.metric("Record", f"{wins}-{losses}")
-        c5.metric("Win Rate", f"{wins/n*100:.1f}%" if n>0 else "—")
+        c4.metric("Record", f"{wins}-{losses}" + (f"-{n_push}" if n_push else ""))
+        c5.metric("Win Rate", f"{wins/n*100:.1f}%" if n>0 else "—",
+                  help="W / (W+L) — pushes excluded from win rate")
+        settled = decided  # alias kept for downstream calibration code
 
         # Taken-only summary
         taken_settled = df[
