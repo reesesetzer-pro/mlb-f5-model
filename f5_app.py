@@ -1380,7 +1380,14 @@ if page == "🎯 MUST TAKE":
         # 60-65% bucket is -13.1% ROI on n=42 (was the bleeding zone). Below
         # 65% is hidden from view; data_sync still logs at 50%+ for audit.
         all_picks = all_picks[all_picks["model_prob_num"] >= 65.0]
-        all_picks = all_picks.sort_values("model_prob_num", ascending=False)
+        # Dedupe to one pick per game — sorted by win prob desc means we keep
+        # the highest-conviction line per matchup. The MUST TAKE list above
+        # already dedupes; this section was leaving duplicates (same game,
+        # different lines) which confused users (2026-05-23 — user flagged
+        # HOU @ CHC showing twice).
+        all_picks = (all_picks
+                     .sort_values("model_prob_num", ascending=False)
+                     .drop_duplicates(subset=["Game"], keep="first"))
 
         if all_picks.empty:
             st.info("No F5 Total picks logged today.")
