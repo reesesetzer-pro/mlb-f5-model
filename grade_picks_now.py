@@ -174,6 +174,26 @@ def grade_pending_picks():
                 except Exception:
                     pass
 
+            elif market.startswith("1st Inn"):
+                # "1st Inn U1.5" / "1st Inn O1.5" etc. The line comes either
+                # from Market_Line or embedded in the market string; default 1.5.
+                fi = ls["fi_total"]
+                try:
+                    line = float(row.get("Market_Line") or 0)
+                except (TypeError, ValueError):
+                    line = 0
+                if line <= 0:
+                    # Pull line out of the market name as a fallback ("U1.5" → 1.5)
+                    import re as _re
+                    m = _re.search(r"(\d+\.?\d*)", market)
+                    line = float(m.group(1)) if m else 1.5
+                # Side may be "Over"/"Under" or "U"/"O" inside the market name
+                side_norm = side.lower() if side else market.lower()
+                if "over" in side_norm or "o1" in side_norm:
+                    result = "WIN" if fi > line else ("PUSH" if fi == line else "LOSS")
+                elif "under" in side_norm or "u1" in side_norm:
+                    result = "WIN" if fi < line else ("PUSH" if fi == line else "LOSS")
+
             if result:
                 picks_df.at[idx, "Result"]   = result
                 picks_df.at[idx, "F5_Score"] = f"{f5a}-{f5h}"
