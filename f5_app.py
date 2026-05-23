@@ -3616,7 +3616,12 @@ elif page == "📊 Model Performance":
         # ── By market ─────────────────────────────────────────────────────
         st.divider()
         st.subheader("📊 P&L by market")
-        by_mkt = (settled.groupby("Market")
+        # Hide markets that are disabled in production grading. NRFI/YRFI was
+        # paused 2026-05-23 (lifetime 3-6 / 33%); keeping the row in the
+        # summary just makes the active markets look worse than they are.
+        _DISABLED_MARKETS = {"NRFI/YRFI", "1st Inn U1.5"}
+        _settled_active = settled[~settled["Market"].isin(_DISABLED_MARKETS)]
+        by_mkt = (_settled_active.groupby("Market")
                   .agg(bets=("profit", "count"),
                        wins=("Result", lambda s: (s == "WIN").sum()),
                        losses=("Result", lambda s: (s == "LOSS").sum()),

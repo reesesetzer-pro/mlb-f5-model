@@ -156,10 +156,10 @@ def grade_pending_picks():
                 except Exception:
                     pass
 
-            elif market == "NRFI/YRFI":
-                fi = ls["fi_total"]
-                if   "NRFI" in side: result = "WIN" if fi == 0 else "LOSS"
-                elif "YRFI" in side: result = "WIN" if fi  > 0 else "LOSS"
+            # NRFI/YRFI grading disabled 2026-05-23 — lifetime 3-6 (33.3%)
+            # not earning its slot. Re-enable when the model shows uptick
+            # on this market. data_sync.py also keeps NRFI/YRFI out of
+            # _ENABLED_MARKETS so no new picks land in the log.
 
             elif market == "F5 Team Total":
                 try:
