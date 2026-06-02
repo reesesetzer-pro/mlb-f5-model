@@ -48,12 +48,37 @@ REC_BOOKS = {"draftkings","fanduel","betmgm","williamhill_us","espnbet","fanatic
 # to ENABLED_MARKETS once the rebuild has been validated against shadow picks.
 ENABLED_MARKETS = {
     "F5 Total",
-    # "F5 ML",           # disabled 2026-05-03 — pending rebuild
-    # "F5 Spread",       # disabled 2026-05-03 — pending rebuild
-    # "F5 Team Total",   # disabled 2026-05-03 — pending rebuild
-    # "NRFI/YRFI",       # disabled 2026-05-03 — pending rebuild
-    # "1st Inn U1.5",    # disabled 2026-05-03 — pending rebuild
+    # F5 ML + Spread re-enabled 2026-06-01 after per-bucket recalibration
+    # found real +EV sweet spots. Outside the sweet spots they still bleed —
+    # so MARKET_SWEET_SPOTS (below) tightens the surfacing gate per market.
+    "F5 ML",
+    "F5 Spread",
+    # "F5 Team Total",   # disabled 2026-05-03 — still off (-7.7% lifetime)
+    # "NRFI/YRFI",       # paused 2026-05-23 (-36.8% lifetime — user directive)
+    # "1st Inn U1.5",    # disabled 2026-05-23 — user never bet
 }
+
+# Per-market sweet spot from the 2026-06-01 recalibration. Picks must clear
+# BOTH the probability AND edge band to surface as actionable. Outside the
+# sweet spot, picks log to the CSV (so the sample grows) but aren't shown on
+# the MUST TAKE or "all plays" tabs.
+MARKET_SWEET_SPOTS = {
+    "F5 Total":  {"prob_lo": 65.0, "prob_hi": 100.1, "edge_lo": 1.0,  "edge_hi": 99.0,
+                  "note": "65%+ confidence — proven profit zone"},
+    "F5 ML":     {"prob_lo": 55.0, "prob_hi": 60.0,  "edge_lo": 3.0,  "edge_hi": 6.0,
+                  "note": "55-60% prob · 3-6% edge — small sample, track-only"},
+    "F5 Spread": {"prob_lo": 60.0, "prob_hi": 65.0,  "edge_lo": 6.0,  "edge_hi": 15.0,
+                  "note": "60-65% prob · 6-15% edge — +28.7% ROI on n=28 ⭐"},
+}
+
+
+def _in_sweet_spot(market: str, prob: float, edge: float) -> bool:
+    """Check whether a pick clears its market's proven +EV band."""
+    spec = MARKET_SWEET_SPOTS.get(market)
+    if not spec:
+        return False
+    return (spec["prob_lo"] <= prob < spec["prob_hi"]
+            and spec["edge_lo"] <= edge < spec["edge_hi"])
 _APP_DIR          = os.path.dirname(os.path.abspath(__file__))
 TRACKER_FILE      = os.path.join(_APP_DIR, "bet_tracker.csv")
 SP_FILE           = os.path.join(_APP_DIR, "sp_data.csv")
