@@ -58,27 +58,55 @@ ENABLED_MARKETS = {
     # "1st Inn U1.5",    # disabled 2026-05-23 — user never bet
 }
 
-# Per-market sweet spot from the 2026-06-01 recalibration. Picks must clear
-# BOTH the probability AND edge band to surface as actionable. Outside the
-# sweet spot, picks log to the CSV (so the sample grows) but aren't shown on
-# the MUST TAKE or "all plays" tabs.
+# Per-market sweet spots from the 2026-06-01 2D recalibration (Prob × Edge).
+# A pick must clear ALL filters in ANY band to surface as actionable. Outside
+# the bands, picks still log to the CSV so the sample keeps growing for
+# future re-tuning — they just don't appear on MUST TAKE / "all plays" tabs.
+#
+# The 2D map exposed an honest truth: F5 picks aren't profitable across a
+# single broad gate (e.g. "65%+ prob"). They're only +EV in specific
+# (probability × edge) cells. Big edges at the wrong probability bleed, and
+# big probabilities with small edges bleed too. Both need to align.
 MARKET_SWEET_SPOTS = {
-    "F5 Total":  {"prob_lo": 65.0, "prob_hi": 100.1, "edge_lo": 1.0,  "edge_hi": 99.0,
-                  "note": "65%+ confidence — proven profit zone"},
-    "F5 ML":     {"prob_lo": 55.0, "prob_hi": 60.0,  "edge_lo": 3.0,  "edge_hi": 6.0,
-                  "note": "55-60% prob · 3-6% edge — small sample, track-only"},
-    "F5 Spread": {"prob_lo": 60.0, "prob_hi": 65.0,  "edge_lo": 6.0,  "edge_hi": 15.0,
-                  "note": "60-65% prob · 6-15% edge — +28.7% ROI on n=28 ⭐"},
+    "F5 Total": {
+        # Three bands proven +EV across both lifetime AND last 30 days
+        "bands": [
+            {"plo": 60.0, "phi": 65.0, "elo": 10.0, "ehi": 99.0,
+             "note": "60-65% prob · ≥10% edge — +11.6% ROI last 30d (n=19)"},
+            {"plo": 65.0, "phi": 70.0, "elo": 6.0,  "ehi": 10.0,
+             "note": "65-70% prob · 6-10% edge — +25.6% lifetime / +20.1% recent ⭐"},
+            {"plo": 70.0, "phi": 75.0, "elo": 10.0, "ehi": 99.0,
+             "note": "70-75% prob · ≥10% edge — +23.3% lifetime / +12.2% recent ⭐"},
+        ],
+    },
+    "F5 Spread": {
+        # 60-65% prob + ≥6% edge: combined n=28 / +28% ROI (the model's
+        # strongest signal anywhere). Above 65% prob it COLLAPSES (-56% / -36%).
+        "bands": [
+            {"plo": 60.0, "phi": 65.0, "elo": 6.0, "ehi": 99.0,
+             "note": "60-65% prob · ≥6% edge — +28% ROI on n=28 ⭐"},
+        ],
+    },
+    "F5 ML": {
+        # Lifetime n=29 — too thin to claim a real cell. Loose band for
+        # track-only logging until ~50 settled. Re-tune when sample grows.
+        "bands": [
+            {"plo": 55.0, "phi": 65.0, "elo": 3.0, "ehi": 6.0,
+             "note": "55-65% prob · 3-6% edge — track only (n<30, awaiting sample)"},
+        ],
+    },
 }
 
 
 def _in_sweet_spot(market: str, prob: float, edge: float) -> bool:
-    """Check whether a pick clears its market's proven +EV band."""
+    """Check whether a pick clears ANY of its market's proven +EV bands."""
     spec = MARKET_SWEET_SPOTS.get(market)
     if not spec:
         return False
-    return (spec["prob_lo"] <= prob < spec["prob_hi"]
-            and spec["edge_lo"] <= edge < spec["edge_hi"])
+    for b in spec.get("bands", []):
+        if b["plo"] <= prob < b["phi"] and b["elo"] <= edge < b["ehi"]:
+            return True
+    return False
 _APP_DIR          = os.path.dirname(os.path.abspath(__file__))
 TRACKER_FILE      = os.path.join(_APP_DIR, "bet_tracker.csv")
 SP_FILE           = os.path.join(_APP_DIR, "sp_data.csv")
