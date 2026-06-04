@@ -493,18 +493,33 @@ Date,Game,Team,Side,Market,ML,Book,Model_Prob,Market_Prob,Edge_Pct,Model_Line,Ma
 06/02/2026,Cleveland Guardians @ New York Yankees,New York Yankees,Home,F5 ML,-235.0,BetMGM,71.4,70.1,1.3,,,67.0,,1.0,0.0,LOSS,5-4,False,
 06/02/2026,San Francisco Giants @ Milwaukee Brewers,Milwaukee Brewers,Home,F5 ML,-220.0,TheScore,71.4,68.8,2.7,,,50.0,,1.02,0.0,WIN,0-3,False,
 06/02/2026,Athletics @ Chicago Cubs,Athletics,Away +0.5,F5 Spread,-135.0,Caesars,62.1,57.4,4.7,0.3,0.5,50.0,,1.06,0.0,WIN,2-1,False,
-06/03/2026,New York Mets @ Seattle Mariners,Over,Over,F5 Total,-140.0,fanduel,62.6,58.3,4.3,4.24,3.5,48.3,45.0,0.99,0.056,PENDING,,False,2026-06-03T18:40:37Z
-06/03/2026,San Diego Padres @ Philadelphia Phillies,Philadelphia Phillies,Home,F5 ML,-260.0,williamhill_us,80.1,72.2,7.9,,,73.00000000000001,50.0,0.99,0.0,PENDING,,False,2026-06-03T18:40:37Z
-06/03/2026,San Diego Padres @ Philadelphia Phillies,Philadelphia Phillies,Home,F5 Spread,115.0,betmgm,87.5,46.5,41.0,-1.2,1.2,60.5,50.0,0.99,0.0,PENDING,,False,2026-06-03T18:40:37Z
-06/03/2026,San Diego Padres @ Philadelphia Phillies,Over,Over,F5 Total,-118.0,betmgm,57.6,54.1,3.5,4.44,4.0,60.5,50.0,0.99,0.0,PENDING,,False,2026-06-03T18:40:37Z
-06/03/2026,San Diego Padres @ Philadelphia Phillies,Under,Under,F5 Total,-140.0,fanduel,51.0,58.3,-7.3,4.44,4.5,60.5,50.0,0.99,0.0,PENDING,,False,2026-06-03T18:40:37Z
-06/03/2026,Baltimore Orioles @ Boston Red Sox,Under,Under,F5 Total,-102.0,fanduel,51.6,50.5,1.1,4.41,4.5,45.5,44.5,1.07,0.034,PENDING,,False,2026-06-03T18:40:37Z
-06/03/2026,Cleveland Guardians @ New York Yankees,Over,Over,F5 Total,-146.0,fanduel,60.6,59.3,1.3,4.12,3.5,56.1,50.0,1.0,0.0,PENDING,,False,2026-06-03T18:40:37Z
-06/03/2026,Kansas City Royals @ Cincinnati Reds,Over,Over,F5 Total,-105.0,williamhill_us,61.5,51.2,10.2,4.67,4.0,55.5,42.0,1.12,0.019,PENDING,,False,2026-06-03T18:40:37Z
-06/03/2026,Toronto Blue Jays @ Atlanta Braves,Under,Under,F5 Total,100.0,williamhill_us,51.9,50.0,1.9,4.39,4.5,52.5,50.0,1.01,0.0,PENDING,,False,2026-06-03T18:40:37Z
-06/03/2026,San Francisco Giants @ Milwaukee Brewers,Over,Over,F5 Total,-125.0,betmgm,60.1,55.6,4.6,4.59,4.0,50.0,50.0,1.02,0.0,PENDING,,False,2026-06-03T18:40:37Z
-06/03/2026,Texas Rangers @ St. Louis Cardinals,Under,Under,F5 Total,-125.0,betmgm,53.6,55.6,-1.9,4.29,4.5,50.9,50.0,0.97,0.0,PENDING,,False,2026-06-03T18:40:37Z
-06/03/2026,Athletics @ Chicago Cubs,Under,Under,F5 Total,-130.0,williamhill_us,59.1,56.5,2.6,4.47,5.0,53.3,50.0,1.06,0.0,PENDING,,False,2026-06-03T18:40:37Z
-06/03/2026,Pittsburgh Pirates @ Houston Astros,Over,Over,F5 Total,-140.0,fanduel,65.2,58.3,6.9,4.4,3.5,55.1,50.0,1.0,0.0,PENDING,,False,2026-06-03T18:40:37Z
-06/03/2026,Colorado Rockies @ Los Angeles Angels,Under,Under,F5 Total,100.0,williamhill_us,53.8,50.0,3.8,4.28,4.5,51.9,50.0,1.03,0.0,PENDING,,False,2026-06-03T18:40:37Z
-06/03/2026,Los Angeles Dodgers @ Arizona Diamondbacks,Under,Under,F5 Total,100.0,williamhill_us,50.9,50.0,0.9,4.45,4.5,52.8,50.0,1.0,0.0,PENDING,,False,2026-06-03T18:40:37Z
+06/03/2026,New York Mets @ Seattle Mariners,Over,Over,F5 Total,-140.0,fanduel,62.6,58.3,4.3,4.24,3.5,48.3,45.0,0.99,0.056,WIN,6-1,False,2026-06-03T18:40:37Z
+06/03/2026,San Diego Padres @ Philadelphia Phillies,Philadelphia Phillies,Home,F5 ML,-260.0,williamhill_us,80.1,72.2,7.9,,,73.00000000000001,50.0,0.99,0.0,WIN,0-1,False,2026-06-03T18:40:37Z
+06/03/2026,San Diego Padres @ Philadelphia Phillies,Philadelphia Phillies,Home,F5 Spread,115.0,betmgm,87.5,46.5,41.0,-1.2,1.2,60.5,50.0,0.99,0.0,WIN,0-1,False,2026-06-03T18:40:37Z
+06/03/2026,San Diego Padres @ Philadelphia Phillies,Over,Over,F5 Total,-118.0,betmgm,57.6,54.1,3.5,4.44,4.0,60.5,50.0,0.99,0.0,LOSS,0-1,False,2026-06-03T18:40:37Z
+06/03/2026,San Diego Padres @ Philadelphia Phillies,Under,Under,F5 Total,-140.0,fanduel,51.0,58.3,-7.3,4.44,4.5,60.5,50.0,0.99,0.0,WIN,0-1,False,2026-06-03T18:40:37Z
+06/03/2026,Baltimore Orioles @ Boston Red Sox,Under,Under,F5 Total,-102.0,fanduel,51.6,50.5,1.1,4.41,4.5,45.5,44.5,1.07,0.034,LOSS,0-8,False,2026-06-03T18:40:37Z
+06/03/2026,Cleveland Guardians @ New York Yankees,Over,Over,F5 Total,-146.0,fanduel,60.6,59.3,1.3,4.12,3.5,56.1,50.0,1.0,0.0,WIN,3-2,False,2026-06-03T18:40:37Z
+06/03/2026,Kansas City Royals @ Cincinnati Reds,Over,Over,F5 Total,-105.0,williamhill_us,61.5,51.2,10.2,4.67,4.0,55.5,42.0,1.12,0.019,PUSH,2-2,False,2026-06-03T18:40:37Z
+06/03/2026,Toronto Blue Jays @ Atlanta Braves,Under,Under,F5 Total,100.0,williamhill_us,51.9,50.0,1.9,4.39,4.5,52.5,50.0,1.01,0.0,LOSS,2-4,False,2026-06-03T18:40:37Z
+06/03/2026,San Francisco Giants @ Milwaukee Brewers,Over,Over,F5 Total,-125.0,betmgm,60.1,55.6,4.6,4.59,4.0,50.0,50.0,1.02,0.0,LOSS,1-0,False,2026-06-03T18:40:37Z
+06/03/2026,Texas Rangers @ St. Louis Cardinals,Under,Under,F5 Total,-125.0,betmgm,53.6,55.6,-1.9,4.29,4.5,50.9,50.0,0.97,0.0,LOSS,1-4,False,2026-06-03T18:40:37Z
+06/03/2026,Athletics @ Chicago Cubs,Under,Under,F5 Total,-130.0,williamhill_us,59.1,56.5,2.6,4.47,5.0,53.3,50.0,1.06,0.0,LOSS,2-4,False,2026-06-03T18:40:37Z
+06/03/2026,Pittsburgh Pirates @ Houston Astros,Over,Over,F5 Total,-140.0,fanduel,65.2,58.3,6.9,4.4,3.5,55.1,50.0,1.0,0.0,WIN,4-3,False,2026-06-03T18:40:37Z
+06/03/2026,Colorado Rockies @ Los Angeles Angels,Under,Under,F5 Total,100.0,williamhill_us,53.8,50.0,3.8,4.28,4.5,51.9,50.0,1.03,0.0,LOSS,3-9,False,2026-06-03T18:40:37Z
+06/03/2026,Los Angeles Dodgers @ Arizona Diamondbacks,Under,Under,F5 Total,100.0,williamhill_us,50.9,50.0,0.9,4.45,4.5,52.8,50.0,1.0,0.0,LOSS,5-0,False,2026-06-03T18:40:37Z
+06/03/2026,Kansas City Royals @ Cincinnati Reds,Cincinnati Reds,Home,F5 ML,-170.0,Caesars,72.4,63.0,9.5,,,58.4,,1.12,0.019,PUSH,2-2,False,
+06/03/2026,San Francisco Giants @ Milwaukee Brewers,Milwaukee Brewers,Home,F5 ML,-118.0,FanDuel,67.6,54.1,13.5,,,50.0,,1.02,0.0,LOSS,1-0,False,
+06/03/2026,Los Angeles Dodgers @ Arizona Diamondbacks,Los Angeles Dodgers,Away,F5 ML,-200.0,TheScore,64.5,66.7,-2.1,,,50.0,,1.0,0.0,WIN,5-0,False,
+06/03/2026,Colorado Rockies @ Los Angeles Angels,Los Angeles Angels,Home,F5 ML,-160.0,Caesars,63.1,61.5,1.6,,,50.0,,1.03,0.0,WIN,3-9,False,
+06/03/2026,Pittsburgh Pirates @ Houston Astros,Pittsburgh Pirates,Away,F5 ML,-170.0,Caesars,62.0,63.0,-0.9,,,66.1,,1.0,0.0,WIN,4-3,False,
+06/04/2026,Toronto Blue Jays @ Atlanta Braves,Atlanta Braves,Home,F5 ML,-250.0,TheScore,68.7,71.4,-2.7,,,50.0,,1.01,0.0,PENDING,,False,
+06/04/2026,Kansas City Royals @ Minnesota Twins,Minnesota Twins,Home +0.5,F5 Spread,-145.0,BetMGM,61.6,59.2,2.5,-0.27,0.5,58.4,,1.12,0.019,PENDING,,False,
+06/04/2026,Toronto Blue Jays @ Atlanta Braves,Atlanta Braves,Home,F5 Spread,116.0,fanduel,85.5,46.3,39.2,-1.2,1.2,59.5,36.8,1.01,0.024,PENDING,,False,2026-06-04T21:59:56Z
+06/04/2026,Toronto Blue Jays @ Atlanta Braves,Over,Over,F5 Total,100.0,williamhill_us,52.2,50.0,2.2,4.13,4.0,59.5,36.8,1.01,0.024,PENDING,,False,2026-06-04T21:59:56Z
+06/04/2026,Toronto Blue Jays @ Atlanta Braves,Under,Under,F5 Total,-138.0,fanduel,56.4,58.0,-1.6,4.13,4.5,59.5,36.8,1.01,0.024,PENDING,,False,2026-06-04T21:59:56Z
+06/04/2026,Kansas City Royals @ Minnesota Twins,Under,Under,F5 Total,-105.0,williamhill_us,67.4,51.2,16.2,3.96,5.0,56.0,35.3,0.98,0.042,PENDING,,False,2026-06-04T21:59:56Z
+06/04/2026,Athletics @ Chicago Cubs,Under,Under,F5 Total,-108.0,fanduel,71.9,51.9,19.9,4.17,5.5,50.4,38.5,1.06,0.058,PENDING,,False,2026-06-04T21:59:56Z
+06/04/2026,Pittsburgh Pirates @ Houston Astros,Under,Under,F5 Total,-110.0,betmgm,50.5,52.4,-1.9,4.47,4.5,51.1,51.4,1.0,0.013,PENDING,,False,2026-06-04T21:59:56Z
+06/04/2026,Los Angeles Dodgers @ Arizona Diamondbacks,Over,Over,F5 Total,-144.0,fanduel,50.2,59.0,-8.8,4.51,4.5,45.5,47.9,1.0,0.026,PENDING,,False,2026-06-04T21:59:56Z
+06/04/2026,Los Angeles Dodgers @ Arizona Diamondbacks,Under,Under,F5 Total,-105.0,williamhill_us,58.4,51.2,7.2,4.51,5.0,45.5,47.9,1.0,0.026,PENDING,,False,2026-06-04T21:59:56Z
