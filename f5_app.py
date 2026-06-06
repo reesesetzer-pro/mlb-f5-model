@@ -58,44 +58,86 @@ ENABLED_MARKETS = {
     # "1st Inn U1.5",    # disabled 2026-05-23 — user never bet
 }
 
-# Per-market sweet spots from the 2026-06-01 2D recalibration (Prob × Edge).
-# A pick must clear ALL filters in ANY band to surface as actionable. Outside
-# the bands, picks still log to the CSV so the sample keeps growing for
-# future re-tuning — they just don't appear on MUST TAKE / "all plays" tabs.
+# ─── Auto-recomputed sweet spots ─────────────────────────────────────────────
+# The MARKET_SWEET_SPOTS gates auto-rebuild from settled-pick data on every
+# cache refresh (5 min). The 2D grid finds every (Probability × Edge) cell
+# that is +EV at a sample-size floor, and ANY pick landing in such a cell
+# surfaces as actionable.
 #
-# The 2D map exposed an honest truth: F5 picks aren't profitable across a
-# single broad gate (e.g. "65%+ prob"). They're only +EV in specific
-# (probability × edge) cells. Big edges at the wrong probability bleed, and
-# big probabilities with small edges bleed too. Both need to align.
-MARKET_SWEET_SPOTS = {
-    "F5 Total": {
-        # Three bands proven +EV across both lifetime AND last 30 days
-        "bands": [
-            {"plo": 60.0, "phi": 65.0, "elo": 10.0, "ehi": 99.0,
-             "note": "60-65% prob · ≥10% edge — +11.6% ROI last 30d (n=19)"},
-            {"plo": 65.0, "phi": 70.0, "elo": 6.0,  "ehi": 10.0,
-             "note": "65-70% prob · 6-10% edge — +25.6% lifetime / +20.1% recent ⭐"},
-            {"plo": 70.0, "phi": 75.0, "elo": 10.0, "ehi": 99.0,
-             "note": "70-75% prob · ≥10% edge — +23.3% lifetime / +12.2% recent ⭐"},
-        ],
-    },
-    "F5 Spread": {
-        # 60-65% prob + ≥6% edge: combined n=28 / +28% ROI (the model's
-        # strongest signal anywhere). Above 65% prob it COLLAPSES (-56% / -36%).
-        "bands": [
-            {"plo": 60.0, "phi": 65.0, "elo": 6.0, "ehi": 99.0,
-             "note": "60-65% prob · ≥6% edge — +28% ROI on n=28 ⭐"},
-        ],
-    },
-    "F5 ML": {
-        # Lifetime n=29 — too thin to claim a real cell. Loose band for
-        # track-only logging until ~50 settled. Re-tune when sample grows.
-        "bands": [
-            {"plo": 55.0, "phi": 65.0, "elo": 3.0, "ehi": 6.0,
-             "note": "55-65% prob · 3-6% edge — track only (n<30, awaiting sample)"},
-        ],
-    },
+# Previously these bands were hardcoded constants set during a 2026-06-01
+# manual recalibration. That meant the gates went stale until I re-tuned.
+# Now they evolve daily as new picks settle — every result moves the boundary.
+PROB_BINS = [(50,55),(55,60),(60,65),(65,70),(70,75),(75,80),(80,85),(85,101)]
+EDGE_BINS = [(0,3),(3,6),(6,10),(10,15),(15,99)]
+MIN_CELL_N = 10        # need ≥10 settled picks in a cell to claim it
+MIN_CELL_ROI = 0.0     # ROI floor (capped at +5u/win) to count as +EV
+
+# Discoverable fallback gates used when the model has too thin a sample to
+# build any cells. Loose enough to log picks but not so loose they surface.
+_FALLBACK_GATES = {
+    "F5 Total":  [{"plo": 65.0, "phi": 100.1, "elo": 1.0, "ehi": 99.0,
+                   "note": "fallback: 65%+ prob — until 2D cells populate"}],
+    "F5 Spread": [{"plo": 60.0, "phi": 65.0,  "elo": 6.0, "ehi": 99.0,
+                   "note": "fallback: 60-65% prob × ≥6% edge"}],
+    "F5 ML":     [{"plo": 55.0, "phi": 65.0,  "elo": 3.0, "ehi": 6.0,
+                   "note": "fallback: 55-65% prob × 3-6% edge (track only)"}],
 }
+
+
+def _build_sweet_spots(model_picks_df) -> dict:
+    """Compute MARKET_SWEET_SPOTS from settled-pick data.
+
+    Walks every market × prob × edge cell, retains those with n ≥ MIN_CELL_N
+    AND capped ROI > MIN_CELL_ROI. Returns the same {market: {"bands":[...]}}
+    structure the rest of the dashboard expects, so it's a drop-in.
+    """
+    import numpy as np
+    out: dict[str, dict] = {m: {"bands": []} for m in ("F5 Total","F5 Spread","F5 ML")}
+    if model_picks_df is None or model_picks_df.empty:
+        for m in out: out[m]["bands"] = list(_FALLBACK_GATES[m])
+        return out
+
+    df = model_picks_df.copy()
+    df = df[df["Result"].isin(["WIN","LOSS"])]
+    df["prob"] = pd.to_numeric(df["Model_Prob"], errors="coerce")
+    df["edge"] = pd.to_numeric(df["Edge_Pct"], errors="coerce")
+    df["ml"]   = pd.to_numeric(df["ML"], errors="coerce")
+    def _pnl(ml, r):
+        if r == "PUSH" or r not in ("WIN","LOSS"): return 0
+        if pd.isna(ml): return -1.0 if r=="LOSS" else 0.909
+        return ((ml/100) if ml>0 else (100/abs(ml))) if r=="WIN" else -1.0
+    df["pnl"] = df.apply(lambda r: _pnl(r["ml"], r["Result"]), axis=1).clip(upper=5.0)
+
+    for mkt in out.keys():
+        s = df[df["Market"] == mkt]
+        if s.empty:
+            out[mkt]["bands"] = list(_FALLBACK_GATES[mkt])
+            continue
+        bands = []
+        for plo, phi in PROB_BINS:
+            for elo, ehi in EDGE_BINS:
+                cell = s[(s["prob"]>=plo)&(s["prob"]<phi)&(s["edge"]>=elo)&(s["edge"]<ehi)]
+                n = len(cell)
+                if n < MIN_CELL_N: continue
+                roi = cell["pnl"].sum() / n
+                if roi <= MIN_CELL_ROI: continue
+                bands.append({
+                    "plo": float(plo), "phi": float(phi),
+                    "elo": float(elo), "ehi": float(ehi),
+                    "n": int(n), "roi_pct": round(roi*100, 1),
+                    "note": f"{plo}-{phi}% prob · {elo}-{ehi}% edge — "
+                            f"{roi*100:+.1f}% ROI on n={n} (auto)",
+                })
+        # If no cells passed the gate, fall back to the seeded band so the
+        # model still surfaces SOMETHING. As data accumulates, real cells
+        # take over.
+        out[mkt]["bands"] = bands if bands else list(_FALLBACK_GATES[mkt])
+    return out
+
+
+# Will be populated by the dashboard at runtime via _build_sweet_spots.
+# Kept as a module-level for backwards compatibility with downstream code.
+MARKET_SWEET_SPOTS: dict = {m: {"bands": list(_FALLBACK_GATES[m])} for m in _FALLBACK_GATES}
 
 
 def _in_sweet_spot(market: str, prob: float, edge: float) -> bool:
@@ -1210,6 +1252,21 @@ sp_df            = load_sp_data()
 tracker_df       = load_tracker()
 cache            = load_cache()
 model_picks_df   = load_model_picks()
+
+# Auto-rebuild the per-market sweet-spot gates from live settled picks. This
+# replaces the previously-hardcoded MARKET_SWEET_SPOTS so every result that
+# lands shifts the bands without manual retuning. Cached via Streamlit's
+# data cache for 5 min so the recompute doesn't hit the CSV every render.
+@st.cache_data(ttl=300, show_spinner=False)
+def _cached_sweet_spots(picks_csv_mtime: float) -> dict:
+    # mtime in the key forces a recompute when the CSV updates
+    return _build_sweet_spots(model_picks_df)
+try:
+    _csv_mtime = os.path.getmtime(MODEL_PICKS_FILE) if os.path.exists(MODEL_PICKS_FILE) else 0.0
+    MARKET_SWEET_SPOTS = _cached_sweet_spots(_csv_mtime)
+except Exception:
+    pass  # keep fallback gates if anything goes wrong
+
 cal_map          = get_calibration_map(model_picks_df)
 live_scores      = fetch_live_scores()
 probable_pitchers= fetch_probable_pitchers()
