@@ -612,19 +612,34 @@ Date,Game,Team,Side,Market,ML,Book,Model_Prob,Market_Prob,Edge_Pct,Model_Line,Ma
 06/09/2026,New York Yankees @ Cleveland Guardians,Cleveland Guardians,Home +0.5,F5 Spread,-138.0,FanDuel,62.5,58.0,4.5,-0.33,0.5,50.0,,0.95,0.0,WIN,2-2,False,
 06/09/2026,Los Angeles Dodgers @ Pittsburgh Pirates,Pittsburgh Pirates,Home,F5 ML,-140.0,FanDuel,61.7,58.3,3.4,,,66.8,,0.96,0.0,WIN,1-2,False,
 06/09/2026,Minnesota Twins @ Detroit Tigers,Minnesota Twins,Away +0.5,F5 Spread,-140.0,Caesars,60.2,58.3,1.8,0.17,0.5,50.0,,0.94,0.0,LOSS,4-5,False,
-06/10/2026,Boston Red Sox @ Tampa Bay Rays,Over,Over,F5 Total,100.0,williamhill_us,50.7,50.0,0.7,4.04,4.0,54.5,36.9,0.96,0.025,PENDING,,False,2026-06-10T16:47:53Z
-06/10/2026,New York Yankees @ Cleveland Guardians,Over,Over,F5 Total,-148.0,fanduel,59.6,59.7,-0.1,4.06,3.5,55.9,47.2,0.95,0.044,PENDING,,False,2026-06-10T16:47:53Z
-06/10/2026,Washington Nationals @ San Francisco Giants,Under,Under,F5 Total,-118.0,betmgm,54.5,54.1,0.4,4.24,4.5,53.2,50.0,0.96,0.0,PENDING,,False,2026-06-10T16:47:53Z
-06/10/2026,Cincinnati Reds @ San Diego Padres,Under,Under,F5 Total,-114.0,fanduel,58.3,53.3,5.0,4.02,4.5,45.3,45.0,0.95,-0.006,PENDING,,False,2026-06-10T16:47:53Z
-06/10/2026,Seattle Mariners @ Baltimore Orioles,Under,Under,F5 Total,-125.0,betmgm,64.1,55.6,8.5,4.17,5.0,52.4,50.0,1.0,0.0,PENDING,,False,2026-06-10T16:47:53Z
-06/10/2026,Los Angeles Dodgers @ Pittsburgh Pirates,Under,Under,F5 Total,-125.0,betmgm,52.2,55.6,-3.3,4.37,4.5,47.0,50.0,0.96,0.0,PENDING,,False,2026-06-10T16:47:53Z
-06/10/2026,Minnesota Twins @ Detroit Tigers,Under,Under,F5 Total,100.0,williamhill_us,65.1,50.0,15.1,4.11,5.0,51.4,50.0,0.94,0.0,PENDING,,False,2026-06-10T16:47:53Z
-06/10/2026,Arizona Diamondbacks @ Miami Marlins,Under,Under,F5 Total,-106.0,fanduel,50.5,51.5,-0.9,4.47,4.5,51.4,50.0,0.97,0.0,PENDING,,False,2026-06-10T16:47:53Z
-06/10/2026,Philadelphia Phillies @ Toronto Blue Jays,Under,Under,F5 Total,-110.0,betmgm,52.9,52.4,0.6,4.33,4.5,61.1,50.0,1.01,0.0,PENDING,,False,2026-06-10T16:47:53Z
-06/10/2026,St. Louis Cardinals @ New York Mets,Under,Under,F5 Total,-105.0,williamhill_us,63.8,51.2,12.5,3.69,4.5,56.6,50.0,0.94,0.0,PENDING,,False,2026-06-10T16:47:53Z
-06/10/2026,Texas Rangers @ Kansas City Royals,Under,Under,F5 Total,-118.0,betmgm,70.1,54.1,15.9,4.29,5.5,51.0,50.0,1.04,0.0,PENDING,,False,2026-06-10T16:47:53Z
-06/10/2026,Atlanta Braves @ Chicago White Sox,Over,Over,F5 Total,-120.0,fanduel,54.7,54.5,0.1,3.77,3.5,54.5,50.0,1.02,0.0,PENDING,,False,2026-06-10T16:47:53Z
-06/10/2026,Chicago Cubs @ Colorado Rockies,Over,Over,F5 Total,-130.0,williamhill_us,51.4,56.5,-5.1,6.08,6.0,41.4,50.0,1.28,0.0,PENDING,,False,2026-06-10T16:47:53Z
-06/10/2026,Chicago Cubs @ Colorado Rockies,Under,Under,F5 Total,-125.0,betmgm,57.2,55.6,1.7,6.08,6.5,41.4,50.0,1.28,0.0,PENDING,,False,2026-06-10T16:47:53Z
-06/10/2026,Milwaukee Brewers @ Athletics,Under,Under,F5 Total,-118.0,betmgm,93.2,54.1,39.1,4.57,8.0,46.2,50.0,1.0,0.0,PENDING,,False,2026-06-10T16:47:53Z
-06/10/2026,Houston Astros @ Los Angeles Angels,Under,Under,F5 Total,100.0,williamhill_us,55.4,50.0,5.4,4.19,4.5,58.4,50.0,1.03,0.0,PENDING,,False,2026-06-10T16:47:53Z
+06/10/2026,Boston Red Sox @ Tampa Bay Rays,Over,Over,F5 Total,100.0,williamhill_us,50.7,50.0,0.7,4.04,4.0,54.5,36.9,0.96,0.025,PUSH,0-4,False,2026-06-10T16:47:53Z
+06/10/2026,New York Yankees @ Cleveland Guardians,Over,Over,F5 Total,-148.0,fanduel,59.6,59.7,-0.1,4.06,3.5,55.9,47.2,0.95,0.044,WIN,3-3,False,2026-06-10T16:47:53Z
+06/10/2026,Washington Nationals @ San Francisco Giants,Under,Under,F5 Total,-118.0,betmgm,54.5,54.1,0.4,4.24,4.5,53.2,50.0,0.96,0.0,WIN,2-0,False,2026-06-10T16:47:53Z
+06/10/2026,Cincinnati Reds @ San Diego Padres,Under,Under,F5 Total,-114.0,fanduel,58.3,53.3,5.0,4.02,4.5,45.3,45.0,0.95,-0.006,WIN,2-2,False,2026-06-10T16:47:53Z
+06/10/2026,Seattle Mariners @ Baltimore Orioles,Under,Under,F5 Total,-125.0,betmgm,64.1,55.6,8.5,4.17,5.0,52.4,50.0,1.0,0.0,WIN,0-0,False,2026-06-10T16:47:53Z
+06/10/2026,Los Angeles Dodgers @ Pittsburgh Pirates,Under,Under,F5 Total,-125.0,betmgm,52.2,55.6,-3.3,4.37,4.5,47.0,50.0,0.96,0.0,WIN,2-1,False,2026-06-10T16:47:53Z
+06/10/2026,Minnesota Twins @ Detroit Tigers,Under,Under,F5 Total,100.0,williamhill_us,65.1,50.0,15.1,4.11,5.0,51.4,50.0,0.94,0.0,LOSS,4-3,False,2026-06-10T16:47:53Z
+06/10/2026,Arizona Diamondbacks @ Miami Marlins,Under,Under,F5 Total,-106.0,fanduel,50.5,51.5,-0.9,4.47,4.5,51.4,50.0,0.97,0.0,LOSS,0-8,False,2026-06-10T16:47:53Z
+06/10/2026,Philadelphia Phillies @ Toronto Blue Jays,Under,Under,F5 Total,-110.0,betmgm,52.9,52.4,0.6,4.33,4.5,61.1,50.0,1.01,0.0,LOSS,6-0,False,2026-06-10T16:47:53Z
+06/10/2026,St. Louis Cardinals @ New York Mets,Under,Under,F5 Total,-105.0,williamhill_us,63.8,51.2,12.5,3.69,4.5,56.6,50.0,0.94,0.0,LOSS,8-2,False,2026-06-10T16:47:53Z
+06/10/2026,Texas Rangers @ Kansas City Royals,Under,Under,F5 Total,-118.0,betmgm,70.1,54.1,15.9,4.29,5.5,51.0,50.0,1.04,0.0,WIN,2-2,False,2026-06-10T16:47:53Z
+06/10/2026,Atlanta Braves @ Chicago White Sox,Over,Over,F5 Total,-120.0,fanduel,54.7,54.5,0.1,3.77,3.5,54.5,50.0,1.02,0.0,LOSS,0-2,False,2026-06-10T16:47:53Z
+06/10/2026,Chicago Cubs @ Colorado Rockies,Over,Over,F5 Total,-130.0,williamhill_us,51.4,56.5,-5.1,6.08,6.0,41.4,50.0,1.28,0.0,LOSS,1-0,False,2026-06-10T16:47:53Z
+06/10/2026,Chicago Cubs @ Colorado Rockies,Under,Under,F5 Total,-125.0,betmgm,57.2,55.6,1.7,6.08,6.5,41.4,50.0,1.28,0.0,WIN,1-0,False,2026-06-10T16:47:53Z
+06/10/2026,Houston Astros @ Los Angeles Angels,Under,Under,F5 Total,100.0,williamhill_us,55.4,50.0,5.4,4.19,4.5,58.4,50.0,1.03,0.0,WIN,0-2,False,2026-06-10T16:47:53Z
+06/13/2026,Colorado Rockies @ Athletics,Colorado Rockies/Athletics,Under 8.0,F5 Total,-105.0,Caesars,93.2,51.2,42.0,4.57,8.0,46.25,50.0,1.0,0.0,LOSS,5-4,False,
+06/13/2026,Chicago Cubs @ San Francisco Giants,Chicago Cubs/San Francisco Giants,Over 4.5,F5 Total,116.0,FanDuel,79.6,46.3,33.3,6.4,4.5,41.400000000000006,50.0,1.28,0.0,WIN,6-1,False,
+06/13/2026,St. Louis Cardinals @ Minnesota Twins,St. Louis Cardinals/Minnesota Twins,Under 5.0,F5 Total,-118.0,BetMGM,71.5,54.1,17.4,3.69,5.0,56.599999999999994,50.0,0.94,0.0,LOSS,4-4,False,
+06/13/2026,Los Angeles Dodgers @ Chicago White Sox,Los Angeles Dodgers,Away,F5 ML,-200.0,TheScore,70.4,66.7,3.8,,,50.0,,0.96,0.0,WIN,4-0,False,
+06/13/2026,Detroit Tigers @ Cleveland Guardians,Detroit Tigers,Away,F5 ML,-150.0,Caesars,65.4,60.0,5.4,,,50.0,51.6,0.95,0.044,LOSS,1-3,False,
+06/13/2026,Chicago Cubs @ San Francisco Giants,San Francisco Giants,Home +0.5,F5 Spread,-138.0,FanDuel,64.5,58.0,6.5,-0.46,0.5,50.0,,1.28,0.0,LOSS,6-1,False,
+06/13/2026,Chicago Cubs @ San Francisco Giants,San Francisco Giants,Home,F5 ML,108.0,FanDuel,63.2,48.1,15.1,,,50.0,,1.28,0.0,LOSS,6-1,False,
+06/13/2026,Houston Astros @ Kansas City Royals,Kansas City Royals,Home,F5 ML,-135.0,TheScore,61.6,57.4,4.2,,,61.0,,1.03,0.0,PUSH,4-4,False,
+06/17/2026,Chicago White Sox @ New York Yankees,Under,Under,F5 Total,100.0,williamhill_us,59.8,50.0,9.8,3.93,4.5,49.0,46.2,1.0,0.022,PENDING,,False,2026-06-17T23:04:35Z
+06/17/2026,San Francisco Giants @ Atlanta Braves,Under,Under,F5 Total,-115.0,betmgm,61.8,53.5,8.3,4.31,5.0,50.1,43.8,1.01,0.052,PENDING,,False,2026-06-17T23:04:35Z
+06/17/2026,Cleveland Guardians @ Milwaukee Brewers,Over,Over,F5 Total,-115.0,betmgm,55.9,53.5,2.4,4.34,4.0,51.0,40.6,1.02,0.04,PENDING,,False,2026-06-17T23:04:35Z
+06/17/2026,Cleveland Guardians @ Milwaukee Brewers,Under,Under,F5 Total,-138.0,fanduel,52.8,58.0,-5.2,4.34,4.5,51.0,40.6,1.02,0.04,PENDING,,False,2026-06-17T23:04:35Z
+06/17/2026,Colorado Rockies @ Chicago Cubs,Under,Under,F5 Total,-110.0,williamhill_us,83.6,52.4,31.2,3.75,6.0,57.4,44.1,1.06,0.077,PENDING,,False,2026-06-17T23:04:35Z
+06/17/2026,Pittsburgh Pirates @ Athletics,Under,Under,F5 Total,-110.0,betmgm,66.3,52.4,14.0,4.53,5.5,47.3,50.0,1.0,0.013,PENDING,,False,2026-06-17T23:04:35Z
+06/17/2026,Baltimore Orioles @ Seattle Mariners,Over,Over,F5 Total,-105.0,williamhill_us,57.6,51.2,6.4,4.44,4.0,43.4,43.6,0.99,0.028,PENDING,,False,2026-06-17T23:04:35Z
+06/17/2026,Baltimore Orioles @ Seattle Mariners,Under,Under,F5 Total,-138.0,fanduel,51.0,58.0,-6.9,4.44,4.5,43.4,43.6,0.99,0.028,PENDING,,False,2026-06-17T23:04:35Z
