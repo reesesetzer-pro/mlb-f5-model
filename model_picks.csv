@@ -672,3 +672,5 @@ Date,Game,Team,Side,Market,ML,Book,Model_Prob,Market_Prob,Edge_Pct,Model_Line,Ma
 06/25/2026,Philadelphia Phillies @ Washington Nationals,Philadelphia Phillies,Away,F5 ML,-170.0,TheScore,63.6,63.0,0.7,,,63.5,,0.99,0.0,LOSS,0-5,False,,,
 06/25/2026,Chicago Cubs @ New York Mets,New York Mets,Home +0.5,F5 Spread,-150.0,Caesars,60.9,60.0,0.9,-0.22,0.5,51.7,,0.94,0.0,LOSS,0-0,False,,,
 06/25/2026,Texas Rangers @ Toronto Blue Jays,Toronto Blue Jays,Home,F5 ML,-145.0,TheScore,60.0,59.2,0.8,,,57.9,,1.01,0.0,LOSS,6-3,False,,,
+06/26/2026,Arizona Diamondbacks @ Tampa Bay Rays,Under,Under,F5 Total,-125.0,betmgm,59.6,55.6,4.1,4.44,5.0,43.6,,0.96,0.0,PENDING,,False,2026-06-26T18:11:52Z,48.0,-7.6
+06/26/2026,Colorado Rockies @ Minnesota Twins,Under,Under,F5 Total,100.0,williamhill_us,54.7,50.0,4.7,4.73,5.0,44.2,,0.98,0.0,PENDING,,False,2026-06-26T18:11:52Z,52.6,2.6
