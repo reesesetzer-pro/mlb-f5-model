@@ -674,10 +674,12 @@ Date,Game,Team,Side,Market,ML,Book,Model_Prob,Market_Prob,Edge_Pct,Model_Line,Ma
 06/25/2026,Texas Rangers @ Toronto Blue Jays,Toronto Blue Jays,Home,F5 ML,-145.0,TheScore,60.0,59.2,0.8,,,57.9,,1.01,0.0,LOSS,6-3,False,,,
 06/26/2026,Arizona Diamondbacks @ Tampa Bay Rays,Under,Under,F5 Total,-125.0,betmgm,59.6,55.6,4.1,4.44,5.0,43.6,,0.96,0.0,WIN,1-3,False,2026-06-26T18:11:52Z,48.0,-7.6
 06/26/2026,Colorado Rockies @ Minnesota Twins,Under,Under,F5 Total,100.0,williamhill_us,54.7,50.0,4.7,4.73,5.0,44.2,,0.98,0.0,LOSS,0-7,False,2026-06-26T18:11:52Z,52.6,2.6
-06/27/2026,Houston Astros @ Detroit Tigers,Under,Under,F5 Total,-105.0,williamhill_us,57.8,51.2,6.5,4.05,4.5,46.7,30.4,0.94,0.086,PENDING,,False,2026-06-27T16:09:51Z,48.5,-2.7
-06/27/2026,New York Yankees @ Boston Red Sox,Over,Over,F5 Total,100.0,williamhill_us,54.7,50.0,4.7,4.77,4.5,45.9,47.2,1.07,0.019,PENDING,,False,2026-06-27T16:09:51Z,52.2,2.2
-06/27/2026,Cincinnati Reds @ Pittsburgh Pirates,Over,Over,F5 Total,-105.0,williamhill_us,57.4,51.2,6.2,4.43,4.0,52.7,,0.96,0.0,PENDING,,False,2026-06-27T16:09:51Z,48.5,-2.7
-06/27/2026,Kansas City Royals @ Chicago White Sox,Over,Over,F5 Total,-125.0,betmgm,62.0,55.6,6.4,4.7,4.0,50.6,,1.02,0.075,PENDING,,False,2026-06-27T16:09:51Z,52.7,-2.9
-06/27/2026,Chicago Cubs @ Milwaukee Brewers,Over,Over,F5 Total,-125.0,williamhill_us,59.8,55.6,4.2,4.57,4.0,50.8,,1.02,0.0,PENDING,,False,2026-06-27T16:09:51Z,48.5,-7.1
-06/27/2026,Miami Marlins @ St. Louis Cardinals,Under,Under,F5 Total,-125.0,betmgm,62.0,55.6,6.4,4.3,5.0,51.3,,0.97,0.0,PENDING,,False,2026-06-27T16:09:51Z,52.7,-2.9
-06/27/2026,Los Angeles Dodgers @ San Diego Padres,Under,Under,F5 Total,-118.0,betmgm,59.3,54.1,5.1,3.96,4.5,52.9,,0.95,0.0,PENDING,,False,2026-06-27T16:09:51Z,48.5,-5.6
+06/27/2026,Houston Astros @ Detroit Tigers,Under,Under,F5 Total,-105.0,williamhill_us,57.8,51.2,6.5,4.05,4.5,46.7,30.4,0.94,0.086,LOSS,4-6,False,2026-06-27T16:09:51Z,48.5,-2.7
+06/27/2026,New York Yankees @ Boston Red Sox,Over,Over,F5 Total,100.0,williamhill_us,54.7,50.0,4.7,4.77,4.5,45.9,47.2,1.07,0.019,WIN,1-4,False,2026-06-27T16:09:51Z,52.2,2.2
+06/27/2026,Cincinnati Reds @ Pittsburgh Pirates,Over,Over,F5 Total,-105.0,williamhill_us,57.4,51.2,6.2,4.43,4.0,52.7,,0.96,0.0,WIN,4-4,False,2026-06-27T16:09:51Z,48.5,-2.7
+06/27/2026,Kansas City Royals @ Chicago White Sox,Over,Over,F5 Total,-125.0,betmgm,62.0,55.6,6.4,4.7,4.0,50.6,,1.02,0.075,LOSS,0-0,False,2026-06-27T16:09:51Z,52.7,-2.9
+06/27/2026,Chicago Cubs @ Milwaukee Brewers,Over,Over,F5 Total,-125.0,williamhill_us,59.8,55.6,4.2,4.57,4.0,50.8,,1.02,0.0,PUSH,2-2,False,2026-06-27T16:09:51Z,48.5,-7.1
+06/27/2026,Miami Marlins @ St. Louis Cardinals,Under,Under,F5 Total,-125.0,betmgm,62.0,55.6,6.4,4.3,5.0,51.3,,0.97,0.0,WIN,4-0,False,2026-06-27T16:09:51Z,52.7,-2.9
+06/27/2026,Los Angeles Dodgers @ San Diego Padres,Under,Under,F5 Total,-118.0,betmgm,59.3,54.1,5.1,3.96,4.5,52.9,,0.95,0.0,WIN,1-1,False,2026-06-27T16:09:51Z,48.5,-5.6
+06/29/2026,Chicago White Sox @ Baltimore Orioles,Under,Under,F5 Total,-125.0,betmgm,60.0,55.6,4.4,4.42,5.0,50.9,,1.0,0.0,PENDING,,False,2026-06-29T15:26:21Z,52.7,-2.9
+06/29/2026,Texas Rangers @ Cleveland Guardians,Over,Over,F5 Total,-125.0,betmgm,59.8,55.6,4.2,4.57,4.0,53.1,,0.95,0.0,PENDING,,False,2026-06-29T15:26:21Z,49.1,-6.5
