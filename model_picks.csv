@@ -691,5 +691,6 @@ Date,Game,Team,Side,Market,ML,Book,Model_Prob,Market_Prob,Edge_Pct,Model_Line,Ma
 06/30/2026,Los Angeles Angels @ Seattle Mariners,Over,Over,F5 Total,-130.0,fanduel,62.3,56.5,5.8,4.22,3.5,49.5,,0.99,0.048,LOSS,0-0,False,2026-06-30T21:54:41Z,53.2,-3.3
 07/01/2026,New York Mets @ Toronto Blue Jays,Under,Under,F5 Total,100.0,williamhill_us,55.5,50.0,5.5,4.18,4.5,51.9,,1.01,0.075,LOSS,0-5,False,2026-07-01T15:48:16Z,49.1,-0.9
 07/02/2026,Miami Marlins @ Colorado Rockies,Under,Under,F5 Total,-110.0,fanduel,57.2,52.4,4.9,6.08,6.5,52.2,51.4,1.28,0.016,LOSS,4-5,False,2026-07-02T18:31:26Z,48.6,-3.8
-07/02/2026,St. Louis Cardinals @ Atlanta Braves,Under,Under,F5 Total,104.0,fanduel,53.3,49.0,4.3,4.31,4.5,57.0,39.0,1.01,0.059,PENDING,,False,2026-07-02T22:05:11Z,52.6,3.6
-07/02/2026,Los Angeles Angels @ Seattle Mariners,Over,Over,F5 Total,100.0,williamhill_us,55.2,50.0,5.2,4.3,4.0,46.9,37.6,0.99,0.004,PENDING,,False,2026-07-02T22:05:11Z,48.6,-1.4
+07/02/2026,St. Louis Cardinals @ Atlanta Braves,Under,Under,F5 Total,104.0,fanduel,53.3,49.0,4.3,4.31,4.5,57.0,39.0,1.01,0.059,LOSS,3-5,False,2026-07-02T22:05:11Z,52.6,3.6
+07/02/2026,Los Angeles Angels @ Seattle Mariners,Over,Over,F5 Total,100.0,williamhill_us,55.2,50.0,5.2,4.3,4.0,46.9,37.6,0.99,0.004,LOSS,0-0,False,2026-07-02T22:05:11Z,48.6,-1.4
+07/03/2026,Baltimore Orioles @ Cincinnati Reds,Under,Under,F5 Total,-115.0,betmgm,58.4,53.5,5.0,5.01,5.5,58.5,,1.12,0.0,PENDING,,False,2026-07-03T15:04:24Z,47.7,-5.8
