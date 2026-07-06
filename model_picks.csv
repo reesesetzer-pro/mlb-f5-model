@@ -710,18 +710,19 @@ Date,Game,Team,Side,Market,ML,Book,Model_Prob,Market_Prob,Edge_Pct,Model_Line,Ma
 07/04/2026,Milwaukee Brewers @ Arizona Diamondbacks,Under,Under,F5 Total,-110.0,ASSUMED (outage),52.2,52.4,-0.1,4.37,4.5,46.0,35.5,1.0,0.036,LOSS,2-3,False,2026-07-05T03:06:17Z,,,,,
 07/04/2026,San Diego Padres @ Los Angeles Dodgers,Under,Under,F5 Total,-110.0,ASSUMED (outage),55.2,52.4,2.8,4.2,4.5,54.5,47.1,0.98,0.032,WIN,0-1,False,2026-07-05T03:06:17Z,,,,,
 07/05/2026,Philadelphia Phillies @ Kansas City Royals,Under,Under,F5 Total,-114.0,fanduel,57.2,53.3,4.0,5.08,5.5,52.0,,1.04,0.0,WIN,1-3,False,2026-07-05T15:15:00Z,50.0,-3.3,-115.0,5.5,0.41
-07/05/2026,Milwaukee Brewers @ Arizona Diamondbacks,Under,Under,F5 Total,-118.0,betmgm,60.0,54.1,5.8,4.42,5.0,54.2,,1.0,0.0,PENDING,,False,2026-07-05T15:15:00Z,53.1,-1.0,-102.0,4.5,-6.71
+07/05/2026,Milwaukee Brewers @ Arizona Diamondbacks,Under,Under,F5 Total,-118.0,betmgm,60.0,54.1,5.8,4.42,5.0,54.2,,1.0,0.0,WIN,0-1,False,2026-07-05T15:15:00Z,53.1,-1.0,-102.0,4.5,-6.71
 07/05/2026,New York Mets @ Atlanta Braves,Under,Under,F5 Total,110.0,fanduel,51.7,47.6,4.1,4.4,4.5,54.8,41.2,1.01,0.001,LOSS,5-3,False,2026-07-05T15:52:27Z,50.7,3.1,110.0,4.5,0.0
 07/05/2026,Pittsburgh Pirates @ Washington Nationals,Under,Under,F5 Total,-125.0,betmgm,60.5,55.6,4.9,4.89,5.5,56.5,,0.99,0.044,LOSS,4-4,False,2026-07-05T15:52:27Z,53.1,-2.5,-118.0,5.5,-2.57
-07/05/2026,San Francisco Giants @ Colorado Rockies,San Francisco Giants/Colorado Rockies,Under 7.0,F5 Total,-135.0,Caesars,72.0,57.4,14.5,5.66,7.0,44.2,50.0,1.28,0.0,PENDING,,False,,,,,,
+07/05/2026,San Francisco Giants @ Colorado Rockies,San Francisco Giants/Colorado Rockies,Under 7.0,F5 Total,-135.0,Caesars,72.0,57.4,14.5,5.66,7.0,44.2,50.0,1.28,0.0,LOSS,5-4,False,,,,,,
 07/05/2026,St. Louis Cardinals @ Chicago Cubs,Chicago Cubs,Home,F5 ML,-156.0,FanDuel,65.8,60.9,4.9,,,50.0,,1.06,0.0,WIN,0-2,False,,,,,,
-07/05/2026,San Diego Padres @ Los Angeles Dodgers,Los Angeles Dodgers,Home,F5 ML,-200.0,TheScore,65.1,66.7,-1.6,,,50.0,,0.98,0.0,PENDING,,False,,,,,,
-07/05/2026,Miami Marlins @ Athletics,Miami Marlins,Away,F5 ML,102.0,FanDuel,64.8,49.5,15.3,,,50.0,,1.0,0.0,PENDING,,False,,,,,,
-07/05/2026,San Diego Padres @ Los Angeles Dodgers,San Diego Padres,Away +1.5,F5 Spread,-145.0,BetMGM,64.8,59.2,5.6,-0.51,1.5,50.0,,0.98,0.0,PENDING,,False,,,,,,
-07/05/2026,Miami Marlins @ Athletics,Miami Marlins,Away +0.5,F5 Spread,-135.0,Caesars,63.3,57.4,5.9,0.39,0.5,50.0,,1.0,0.0,PENDING,,False,,,,,,
+07/05/2026,San Diego Padres @ Los Angeles Dodgers,Los Angeles Dodgers,Home,F5 ML,-200.0,TheScore,65.1,66.7,-1.6,,,50.0,,0.98,0.0,LOSS,1-0,False,,,,,,
+07/05/2026,Miami Marlins @ Athletics,Miami Marlins,Away,F5 ML,102.0,FanDuel,64.8,49.5,15.3,,,50.0,,1.0,0.0,WIN,6-0,False,,,,,,
+07/05/2026,San Diego Padres @ Los Angeles Dodgers,San Diego Padres,Away +1.5,F5 Spread,-145.0,BetMGM,64.8,59.2,5.6,-0.51,1.5,50.0,,0.98,0.0,WIN,1-0,False,,,,,,
+07/05/2026,Miami Marlins @ Athletics,Miami Marlins,Away +0.5,F5 Spread,-135.0,Caesars,63.3,57.4,5.9,0.39,0.5,50.0,,1.0,0.0,WIN,6-0,False,,,,,,
 07/05/2026,New York Mets @ Atlanta Braves,New York Mets,Away,F5 ML,-128.0,FanDuel,61.5,56.1,5.4,,,58.6,34.4,1.01,0.001,WIN,5-3,False,,,,,,
-07/05/2026,Boston Red Sox @ Los Angeles Angels,Boston Red Sox,Away,F5 ML,-158.0,FanDuel,61.4,61.2,0.1,,,62.4,,1.03,0.0,PENDING,,False,,,,,,
+07/05/2026,Boston Red Sox @ Los Angeles Angels,Boston Red Sox,Away,F5 ML,-158.0,FanDuel,61.4,61.2,0.1,,,62.4,,1.03,0.0,WIN,5-3,False,,,,,,
 07/05/2026,Philadelphia Phillies @ Kansas City Royals,Philadelphia Phillies,Away,F5 ML,-130.0,DraftKings,61.3,56.5,4.8,,,58.6,,1.04,0.003,LOSS,1-3,False,,,,,,
 07/05/2026,Minnesota Twins @ New York Yankees,New York Yankees,Home,F5 ML,-115.0,DraftKings,60.6,53.5,7.1,,,52.9,42.3,1.0,0.019,LOSS,4-0,False,,,,,,
 07/05/2026,Tampa Bay Rays @ Houston Astros,Under,Under,F5 Total,-130.0,betmgm,62.3,56.5,5.8,4.28,5.0,55.3,44.5,1.0,0.018,WIN,0-1,False,2026-07-05T19:21:12Z,53.1,-3.4,-130.0,5.0,0.0
-07/05/2026,Boston Red Sox @ Los Angeles Angels,Under,Under,F5 Total,-125.0,fanduel,61.5,55.6,5.9,3.83,4.5,63.2,36.8,1.03,0.069,PENDING,,False,2026-07-05T23:20:18Z,53.1,-2.5,,,
+07/05/2026,Boston Red Sox @ Los Angeles Angels,Under,Under,F5 Total,-125.0,fanduel,61.5,55.6,5.9,3.83,4.5,63.2,36.8,1.03,0.069,LOSS,5-3,False,2026-07-05T23:20:18Z,53.1,-2.5,-128.0,4.5,1.05
+07/06/2026,Arizona Diamondbacks @ San Diego Padres,Under,Under,F5 Total,100.0,williamhill_us,54.3,50.0,4.3,4.25,4.5,48.5,,0.95,0.0,PENDING,,False,2026-07-06T21:51:08Z,50.3,0.3,,,
