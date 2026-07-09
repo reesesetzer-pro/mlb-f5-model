@@ -749,4 +749,6 @@ Date,Game,Team,Side,Market,ML,Book,Model_Prob,Market_Prob,Edge_Pct,Model_Line,Ma
 07/08/2026,Milwaukee Brewers @ St. Louis Cardinals,Under,Under,F5 Total,-110.0,ASSUMED (outage),51.9,52.4,-0.5,4.39,4.5,44.9,38.8,0.97,-0.055,WIN,0-3,False,2026-07-09T03:16:09Z,50.3,-2.1,,,
 07/08/2026,Los Angeles Angels @ Texas Rangers,Over,Over,F5 Total,-110.0,ASSUMED (outage),56.4,52.4,4.0,4.87,4.5,41.8,39.5,1.08,0.019,WIN,7-0,False,2026-07-09T03:16:09Z,48.4,-4.0,,,
 07/08/2026,Colorado Rockies @ Los Angeles Dodgers,Under,Under,F5 Total,-110.0,ASSUMED (outage),51.6,52.4,-0.8,4.41,4.5,48.9,55.2,0.98,0.044,LOSS,3-3,False,2026-07-09T03:16:09Z,50.3,-2.1,,,
-07/08/2026,Arizona Diamondbacks @ San Diego Padres,Under,Under,F5 Total,-110.0,ASSUMED (outage),58.4,52.4,6.1,4.01,4.5,39.5,29.4,0.95,0.043,PENDING,,False,2026-07-09T03:16:09Z,48.4,-4.0,,,
+07/08/2026,Arizona Diamondbacks @ San Diego Padres,Under,Under,F5 Total,-110.0,ASSUMED (outage),58.4,52.4,6.1,4.01,4.5,39.5,29.4,0.95,0.043,LOSS,1-4,False,2026-07-09T03:16:09Z,48.4,-4.0,,,
+07/09/2026,Cleveland Guardians @ Minnesota Twins,Under,Under,F5 Total,-105.0,williamhill_us,55.2,51.2,4.0,4.2,4.5,48.6,,0.98,0.032,PENDING,,False,2026-07-09T16:48:21Z,48.0,-3.2,,,
+07/09/2026,Milwaukee Brewers @ St. Louis Cardinals,Under,Under,F5 Total,-105.0,williamhill_us,56.4,51.2,5.2,4.13,4.5,53.5,,0.97,0.0,PENDING,,False,2026-07-09T16:48:21Z,48.0,-3.2,,,
