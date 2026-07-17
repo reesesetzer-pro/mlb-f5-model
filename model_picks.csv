@@ -773,5 +773,5 @@ Date,Game,Team,Side,Market,ML,Book,Model_Prob,Market_Prob,Edge_Pct,Model_Line,Ma
 07/14/2026,American League All-Stars @ National League All-Stars,Over,Over,F5 Total,-110.0,ASSUMED (outage),56.7,52.4,4.3,4.89,4.5,61.0,62.3,0.99,0.058,LOSS,3-0,False,2026-07-14T04:26:18Z,47.8,-4.6,,,
 07/17/2026,St. Louis Cardinals @ Arizona Diamondbacks,Under,Under,F5 Total,-115.0,williamhill_us,58.9,53.5,5.5,4.48,5.0,50.8,,1.0,0.0,PENDING,,False,2026-07-17T15:03:52Z,47.5,-6.0,,,
 07/17/2026,San Francisco Giants @ Seattle Mariners,Over,Over,F5 Total,-138.0,fanduel,63.6,58.0,5.6,4.3,3.5,58.3,,0.99,0.0,PENDING,,False,2026-07-17T15:03:52Z,53.8,-4.2,,,
-07/17/2026,Tampa Bay Rays @ Boston Red Sox,Over,Over,F5 Total,-102.0,fanduel,54.5,50.5,4.0,4.76,4.5,52.0,38.3,1.07,0.0,PENDING,,False,2026-07-17T16:56:01Z,49.7,-0.8,,,
-07/17/2026,Tampa Bay Rays @ Boston Red Sox,Under,Under,F5 Total,-110.0,betmgm,56.9,52.4,4.5,4.6,5.0,50.0,,1.07,0.0,PENDING,,False,2026-07-17T16:56:01Z,47.5,-4.9,,,
+07/17/2026,Tampa Bay Rays @ Boston Red Sox,Over,Over,F5 Total,-102.0,fanduel,54.5,50.5,4.0,4.76,4.5,52.0,38.3,1.07,0.0,LOSS,0-3,False,2026-07-17T16:56:01Z,49.7,-0.8,-102.0,4.5,0.0
+07/17/2026,Tampa Bay Rays @ Boston Red Sox,Under,Under,F5 Total,-110.0,betmgm,56.9,52.4,4.5,4.6,5.0,50.0,,1.07,0.0,WIN,0-3,False,2026-07-17T16:56:01Z,47.5,-4.9,-118.0,4.5,3.34
