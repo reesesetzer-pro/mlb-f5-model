@@ -782,9 +782,9 @@ Date,Game,Team,Side,Market,ML,Book,Model_Prob,Market_Prob,Edge_Pct,Model_Line,Ma
 07/19/2026,Texas Rangers @ Atlanta Braves,Under,Under,F5 Total,100.0,williamhill_us,54.7,50.0,4.7,4.23,4.5,59.9,45.8,1.01,0.007,LOSS,3-4,False,2026-07-19T15:04:40Z,49.4,-0.6,100.0,4.5,0.0
 07/19/2026,Cincinnati Reds @ Colorado Rockies,Over,Over,F5 Total,-125.0,betmgm,60.0,55.6,4.4,6.08,5.5,48.8,,1.28,0.0,WIN,9-1,False,2026-07-19T15:04:40Z,53.3,-2.3,-125.0,5.5,0.0
 07/19/2026,Los Angeles Dodgers @ New York Yankees,Under,Under,F5 Total,-110.0,betmgm,56.9,52.4,4.5,4.6,5.0,50.0,,1.0,0.0,WIN,3-1,False,2026-07-19T18:29:11Z,48.3,-4.1,,,
-07/20/2026,Tampa Bay Rays @ Toronto Blue Jays,Over,Over,F5 Total,100.0,betmgm,54.2,50.0,4.2,4.24,4.0,53.9,39.1,1.01,0.039,PENDING,,False,2026-07-20T22:52:04Z,49.1,-0.9,,,
-07/20/2026,Baltimore Orioles @ Boston Red Sox,Under,Under,F5 Total,100.0,fanduel,55.9,50.0,5.9,4.16,4.5,49.7,34.5,1.07,0.009,PENDING,,False,2026-07-20T22:52:04Z,48.6,-1.4,,,
-07/20/2026,New York Mets @ Milwaukee Brewers,Over,Over,F5 Total,-140.0,fanduel,62.8,58.3,4.5,4.25,3.5,60.8,44.2,1.02,0.018,PENDING,,False,2026-07-20T22:52:04Z,53.7,-4.6,,,
-07/20/2026,Chicago White Sox @ Texas Rangers,Over,Over,F5 Total,-125.0,betmgm,60.0,55.6,4.4,4.58,4.0,58.7,47.1,1.08,0.016,PENDING,,False,2026-07-20T22:52:04Z,53.7,-1.9,,,
-07/20/2026,Miami Marlins @ Houston Astros,Under,Under,F5 Total,-118.0,betmgm,59.6,54.1,5.5,4.44,5.0,48.5,43.5,1.0,0.01,PENDING,,False,2026-07-20T22:52:04Z,48.6,-5.5,,,
-07/20/2026,Minnesota Twins @ Cleveland Guardians,Under,Under,F5 Total,-110.0,ASSUMED (outage),55.0,52.4,2.6,4.21,4.5,55.5,33.9,0.95,0.012,PENDING,,False,2026-07-20T22:52:04Z,48.6,-3.8,,,
+07/20/2026,Tampa Bay Rays @ Toronto Blue Jays,Over,Over,F5 Total,100.0,betmgm,54.2,50.0,4.2,4.24,4.0,53.9,39.1,1.01,0.039,PENDING,,False,2026-07-20T22:52:04Z,49.1,-0.9,100.0,4.0,0.0
+07/20/2026,Baltimore Orioles @ Boston Red Sox,Under,Under,F5 Total,100.0,fanduel,55.9,50.0,5.9,4.16,4.5,49.7,34.5,1.07,0.009,PENDING,,False,2026-07-20T22:52:04Z,48.6,-1.4,-102.0,4.5,0.99
+07/20/2026,New York Mets @ Milwaukee Brewers,Over,Over,F5 Total,-140.0,fanduel,62.8,58.3,4.5,4.25,3.5,60.8,44.2,1.02,0.018,PENDING,,False,2026-07-20T22:52:04Z,53.7,-4.6,-140.0,3.5,0.0
+07/20/2026,Chicago White Sox @ Texas Rangers,Over,Over,F5 Total,-125.0,betmgm,60.0,55.6,4.4,4.58,4.0,58.7,47.1,1.08,0.016,PENDING,,False,2026-07-20T22:52:04Z,53.7,-1.9,-125.0,4.0,0.0
+07/20/2026,Miami Marlins @ Houston Astros,Under,Under,F5 Total,-118.0,betmgm,59.6,54.1,5.5,4.44,5.0,48.5,43.5,1.0,0.01,PENDING,,False,2026-07-20T22:52:04Z,48.6,-5.5,-118.0,5.0,0.0
+07/20/2026,Minnesota Twins @ Cleveland Guardians,Under,Under,F5 Total,-110.0,ASSUMED (outage),55.0,52.4,2.6,4.21,4.5,55.5,33.9,0.95,0.012,LOSS,2-9,False,2026-07-20T22:52:04Z,48.6,-3.8,,,
