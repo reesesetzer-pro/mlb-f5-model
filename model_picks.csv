@@ -788,5 +788,10 @@ Date,Game,Team,Side,Market,ML,Book,Model_Prob,Market_Prob,Edge_Pct,Model_Line,Ma
 07/20/2026,Chicago White Sox @ Texas Rangers,Over,Over,F5 Total,-125.0,betmgm,60.0,55.6,4.4,4.58,4.0,58.7,47.1,1.08,0.016,WIN,5-2,False,2026-07-20T22:52:04Z,53.7,-1.9,-125.0,4.0,0.0
 07/20/2026,Miami Marlins @ Houston Astros,Under,Under,F5 Total,-118.0,betmgm,59.6,54.1,5.5,4.44,5.0,48.5,43.5,1.0,0.01,LOSS,4-7,False,2026-07-20T22:52:04Z,48.6,-5.5,-118.0,5.0,0.0
 07/20/2026,Minnesota Twins @ Cleveland Guardians,Under,Under,F5 Total,-110.0,ASSUMED (outage),55.0,52.4,2.6,4.21,4.5,55.5,33.9,0.95,0.012,LOSS,2-9,False,2026-07-20T22:52:04Z,48.6,-3.8,,,
-07/21/2026,Cincinnati Reds @ Seattle Mariners,Over,Over,F5 Total,-148.0,fanduel,65.2,59.7,5.5,4.4,3.5,52.7,,0.99,0.0,PENDING,,False,2026-07-21T15:01:59Z,51.9,-7.8,,,
-07/21/2026,New York Mets @ Milwaukee Brewers,Under,Under,F5 Total,-130.0,williamhill_us,60.8,56.5,4.3,4.37,5.0,47.8,43.0,1.02,0.07,PENDING,,False,2026-07-21T21:55:58Z,54.5,-2.0,,,
+07/21/2026,Cincinnati Reds @ Seattle Mariners,Over,Over,F5 Total,-148.0,fanduel,65.2,59.7,5.5,4.4,3.5,52.7,,0.99,0.0,LOSS,3-0,False,2026-07-21T15:01:59Z,51.9,-7.8,120.0,4.5,-23.83
+07/21/2026,New York Mets @ Milwaukee Brewers,Under,Under,F5 Total,-130.0,williamhill_us,60.8,56.5,4.3,4.37,5.0,47.8,43.0,1.02,0.07,WIN,3-0,False,2026-07-21T21:55:58Z,54.5,-2.0,-130.0,5.0,0.0
+07/22/2026,Tampa Bay Rays @ Toronto Blue Jays,Over,Over,F5 Total,-130.0,betmgm,60.8,56.5,4.3,4.63,4.0,45.7,,1.01,0.0,PENDING,,False,2026-07-22T18:30:52Z,55.0,-1.5,,,
+07/22/2026,Pittsburgh Pirates @ New York Yankees,Under,Under,F5 Total,-110.0,ASSUMED (outage),52.8,52.4,0.4,4.34,4.5,45.6,46.2,1.0,0.05,PENDING,,False,2026-07-22T18:30:52Z,49.4,-3.0,,,
+07/22/2026,Baltimore Orioles @ Boston Red Sox,Over,Over,F5 Total,-110.0,ASSUMED (outage),50.9,52.4,-1.5,4.55,4.5,51.6,41.5,1.07,-0.075,PENDING,,False,2026-07-22T18:30:52Z,49.4,-3.0,,,
+07/22/2026,San Francisco Giants @ Kansas City Royals,Over,Over,F5 Total,-110.0,ASSUMED (outage),59.5,52.4,7.1,5.05,4.5,54.8,40.9,1.04,-0.016,PENDING,,False,2026-07-22T18:30:52Z,47.6,-4.8,,,
+07/22/2026,New York Mets @ Milwaukee Brewers,Over,Over,F5 Total,-110.0,ASSUMED (outage),50.5,52.4,-1.9,4.53,4.5,53.4,42.2,1.02,-0.036,PENDING,,False,2026-07-22T18:30:52Z,49.4,-3.0,,,
