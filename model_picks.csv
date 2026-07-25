@@ -797,6 +797,8 @@ Date,Game,Team,Side,Market,ML,Book,Model_Prob,Market_Prob,Edge_Pct,Model_Line,Ma
 07/22/2026,New York Mets @ Milwaukee Brewers,Over,Over,F5 Total,-110.0,ASSUMED (outage),50.5,52.4,-1.9,4.53,4.5,53.4,42.2,1.02,-0.036,WIN,2-3,False,2026-07-22T18:30:52Z,49.4,-3.0,,,
 07/24/2026,Kansas City Royals @ Detroit Tigers,Over,Over,F5 Total,-146.0,fanduel,64.7,59.3,5.4,4.37,3.5,47.5,,0.94,0.0,LOSS,1-2,False,2026-07-24T15:03:49Z,54.5,-4.8,-144.0,3.5,-0.56
 07/24/2026,New York Yankees @ Philadelphia Phillies,Over,Over,F5 Total,-125.0,betmgm,61.0,55.6,5.4,4.14,3.5,63.5,,0.99,0.0,LOSS,1-0,False,2026-07-24T15:03:49Z,54.5,-1.1,-125.0,3.5,0.0
-07/24/2026,Houston Astros @ Chicago White Sox,Under,Under,F5 Total,-118.0,betmgm,59.8,54.1,5.7,4.43,5.0,43.2,,1.02,0.0,PENDING,,False,2026-07-24T15:03:49Z,47.3,-6.8,-118.0,5.0,0.0
-07/24/2026,Athletics @ Minnesota Twins,Under,Under,F5 Total,-130.0,betmgm,61.1,56.5,4.6,4.85,5.5,50.2,,0.98,0.0,PENDING,,False,2026-07-24T15:03:49Z,54.5,-2.0,-130.0,5.5,0.0
-07/24/2026,Cleveland Guardians @ Tampa Bay Rays,Over,Over,F5 Total,-125.0,betmgm,60.8,55.6,5.2,4.13,3.5,54.0,,0.96,0.049,PENDING,,False,2026-07-24T19:43:01Z,54.5,-1.1,-125.0,3.5,0.0
+07/24/2026,Houston Astros @ Chicago White Sox,Under,Under,F5 Total,-118.0,betmgm,59.8,54.1,5.7,4.43,5.0,43.2,,1.02,0.0,PUSH,0-5,False,2026-07-24T15:03:49Z,47.3,-6.8,-118.0,5.0,0.0
+07/24/2026,Athletics @ Minnesota Twins,Under,Under,F5 Total,-130.0,betmgm,61.1,56.5,4.6,4.85,5.5,50.2,,0.98,0.0,WIN,1-0,False,2026-07-24T15:03:49Z,54.5,-2.0,-130.0,5.5,0.0
+07/24/2026,Cleveland Guardians @ Tampa Bay Rays,Over,Over,F5 Total,-125.0,betmgm,60.8,55.6,5.2,4.13,3.5,54.0,,0.96,0.049,WIN,1-5,False,2026-07-24T19:43:01Z,54.5,-1.1,-125.0,3.5,0.0
+07/25/2026,Atlanta Braves @ Baltimore Orioles,Under,Under,F5 Total,-146.0,fanduel,64.7,59.3,5.4,4.63,5.5,43.8,,1.0,0.0,PENDING,,False,2026-07-25T15:02:30Z,54.3,-5.0,,,
+07/25/2026,Colorado Rockies @ Milwaukee Brewers,Under,Under,F5 Total,-105.0,williamhill_us,57.2,51.2,6.0,4.58,5.0,50.7,,1.02,0.0,PENDING,,False,2026-07-25T15:02:30Z,47.3,-3.9,,,
