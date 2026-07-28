@@ -809,6 +809,6 @@ Date,Game,Team,Side,Market,ML,Book,Model_Prob,Market_Prob,Edge_Pct,Model_Line,Ma
 07/26/2026,Toronto Blue Jays @ Boston Red Sox,Over,Over,F5 Total,-118.0,betmgm,59.5,54.1,5.3,4.55,4.0,49.5,37.0,1.07,0.05,LOSS,0-3,False,2026-07-26T15:50:08Z,47.3,-6.8,-115.0,4.0,-1.18
 07/26/2026,Athletics @ Minnesota Twins,Under,Under,F5 Total,-114.0,fanduel,59.3,53.3,6.0,4.96,5.5,49.9,,0.98,0.018,LOSS,0-7,False,2026-07-26T15:50:08Z,47.3,-6.0,-115.0,5.5,0.41
 07/26/2026,New York Yankees @ Philadelphia Phillies,Over,Over,F5 Total,-125.0,betmgm,60.5,55.6,4.9,4.61,4.0,50.6,,0.99,0.0,WIN,3-6,False,2026-07-26T18:53:57Z,54.7,-0.9,-105.0,4.5,-7.8
-07/27/2026,Baltimore Orioles @ Detroit Tigers,Under,Under,F5 Total,-114.0,fanduel,58.4,53.3,5.2,4.01,4.5,53.8,,0.94,0.0,PENDING,,False,2026-07-27T15:01:49Z,46.1,-7.2,,,
-07/27/2026,Cleveland Guardians @ Cincinnati Reds,Over,Over,F5 Total,-105.0,williamhill_us,55.9,51.2,4.7,4.84,4.5,49.4,,1.12,0.0,PENDING,,False,2026-07-27T15:01:49Z,46.1,-5.1,,,
-07/27/2026,Philadelphia Phillies @ Miami Marlins,Over,Over,F5 Total,-115.0,betmgm,58.6,53.5,5.1,4.5,4.0,50.3,42.2,0.97,0.025,PENDING,,False,2026-07-27T22:03:55Z,46.1,-7.4,,,
+07/27/2026,Baltimore Orioles @ Detroit Tigers,Under,Under,F5 Total,-114.0,fanduel,58.4,53.3,5.2,4.01,4.5,53.8,,0.94,0.0,PENDING,,False,2026-07-27T15:01:49Z,46.1,-7.2,-118.0,4.5,1.61
+07/27/2026,Cleveland Guardians @ Cincinnati Reds,Over,Over,F5 Total,-105.0,williamhill_us,55.9,51.2,4.7,4.84,4.5,49.4,,1.12,0.0,LOSS,0-0,False,2026-07-27T15:01:49Z,46.1,-5.1,-140.0,4.5,13.89
+07/27/2026,Philadelphia Phillies @ Miami Marlins,Over,Over,F5 Total,-115.0,betmgm,58.6,53.5,5.1,4.5,4.0,50.3,42.2,0.97,0.025,PENDING,,False,2026-07-27T22:03:55Z,46.1,-7.4,-115.0,4.0,0.0
