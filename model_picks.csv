@@ -819,3 +819,5 @@ Date,Game,Team,Side,Market,ML,Book,Model_Prob,Market_Prob,Edge_Pct,Model_Line,Ma
 07/29/2026,Milwaukee Brewers @ San Francisco Giants,Over,Over,F5 Total,-115.0,williamhill_us,57.6,53.5,4.1,4.44,4.0,50.0,,0.96,0.0,PENDING,,False,2026-07-29T16:28:14Z,46.2,-7.3,,,
 07/29/2026,Cleveland Guardians @ Cincinnati Reds,Over,Over,F5 Total,-120.0,fanduel,58.8,54.5,4.2,5.01,4.5,52.5,,1.12,0.0,PENDING,,False,2026-07-29T16:28:14Z,46.2,-8.3,,,
 07/29/2026,Philadelphia Phillies @ Miami Marlins,Over,Over,F5 Total,-110.0,ASSUMED (outage),50.7,52.4,-1.7,4.54,4.5,64.5,45.3,0.97,0.046,WIN,6-3,False,2026-07-29T16:28:14Z,50.0,-2.4,,,
+07/29/2026,New York Yankees @ Chicago White Sox,Over,Over,F5 Total,100.0,williamhill_us,55.9,50.0,5.9,4.34,4.0,55.4,41.5,1.02,0.0,PENDING,,False,2026-07-29T22:53:47Z,46.2,-3.8,,,
+07/29/2026,Chicago Cubs @ St. Louis Cardinals,Over,Over,F5 Total,-115.0,betmgm,58.8,53.5,5.3,4.51,4.0,52.6,44.1,0.97,0.0,PENDING,,False,2026-07-29T22:53:47Z,46.2,-7.3,,,
