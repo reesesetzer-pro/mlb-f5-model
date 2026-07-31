@@ -821,4 +821,5 @@ Date,Game,Team,Side,Market,ML,Book,Model_Prob,Market_Prob,Edge_Pct,Model_Line,Ma
 07/29/2026,Philadelphia Phillies @ Miami Marlins,Over,Over,F5 Total,-110.0,ASSUMED (outage),50.7,52.4,-1.7,4.54,4.5,64.5,45.3,0.97,0.046,WIN,6-3,False,2026-07-29T16:28:14Z,50.0,-2.4,,,
 07/29/2026,New York Yankees @ Chicago White Sox,Over,Over,F5 Total,100.0,williamhill_us,55.9,50.0,5.9,4.34,4.0,55.4,41.5,1.02,0.0,PUSH,4-0,False,2026-07-29T22:53:47Z,46.2,-3.8,100.0,4.0,0.0
 07/29/2026,Chicago Cubs @ St. Louis Cardinals,Over,Over,F5 Total,-115.0,betmgm,58.8,53.5,5.3,4.51,4.0,52.6,44.1,0.97,0.0,LOSS,0-0,False,2026-07-29T22:53:47Z,46.2,-7.3,-115.0,4.0,0.0
-07/30/2026,Seattle Mariners @ Los Angeles Dodgers,Under,Under,F5 Total,-130.0,betmgm,62.0,56.5,5.4,4.3,5.0,53.8,,0.98,0.0,PENDING,,False,2026-07-30T18:03:59Z,55.0,-1.5,,,
+07/30/2026,Seattle Mariners @ Los Angeles Dodgers,Under,Under,F5 Total,-130.0,betmgm,62.0,56.5,5.4,4.3,5.0,53.8,,0.98,0.0,PUSH,0-5,False,2026-07-30T18:03:59Z,55.0,-1.5,,,
+07/31/2026,Miami Marlins @ New York Mets,Under,Under,F5 Total,-106.0,fanduel,57.1,51.5,5.6,4.09,4.5,46.1,,0.94,0.0,PENDING,,False,2026-07-31T07:02:02Z,46.0,-5.5,,,
